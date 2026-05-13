@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALQ Farma — Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* ── Reset & base ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:    #2e3f6e;
+  --blue:    #4a5684;
+  --lt:      #85a0cc;
+  --pale:    #d9e4f4;
+  --bg:      #f0f4fb;
+  --white:   #ffffff;
+  --border:  #c8d5ee;
+  --text:    #0a0f1e;
+  --green:   #1a6e4e;
+  --red:     #a02020;
+  --sidebar: 240px;
+  --topbar:  60px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar);
+  background: var(--navy);
+  min-height: 100vh;
+  position: fixed;
+  top: 0; left: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+}
+.sidebar::after {
+  content: '';
+  position: absolute;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.03);
+  bottom: -60px; right: -60px;
+  pointer-events: none;
+}
+
+/* Logo zone */
+.sb-logo {
+  padding: 22px 22px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.sb-logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+.sb-icon {
+  width: 34px; height: 34px;
+  background: rgba(255,255,255,.12);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; color: #fff;
+  letter-spacing: -.02em;
+  flex-shrink: 0;
+}
+.sb-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.01em;
+}
+.sb-sub {
+  font-size: 9px;
+  color: rgba(255,255,255,.45);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding-left: 44px;
+}
+
+/* Nav */
+.sb-nav { padding: 16px 12px; flex: 1; }
+.sb-section-label {
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(255,255,255,.35);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: 10px 10px 6px;
+}
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  color: rgba(255,255,255,.6);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .18s;
+  margin-bottom: 2px;
+  text-decoration: none;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.sb-item:hover {
+  background: rgba(255,255,255,.07);
+  color: rgba(255,255,255,.9);
+}
+.sb-item.active {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  font-weight: 600;
+}
+.sb-item-icon {
+  font-size: 15px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.sb-badge {
+  margin-left: auto;
+  background: rgba(255,255,255,.15);
+  color: rgba(255,255,255,.8);
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 99px;
+}
+
+/* Sidebar footer */
+.sb-footer {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.sb-user {
+  display: flex; align-items: center; gap: 9px;
+}
+.sb-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.sb-user-name { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.9); }
+.sb-user-role { font-size: 9px; color: rgba(255,255,255,.4); }
+
+/* ── Main area ───────────────────────────────────────────────── */
+.main {
+  margin-left: var(--sidebar);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── Topbar ──────────────────────────────────────────────────── */
+.topbar {
+  height: var(--topbar);
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  gap: 12px;
+}
+.topbar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -.01em;
+}
+.topbar-sep { width: 1px; height: 18px; background: var(--border); margin: 0 4px; }
+.topbar-path {
+  font-size: 12px;
+  color: var(--blue);
+  font-weight: 400;
+}
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.topbar-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.topbar-btn:hover { background: var(--bg); }
+.topbar-btn-p {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+.topbar-btn-p:hover { background: #3a4f87; }
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #1a6e4e;
+  box-shadow: 0 0 0 2px rgba(26,110,78,.2);
+}
+.status-label { font-size: 10px; color: var(--blue); font-weight: 500; }
+
+/* Tab switcher in topbar */
+.tab-switch {
+  display: flex; gap: 2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 3px;
+}
+.tab-switch-btn {
+  padding: 5px 16px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--blue);
+  cursor: pointer;
+  transition: all .15s;
+}
+.tab-switch-btn.on {
+  background: var(--white);
+  color: var(--navy);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(46,63,110,.1);
+}
+
+/* ── Content ─────────────────────────────────────────────────── */
+.content { padding: 24px 28px; flex: 1; }
+
+/* ── Page header ─────────────────────────────────────────────── */
+.page-hd {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.page-hd-left {}
+.page-hd-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 4px;
+}
+.page-hd-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+}
+.page-hd-sub {
+  font-size: 12px;
+  color: var(--blue);
+  font-weight: 400;
+}
+.page-hd-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* ── Filter strip ────────────────────────────────────────────── */
+.filter-strip {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 4px rgba(46,63,110,.06);
+}
+.fl { font-size: 9px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .07em; }
+.mbtns { display: flex; gap: 3px; }
+.mbtn {
+  padding: 5px 14px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--blue);
+  cursor: pointer;
+  transition: all .15s;
+}
+.mbtn.on { background: var(--navy); border-color: var(--navy); color: #fff; font-weight: 600; }
+.fdiv { width: 1px; height: 20px; background: var(--border); }
+.comp-tag {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--pale);
+  border-radius: 99px;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--navy);
+}
+.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.da { background: var(--blue); }
+.db { background: var(--lt); }
+
+/* ── KPI grid ────────────────────────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.kpi-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: 0 1px 4px rgba(46,63,110,.07);
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--pale);
+  border-radius: 14px 0 0 14px;
+}
+.kpi-tag {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 8px;
+}
+.kpi-val {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+.kpi-comps { display: flex; flex-direction: column; gap: 4px; }
+.kc { display: flex; align-items: center; gap: 6px; font-size: 10px; }
+.kc-per { color: var(--blue); font-weight: 500; }
+.dl { font-weight: 600; font-size: 10px; }
+.dp { color: var(--green); } .dn { color: var(--red); } .d0 { color: #1a2340; }
+
+/* ── Section ─────────────────────────────────────────────────── */
+.sec {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 22px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(46,63,110,.07);
+}
+.sec-hd {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sec-hd-left {}
+.sec-tag {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 2px;
+}
+.sec-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -.01em;
+}
+.sec-body { padding: 24px; }
+.sec-div { border-top: 1px solid var(--border); margin-top: 22px; padding-top: 22px; }
+
+/* ── Grids ───────────────────────────────────────────────────── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+/* ── Chart legend ────────────────────────────────────────────── */
+.leg { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+.li { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--blue); font-weight: 500; }
+.lb { width: 12px; height: 7px; border-radius: 2px; }
+.ld { width: 8px; height: 8px; border-radius: 50%; }
+.cwrap { position: relative; }
+
+/* ── Table ───────────────────────────────────────────────────── */
+.dt { width: 100%; border-collapse: collapse; font-size: 12px; }
+.dt th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.dt th:first-child { border-radius: 8px 0 0 8px; }
+.dt th:last-child { border-radius: 0 8px 8px 0; }
+.dt td { padding: 10px 14px; border-bottom: 1px solid #eef2f9; color: var(--text); }
+.dt tr:last-child td { border-bottom: none; }
+.dt tr:nth-child(even) td { background: #f8fafd; }
+.dt .tot td { background: var(--pale) !important; font-weight: 600; }
+.dt .tr { text-align: right; }
+.dt .tc { text-align: center; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 9px; font-weight: 600; }
+.br { background: #fde8e8; color: var(--red); }
+.bg { background: #e8f5ee; color: var(--green); }
+.bb { background: var(--pale); color: var(--navy); }
+
+/* ── Funnel ──────────────────────────────────────────────────── */
+.funnel { display: flex; flex-direction: column; align-items: center; }
+.f-step { display: flex; align-items: center; justify-content: space-between; border-radius: 10px; padding: 14px 24px; color: #fff; transition: width .3s; }
+.f-label { font-size: 12px; font-weight: 600; }
+.f-pct { font-size: 10px; color: rgba(255,255,255,.7); margin-top: 2px; }
+.f-val { font-size: 20px; font-weight: 700; }
+.f-conn { text-align: center; padding: 6px 0; }
+.f-clbl { font-size: 9px; color: var(--blue); font-weight: 500; }
+.f-conv { font-size: 14px; font-weight: 700; color: var(--navy); }
+
+/* ── Time cards ──────────────────────────────────────────────── */
+.tc-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+}
+.tc-lbl { font-size: 9px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.tc-val { font-size: 22px; font-weight: 700; color: var(--navy); }
+.tc-delta { font-size: 10px; font-weight: 500; margin-top: 4px; }
+
+/* ── NPS ─────────────────────────────────────────────────────── */
+.nps-big { text-align: center; padding: 18px 12px; }
+.nps-num { font-size: 72px; font-weight: 700; color: var(--navy); line-height: 1; }
+.nps-lbl { font-size: 12px; font-weight: 600; color: var(--blue); margin-top: 4px; }
+.nps-zone { display: inline-block; padding: 3px 14px; border-radius: 99px; font-size: 11px; font-weight: 600; margin-top: 10px; }
+.nz-g { background: #e8f5ee; color: var(--green); }
+.nz-b { background: var(--pale); color: var(--navy); }
+.nz-n { background: #fff3cd; color: #856404; }
+
+/* ── Insight strip ───────────────────────────────────────────── */
+.insight-strip {
+  background: linear-gradient(135deg, #2e3f6e 0%, #3d5190 100%);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.insight-icon {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.12);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.insight-text { flex: 1; }
+.insight-label { font-size: 9px; font-weight: 700; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 3px; }
+.insight-value { font-size: 13px; font-weight: 500; color: #fff; line-height: 1.4; }
+.insight-delta { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 99px; white-space: nowrap; }
+.id-up { background: rgba(26,110,78,.3); color: #6adba5; }
+.id-dn { background: rgba(160,32,32,.3); color: #f09090; }
+
+/* ── Tab content ─────────────────────────────────────────────── */
+.tc { display: none; }
+.tc.on { display: block; }
+
+/* ── Placeholder ─────────────────────────────────────────────── */
+.ph { text-align: center; padding: 80px 40px; color: var(--blue); }
+.ph-icon { font-size: 48px; margin-bottom: 16px; }
+.ph-title { font-size: 18px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+.ph-sub { font-size: 13px; line-height: 1.6; max-width: 400px; margin: 0 auto; }
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  SIDEBAR                                                   -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-mark">
+      <div class="sb-icon">A</div>
+      <div class="sb-name">ALQ Farma</div>
+    </div>
+    <div class="sb-sub">Analytics Platform</div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-section-label">Principal</div>
+    <button class="sb-item active" onclick="swTab('comercial',this)">
+      <span class="sb-item-icon">📊</span> Comercial
+    </button>
+    <button class="sb-item" onclick="swTab('marketing',this)">
+      <span class="sb-item-icon">📣</span> Marketing
+      <span class="sb-badge">Em breve</span>
+    </button>
+
+    <div class="sb-section-label" style="margin-top:8px">Análises</div>
+    <button class="sb-item" onclick="scrollTo('sec-rej')">
+      <span class="sb-item-icon">📋</span> Rejeições
+    </button>
+    <button class="sb-item" onclick="scrollTo('sec-tempo')">
+      <span class="sb-item-icon">⏱</span> Tempos
+    </button>
+    <button class="sb-item" onclick="scrollTo('sec-nps')">
+      <span class="sb-item-icon">⭐</span> NPS
+    </button>
+
+    <div class="sb-section-label" style="margin-top:8px">Ferramentas</div>
+    <button class="sb-item" onclick="expCSV()">
+      <span class="sb-item-icon">⬇</span> Exportar CSV
+    </button>
+    <button class="sb-item" onclick="refData()">
+      <span class="sb-item-icon">↻</span> Atualizar dados
+    </button>
+  </nav>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">G</div>
+      <div>
+        <div class="sb-user-name">Gestão</div>
+        <div class="sb-user-role">ALQ Farma · Admin</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  MAIN                                                      -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <span class="topbar-title" id="tb-title">Dashboard Comercial</span>
+    <div class="topbar-sep"></div>
+    <span class="topbar-path" id="tb-path">Performance · Abril/26</span>
+    <div class="topbar-right">
+      <div class="status-dot"></div>
+      <span class="status-label">Dados atualizados</span>
+      <div class="topbar-sep"></div>
+      <div class="tab-switch">
+        <button class="tab-switch-btn on" onclick="swTab('comercial',this)">Comercial</button>
+        <button class="tab-switch-btn" onclick="swTab('marketing',this)">Marketing</button>
+      </div>
+      <button class="topbar-btn" onclick="expCSV()">⬇ Exportar</button>
+      <button class="topbar-btn topbar-btn-p" id="btn-ref" onclick="refData()">↻ Atualizar</button>
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- TAB COMERCIAL                                          -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="tc on" id="tab-comercial">
+  <div class="content">
+
+    <!-- Page header -->
+    <div class="page-hd">
+      <div class="page-hd-left">
+        <div class="page-hd-eyebrow">ALQ Farma · Análise Comercial</div>
+        <div class="page-hd-title">Performance Comercial</div>
+        <div class="page-hd-sub">Rejeições por médico · Tempos de atendimento · NPS e experiência do cliente</div>
+      </div>
+      <div class="page-hd-actions">
+        <span style="font-size:10px;color:var(--blue);font-weight:500">Período:</span>
+        <div class="mbtns">
+          <button class="mbtn" onclick="setM('Janeiro',this)">Janeiro</button>
+          <button class="mbtn" onclick="setM('Fevereiro',this)">Fevereiro</button>
+          <button class="mbtn" onclick="setM('Março',this)">Março</button>
+          <button class="mbtn on" onclick="setM('Abril',this)">Abril</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter strip -->
+    <div class="filter-strip">
+      <span class="fl">Comparando com</span>
+      <div class="comp-tag"><span class="dot da"></span><span id="comp-a">Mar/26 (mês anterior)</span></div>
+      <div class="comp-tag"><span class="dot db"></span><span id="comp-b">Abr/25 (ano anterior)</span></div>
+      <div class="fdiv"></div>
+      <span id="fs-info" style="font-size:10px;color:var(--blue);font-weight:500"></span>
+    </div>
+
+    <!-- Insight strip -->
+    <div class="insight-strip" id="insight-strip"></div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-tag">NPS do mês</div>
+        <div class="kpi-val" id="kv-nps">—</div>
+        <div class="kpi-comps" id="kc-nps"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-tag">Taxa de rejeição (top 10)</div>
+        <div class="kpi-val" id="kv-rej">—</div>
+        <div class="kpi-comps" id="kc-rej"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-tag">Tempo atendimento</div>
+        <div class="kpi-val" id="kv-at">—</div>
+        <div class="kpi-comps" id="kc-at"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-tag">Tempo cálculo</div>
+        <div class="kpi-val" id="kv-ca">—</div>
+        <div class="kpi-comps" id="kc-ca"></div>
+      </div>
+    </div>
+
+    <!-- ── SEÇÃO REJEIÇÃO ────────────────────────────────── -->
+    <div class="sec" id="sec-rej">
+      <div class="sec-hd">
+        <div class="sec-hd-left">
+          <div class="sec-tag">Análise Comercial</div>
+          <div class="sec-title">Rejeição por Médico — <span id="s-mes">Abril/26</span></div>
+        </div>
+      </div>
+      <div class="sec-body">
+        <div class="g2">
+          <div>
+            <div class="leg">
+              <span class="li"><span class="lb" style="background:#4a5684"></span>Rejeitados</span>
+              <span class="li"><span class="lb" style="background:#d9e4f4"></span>Aprovados</span>
+            </div>
+            <div class="cwrap" style="height:300px"><canvas id="chQ"></canvas></div>
+          </div>
+          <div>
+            <div class="leg">
+              <span class="li"><span class="lb" style="background:#2e3f6e"></span>Valor rejeitado (R$)</span>
+            </div>
+            <div class="cwrap" style="height:300px"><canvas id="chV"></canvas></div>
+          </div>
+        </div>
+
+        <div class="sec-div">
+          <div class="g2">
+            <div>
+              <div class="sec-tag" style="margin-bottom:8px">Evolução Jan–Abr/26 — Rejeições vs Valor</div>
+              <div class="leg">
+                <span class="li"><span class="lb" style="background:#4a5684"></span>Qtd. rejeitados</span>
+                <span class="li"><span class="lb" style="background:#85a0cc"></span>Valor rejeitado</span>
+              </div>
+              <div class="cwrap" style="height:220px"><canvas id="chE"></canvas></div>
+            </div>
+            <div>
+              <div class="sec-tag" style="margin-bottom:8px">Funil de atendimento</div>
+              <div id="funil" style="max-width:420px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:12px">Ranking detalhado por médico</div>
+          <div id="tbl" style="overflow-x:auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEÇÃO TEMPOS ──────────────────────────────────── -->
+    <div class="sec" id="sec-tempo">
+      <div class="sec-hd">
+        <div class="sec-hd-left">
+          <div class="sec-tag">Eficiência Operacional</div>
+          <div class="sec-title">Tempos de Atendimento — Abr/25 → Abr/26</div>
+        </div>
+      </div>
+      <div class="sec-body">
+        <div class="leg">
+          <span class="li"><span class="ld" style="background:#2e3f6e"></span>Atendimento</span>
+          <span class="li"><span class="ld" style="background:#4a5684"></span>Cálculos</span>
+          <span class="li"><span class="ld" style="background:#85a0cc"></span>Aprovações</span>
+          <span class="li"><span class="ld" style="background:#c8d5ee"></span>Inclusões</span>
+        </div>
+        <div class="cwrap" style="height:280px"><canvas id="chT"></canvas></div>
+        <div class="g4" id="tcards" style="margin-top:20px"></div>
+      </div>
+    </div>
+
+    <!-- ── SEÇÃO NPS ─────────────────────────────────────── -->
+    <div class="sec" id="sec-nps">
+      <div class="sec-hd">
+        <div class="sec-hd-left">
+          <div class="sec-tag">Experiência do Cliente</div>
+          <div class="sec-title">NPS — Net Promoter Score · Evolução e Motivos</div>
+        </div>
+      </div>
+      <div class="sec-body">
+        <div class="g3">
+          <div>
+            <div id="npsd"></div>
+            <div class="leg" style="justify-content:center;margin-top:6px">
+              <span class="li"><span class="ld" style="background:#2e3f6e"></span>NPS mensal</span>
+            </div>
+            <div class="cwrap" style="height:180px"><canvas id="chN"></canvas></div>
+          </div>
+          <div>
+            <div class="sec-tag" style="margin-bottom:8px">Motivos — Promotores</div>
+            <div class="cwrap" style="height:160px"><canvas id="chP"></canvas></div>
+            <div id="lgP" style="margin-top:8px"></div>
+          </div>
+          <div>
+            <div class="sec-tag" style="margin-bottom:8px">Motivos — Detratores</div>
+            <div class="cwrap" style="height:160px"><canvas id="chD"></canvas></div>
+            <div id="lgD" style="margin-top:8px"></div>
+            <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px">
+              <div class="sec-tag" style="margin-bottom:8px">Motivos — Neutros</div>
+              <div class="cwrap" style="height:130px"><canvas id="chNeu"></canvas></div>
+              <div id="lgNeu" style="margin-top:6px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+  </div><!-- /tab-comercial -->
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- TAB MARKETING                                          -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="tc" id="tab-marketing">
+  <div class="content">
+    <div class="page-hd">
+      <div class="page-hd-left">
+        <div class="page-hd-eyebrow">ALQ Farma · Marketing</div>
+        <div class="page-hd-title">Performance de Marketing</div>
+        <div class="page-hd-sub">Campanhas · ROAS por canal · Novos clientes · CAC · Repescagem</div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-body">
+        <div class="ph">
+          <div class="ph-icon">📣</div>
+          <div class="ph-title">Módulo em desenvolvimento</div>
+          <div class="ph-sub">Os dados de campanhas (Março e Abril/26), ROAS por canal, novos clientes e CAC serão exibidos aqui em breve.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--  JAVASCRIPT                                               -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<script>
+const MO=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MS=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+/* ── Datasets ─────────────────────────────────────────────── */
+const DR=[
+  {ano:2026,mes:'Janeiro',med:'PATRICIA MACHADO',ef:307,ap:54,rj:253,vl:42298.91,ix:82.41},
+  {ano:2026,mes:'Janeiro',med:'ISIS CARLA QUEIROZ DE SOUZA',ef:126,ap:45,rj:81,vl:12536.85,ix:64.29},
+  {ano:2026,mes:'Janeiro',med:'CAMILA C. DO VALLE SERRA D´ÁVILA',ef:179,ap:99,rj:80,vl:12449.35,ix:44.69},
+  {ano:2026,mes:'Janeiro',med:'JULIANA ABIGAIL LEITE',ef:151,ap:72,rj:79,vl:12878.14,ix:52.32},
+  {ano:2026,mes:'Janeiro',med:'MARIA CAROLINA FERREIRA VIANNA',ef:153,ap:79,rj:74,vl:16957.71,ix:48.37},
+  {ano:2026,mes:'Janeiro',med:'INGRID DOS ANJOS TEIXEIRA',ef:83,ap:35,rj:48,vl:4200.94,ix:57.83},
+  {ano:2026,mes:'Janeiro',med:'MIRIA DE AMORIM',ef:533,ap:493,rj:40,vl:5923.75,ix:7.50},
+  {ano:2026,mes:'Janeiro',med:'ELIZABETH DO NASCIMENTO RODRIGUES DE LIRA',ef:137,ap:97,rj:40,vl:4752.74,ix:29.20},
+  {ano:2026,mes:'Janeiro',med:'ANDREA SOUZA DE PAIVA',ef:196,ap:160,rj:36,vl:6640.22,ix:18.37},
+  {ano:2026,mes:'Janeiro',med:'GABRIELLA LUCAS DOLAVALE ASSED',ef:114,ap:81,rj:33,vl:3533.73,ix:28.95},
+  {ano:2026,mes:'Fevereiro',med:'PATRICIA MACHADO',ef:161,ap:66,rj:95,vl:21622.37,ix:59.01},
+  {ano:2026,mes:'Fevereiro',med:'CAMILA C. DO VALLE SERRA D´ÁVILA',ef:212,ap:120,rj:92,vl:14042.69,ix:43.40},
+  {ano:2026,mes:'Fevereiro',med:'JULIANA ABIGAIL LEITE',ef:97,ap:42,rj:55,vl:13013.33,ix:56.70},
+  {ano:2026,mes:'Fevereiro',med:'ELIZABETH DO NASCIMENTO RODRIGUES DE LIRA',ef:123,ap:69,rj:54,vl:7187.61,ix:43.90},
+  {ano:2026,mes:'Fevereiro',med:'MIRIA DE AMORIM',ef:541,ap:492,rj:49,vl:7542.15,ix:9.06},
+  {ano:2026,mes:'Fevereiro',med:'ANDREA SOUZA DE PAIVA',ef:207,ap:164,rj:43,vl:6834.81,ix:20.77},
+  {ano:2026,mes:'Fevereiro',med:'BRENDA MACIEL CASTELLAR LIMA',ef:79,ap:41,rj:38,vl:7068.75,ix:48.10},
+  {ano:2026,mes:'Fevereiro',med:'TEREZA CRISTINA FARIAS KRUSCHEWSKY MITCHELL',ef:187,ap:153,rj:34,vl:6381.31,ix:18.18},
+  {ano:2026,mes:'Fevereiro',med:'MARIA CAROLINA FERREIRA VIANNA',ef:94,ap:68,rj:26,vl:7310.52,ix:27.66},
+  {ano:2026,mes:'Fevereiro',med:'ALESSANDRA PEREIRA MARQUES ALBANO',ef:33,ap:11,rj:22,vl:8404.65,ix:66.67},
+  {ano:2026,mes:'Março',med:'CAMILA C. DO VALLE SERRA D´ÁVILA',ef:246,ap:159,rj:87,vl:11710.74,ix:35.37},
+  {ano:2026,mes:'Março',med:'MIRIA DE AMORIM',ef:691,ap:621,rj:70,vl:11206.71,ix:10.13},
+  {ano:2026,mes:'Março',med:'BRENDA MACIEL CASTELLAR LIMA',ef:162,ap:92,rj:70,vl:17878.90,ix:43.21},
+  {ano:2026,mes:'Março',med:'MARIA CAROLINA FERREIRA VIANNA',ef:140,ap:89,rj:51,vl:6058.15,ix:36.43},
+  {ano:2026,mes:'Março',med:'JULIANA ABIGAIL LEITE',ef:121,ap:72,rj:49,vl:7338.52,ix:40.50},
+  {ano:2026,mes:'Março',med:'INGRID DOS ANJOS TEIXEIRA',ef:64,ap:19,rj:45,vl:5128.48,ix:70.31},
+  {ano:2026,mes:'Março',med:'NAIZA CRUZ DE SOUZA',ef:259,ap:222,rj:37,vl:5517.54,ix:14.29},
+  {ano:2026,mes:'Março',med:'ANDREA SOUZA DE PAIVA',ef:225,ap:190,rj:35,vl:5556.40,ix:15.56},
+  {ano:2026,mes:'Março',med:'ELIZABETH DO NASCIMENTO RODRIGUES DE LIRA',ef:176,ap:141,rj:35,vl:4203.10,ix:19.89},
+  {ano:2026,mes:'Março',med:'PATRICIA MACHADO',ef:80,ap:46,rj:34,vl:10583.55,ix:42.50},
+  {ano:2026,mes:'Abril',med:'CAMILA C. DO VALLE SERRA D´ÁVILA',ef:272,ap:158,rj:114,vl:20246.75,ix:41.91},
+  {ano:2026,mes:'Abril',med:'JULIANA ABIGAIL LEITE',ef:173,ap:68,rj:105,vl:17278.73,ix:60.69},
+  {ano:2026,mes:'Abril',med:'MIRIA DE AMORIM',ef:639,ap:573,rj:66,vl:10313.17,ix:10.33},
+  {ano:2026,mes:'Abril',med:'ANDREA SOUZA DE PAIVA',ef:248,ap:189,rj:59,vl:10642.75,ix:23.79},
+  {ano:2026,mes:'Abril',med:'BRENDA MACIEL CASTELLAR LIMA',ef:145,ap:99,rj:46,vl:9626.86,ix:31.72},
+  {ano:2026,mes:'Abril',med:'ELIZABETH DO NASCIMENTO RODRIGUES DE LIRA',ef:170,ap:125,rj:45,vl:5545.52,ix:26.47},
+  {ano:2026,mes:'Abril',med:'GABRIELLA LUCAS DOLAVALE ASSED',ef:140,ap:101,rj:39,vl:3961.16,ix:27.86},
+  {ano:2026,mes:'Abril',med:'MILTON UNGIEROWICZ',ef:46,ap:17,rj:29,vl:13803.14,ix:63.04},
+  {ano:2026,mes:'Abril',med:'NAIZA CRUZ DE SOUZA',ef:211,ap:183,rj:28,vl:2888.42,ix:13.27},
+  {ano:2026,mes:'Abril',med:'TANIA CRISTINA DE AZEVEDO PIMENTEL GONCALVES',ef:52,ap:24,rj:28,vl:8382.14,ix:53.85},
+];
+
+function pt(s){const m=s.match(/(\d+)h(\d+)m/);return m?+m[1]*60+ +m[2]:0}
+function ft(n){const h=Math.floor(n/60),m=n%60;return`${h}h${String(m).padStart(2,'0')}m`}
+
+const DT=[
+  {ano:2025,mes:'Abril',at:pt('1h34m'),ca:pt('2h30m'),ap:pt('6h33m'),in:pt('6h42m')},
+  {ano:2025,mes:'Maio',at:pt('1h40m'),ca:pt('2h31m'),ap:pt('6h45m'),in:pt('2h29m')},
+  {ano:2025,mes:'Junho',at:pt('1h50m'),ca:pt('2h38m'),ap:pt('7h02m'),in:pt('2h09m')},
+  {ano:2025,mes:'Julho',at:pt('1h38m'),ca:pt('2h23m'),ap:pt('7h26m'),in:pt('1h38m')},
+  {ano:2025,mes:'Agosto',at:pt('1h05m'),ca:pt('2h01m'),ap:pt('6h49m'),in:pt('1h48m')},
+  {ano:2025,mes:'Setembro',at:pt('1h43m'),ca:pt('2h54m'),ap:pt('7h50m'),in:pt('2h21m')},
+  {ano:2025,mes:'Outubro',at:pt('2h12m'),ca:pt('3h12m'),ap:pt('7h29m'),in:pt('1h47m')},
+  {ano:2025,mes:'Novembro',at:pt('2h26m'),ca:pt('3h27m'),ap:pt('8h11m'),in:pt('2h11m')},
+  {ano:2025,mes:'Dezembro',at:pt('3h12m'),ca:pt('4h13m'),ap:pt('8h31m'),in:pt('2h22m')},
+  {ano:2026,mes:'Janeiro',at:pt('2h43m'),ca:pt('3h56m'),ap:pt('8h05m'),in:pt('2h18m')},
+  {ano:2026,mes:'Fevereiro',at:pt('2h43m'),ca:pt('3h50m'),ap:pt('8h15m'),in:pt('2h42m')},
+  {ano:2026,mes:'Março',at:pt('2h08m'),ca:pt('3h10m'),ap:pt('6h43m'),in:pt('2h29m')},
+  {ano:2026,mes:'Abril',at:pt('2h16m'),ca:pt('3h13m'),ap:pt('7h36m'),in:pt('2h24m')},
+];
+
+const DN=[
+  {ano:2025,mes:'Abril',n:85},{ano:2025,mes:'Maio',n:68},{ano:2025,mes:'Junho',n:73},
+  {ano:2025,mes:'Julho',n:81},{ano:2025,mes:'Agosto',n:75},{ano:2025,mes:'Setembro',n:77},
+  {ano:2025,mes:'Outubro',n:73},{ano:2025,mes:'Novembro',n:69},{ano:2025,mes:'Dezembro',n:72},
+  {ano:2026,mes:'Janeiro',n:77},{ano:2026,mes:'Fevereiro',n:74},{ano:2026,mes:'Março',n:81},
+  {ano:2026,mes:'Abril',n:80},
+];
+
+const DP_PROM={
+  'Abril 2026':[['Não Especificado',49],['Ótimo Atendimento',33],['Serviço de Qualidade',13],['Preço Justo',3]],
+  'Março 2026':[['Não Especificado',47],['Ótimo Atendimento',32],['Serviço de Qualidade',16],['Preço Justo',3]],
+  'Fevereiro 2026':[['Não Especificado',50],['Ótimo Atendimento',33],['Serviço de Qualidade',14],['Preço Justo',1]],
+  'Janeiro 2026':[['Não Especificado',46],['Ótimo Atendimento',30],['Serviço de Qualidade',18],['Preço Justo',4]],
+};
+const DP_DET={
+  'Abril 2026':[['Não especificado',53],['Tempo de Espera',15],['Atendimento Confuso',15],['Preço Elevado',15]],
+  'Março 2026':[['Preço Elevado',35],['Não especificado',25],['Tempo de Espera',20],['Difícil Solicitação',10]],
+  'Fevereiro 2026':[['Tempo de Espera',40],['Preço Elevado',28],['Atendimento Confuso',12],['Outros',8]],
+  'Janeiro 2026':[['Preço Elevado',40],['Atendimento Confuso',24],['Tempo de Espera',20],['Outros',12]],
+};
+const DP_NEU={
+  'Abril 2026':[['Não especificado',69],['Preço Competitivo',15],['Atendimento',12],['Serviço',3]],
+  'Março 2026':[['Não especificado',62],['Atendimento',25],['Preço Competitivo',7],['Serviço',3]],
+  'Fevereiro 2026':[['Não especificado',77],['Atendimento',11],['Preço Competitivo',5],['Serviço',5]],
+  'Janeiro 2026':[['Não especificado',70],['Atendimento',16],['Serviço',12],['Outros',2]],
+};
+
+/* ── State ────────────────────────────────────────────────── */
+let cM='Abril', cA=2026;
+const CH={};
+
+/* ── Utils ────────────────────────────────────────────────── */
+function sl(m,a){return MS[MO.indexOf(m)]+'/'+String(a).slice(-2)}
+function pm(m,a){const i=MO.indexOf(m);return i===0?{m:'Dezembro',a:a-1}:{m:MO[i-1],a}}
+function gr(m,a){return DR.filter(d=>d.mes===m&&d.ano===a)}
+function gt(m,a){return DT.find(d=>d.mes===m&&d.ano===a)||null}
+function gn(m,a){const d=DN.find(d=>d.mes===m&&d.ano===a);return d?d.n:null}
+function ar(data){const e=data.reduce((s,x)=>s+x.ef,0),r=data.reduce((s,x)=>s+x.rj,0);return e>0?r/e*100:null}
+function brl(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function sn(n){const p=n.split(' ');return p.length<=2?n:p[0]+' '+p[p.length-1]}
+function tc(n){return n.split(' ').map(w=>w.charAt(0)+w.slice(1).toLowerCase()).join(' ')}
+function dtag(v,gp=true,unit='pt',abs=true){
+  if(v===null||v===undefined)return'<span class="dl d0">—</span>';
+  const g=gp?v>0:v<0,b=gp?v<0:v>0;
+  const cls=g?'dp':b?'dn':'d0';
+  const ar=v>0?'▲':v<0?'▼':'–';
+  const fv=abs?Math.abs(v).toFixed(1)+unit:Math.abs(v).toFixed(1)+'%';
+  return`<span class="dl ${cls}">${ar} ${fv}</span>`;
+}
+function dtime(c,p){
+  if(p===null)return'<span class="dl d0">—</span>';
+  const d=c-p,cls=d<0?'dp':d>0?'dn':'d0';
+  return`<span class="dl ${cls}">${d>0?'▲':d<0?'▼':'–'} ${ft(Math.abs(d))}</span>`;
+}
+
+const CDef={
+  responsive:true,maintainAspectRatio:false,
+  plugins:{
+    legend:{display:false},
+    tooltip:{backgroundColor:'#1a2340',titleFont:{family:'Poppins',size:11,weight:'600'},
+      bodyFont:{family:'Poppins',size:11},padding:10,cornerRadius:7}
+  },
+  scales:{
+    x:{ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e'},grid:{display:false},border:{display:false}},
+    y:{ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e'},grid:{color:'rgba(74,86,132,0.1)'},border:{display:false}}
+  }
+};
+
+/* ── Render ────────────────────────────────────────────────── */
+function render(){
+  const m=cM,a=cA;
+  const pr=pm(m,a),py={m,a:a-1};
+  const slFull=`${MS[MO.indexOf(pr.m)]}/${String(pr.a).slice(-2)} (mês anterior)`;
+  const slAno=`${MS[MO.indexOf(m)]}/${String(py.a).slice(-2)} (ano anterior)`;
+  document.getElementById('comp-a').textContent=slFull;
+  document.getElementById('comp-b').textContent=slAno;
+  document.getElementById('s-mes').textContent=`${m}/${String(a).slice(-2)}`;
+  document.getElementById('tb-path').textContent=`Performance · ${m}/${String(a).slice(-2)}`;
+  document.getElementById('fs-info').textContent=`Exibindo ${m} de ${a} com comparativo vs dois períodos`;
+
+  renderInsight(m,a,pr,py);
+  renderKPIs(m,a,pr,py);
+  renderBarQty(m,a);
+  renderBarVal(m,a);
+  renderEvo();
+  renderFunil(m,a);
+  renderTbl(m,a);
+  renderTempos();
+  renderTCards(m,a,pr,py);
+  renderNPS(m,a);
+  renderNPSLine();
+  renderDonut('chP','lgP',DP_PROM[`${m} ${a}`]||[],['#2e3f6e','#4a5684','#85a0cc','#c8d5ee']);
+  renderDonut('chD','lgD',DP_DET[`${m} ${a}`]||[],['#a02020','#c44040','#e07070','#f5a0a0']);
+  renderDonut('chNeu','lgNeu',DP_NEU[`${m} ${a}`]||[],['#4a5684','#85a0cc','#2e3f6e','#c8d5ee']);
+}
+
+function renderInsight(m,a,pr,py){
+  const rej=gr(m,a),rejPr=gr(pr.m,pr.a);
+  const avg=ar(rej),avgPr=ar(rejPr);
+  const delta=avg!==null&&avgPr!==null?avg-avgPr:null;
+  const nps=gn(m,a),npsP=gn(pr.m,pr.a);
+  const dnps=nps&&npsP?nps-npsP:null;
+
+  const items=[
+    {icon:'📊',label:'Maior rejeitador do período',val:()=>{const d=gr(m,a).sort((x,y)=>y.rj-x.rj)[0];return d?`${sn(d.med)} — ${d.rj} rejeições (${d.ix.toFixed(1)}%)`:'—'},delta:null},
+    {icon:'💰',label:'Maior valor rejeitado',val:()=>{const d=gr(m,a).sort((x,y)=>y.vl-x.vl)[0];return d?`${sn(d.med)} — ${brl(d.vl)}`:'—'},delta:null},
+    {icon:'📉',label:'Taxa média de rejeição',val:()=>avg!==null?avg.toFixed(1)+'%':'—',delta:delta,gp:false},
+    {icon:'⭐',label:'NPS do período',val:()=>nps!==null?String(nps):'—',delta:dnps,gp:true},
+  ];
+
+  document.getElementById('insight-strip').innerHTML=items.map(it=>`
+    <div style="flex:1;min-width:160px;display:flex;align-items:center;gap:10px">
+      <div class="insight-icon">${it.icon}</div>
+      <div class="insight-text">
+        <div class="insight-label">${it.label}</div>
+        <div class="insight-value">${it.val()}</div>
+      </div>
+      ${it.delta!==null?`<div class="insight-delta ${it.delta>0?(it.gp?'id-up':'id-dn'):'id-dn'}">${it.delta>0?'▲':'▼'} ${Math.abs(it.delta).toFixed(1)}</div>`:''}
+    </div>
+  `).join('<div style="width:1px;background:rgba(255,255,255,.12);align-self:stretch"></div>');
+}
+
+function renderKPIs(m,a,pr,py){
+  const nps=gn(m,a),npsPr=gn(pr.m,pr.a),npsAn=gn(py.m,py.a);
+  const rj=gr(m,a),rjPr=gr(pr.m,pr.a);
+  const avg=ar(rj),avgPr=ar(rjPr);
+  const t=gt(m,a),tPr=gt(pr.m,pr.a),tAn=gt(py.m,py.a);
+
+  document.getElementById('kv-nps').textContent=nps!==null?nps:'—';
+  document.getElementById('kc-nps').innerHTML=kc(sl(pr.m,pr.a),dtag(nps&&npsPr!==null?nps-npsPr:null,true,'pt'),sl(py.m,py.a),dtag(nps&&npsAn!==null?nps-npsAn:null,true,'pt'));
+  document.getElementById('kv-rej').textContent=avg!==null?avg.toFixed(1)+'%':'—';
+  const dr=avg!==null&&avgPr!==null?((avg-avgPr)/Math.abs(avgPr)*100):null;
+  document.getElementById('kc-rej').innerHTML=kc(sl(pr.m,pr.a),dtag(dr,false,'%'),sl(py.m,py.a),'<span class="dl d0">n/d</span>');
+  document.getElementById('kv-at').textContent=t?ft(t.at):'—';
+  document.getElementById('kc-at').innerHTML=kc(sl(pr.m,pr.a),t&&tPr?dtime(t.at,tPr.at):'<span class="dl d0">—</span>',sl(py.m,py.a),t&&tAn?dtime(t.at,tAn.at):'<span class="dl d0">—</span>');
+  document.getElementById('kv-ca').textContent=t?ft(t.ca):'—';
+  document.getElementById('kc-ca').innerHTML=kc(sl(pr.m,pr.a),t&&tPr?dtime(t.ca,tPr.ca):'<span class="dl d0">—</span>',sl(py.m,py.a),t&&tAn?dtime(t.ca,tAn.ca):'<span class="dl d0">—</span>');
+}
+function kc(la,da,lb,db){return`<div class="kc"><span class="kc-per">vs ${la}</span>${da}</div><div class="kc"><span class="kc-per">vs ${lb}</span>${db}</div>`}
+
+function renderBarQty(m,a){
+  const d=[...gr(m,a)].sort((x,y)=>y.rj-x.rj).slice(0,8);
+  if(CH.q)CH.q.destroy();
+  CH.q=new Chart(document.getElementById('chQ'),{type:'bar',
+    data:{labels:d.map(x=>sn(x.med)),datasets:[
+      {label:'Rejeitados',data:d.map(x=>x.rj),backgroundColor:'#4a5684',borderRadius:4,barPercentage:.55,order:2},
+      {label:'Aprovados',data:d.map(x=>x.ap),backgroundColor:'#d9e4f4',borderRadius:4,barPercentage:.55,order:1}
+    ]},
+    options:{...CDef,indexAxis:'y',
+      plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.x.toLocaleString('pt-BR')}`}}},
+      scales:{x:{...CDef.scales.x},y:{...CDef.scales.y,grid:{display:false},ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e'}}}}
+  });
+}
+function renderBarVal(m,a){
+  const d=[...gr(m,a)].sort((x,y)=>y.vl-x.vl).slice(0,8);
+  if(CH.v)CH.v.destroy();
+  CH.v=new Chart(document.getElementById('chV'),{type:'bar',
+    data:{labels:d.map(x=>sn(x.med)),datasets:[{label:'Valor',data:d.map(x=>x.vl),backgroundColor:'#2e3f6e',borderRadius:4,barPercentage:.5}]},
+    options:{...CDef,indexAxis:'y',
+      plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${brl(c.parsed.x)}`}}},
+      scales:{x:{...CDef.scales.x,ticks:{...CDef.scales.x.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}},
+              y:{...CDef.scales.y,grid:{display:false},ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e'}}}}
+  });
+}
+function renderEvo(){
+  const ms=['Janeiro','Fevereiro','Março','Abril'];
+  const lbs=ms.map(m=>MS[MO.indexOf(m)]+'/26');
+  const qd=ms.map(m=>DR.filter(d=>d.mes===m&&d.ano===2026).reduce((a,b)=>a+b.rj,0));
+  const vd=ms.map(m=>DR.filter(d=>d.mes===m&&d.ano===2026).reduce((a,b)=>a+b.vl,0));
+  if(CH.e)CH.e.destroy();
+  CH.e=new Chart(document.getElementById('chE'),{type:'bar',
+    data:{labels:lbs,datasets:[
+      {type:'bar',label:'Rejeitados',data:qd,backgroundColor:'#4a5684',borderRadius:4,barPercentage:.5,yAxisID:'y',order:2},
+      {type:'line',label:'Valor',data:vd,borderColor:'#85a0cc',backgroundColor:'rgba(133,160,204,.08)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#85a0cc',fill:true,tension:.3,yAxisID:'y2',order:1}
+    ]},
+    options:{...CDef,
+      plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>c.datasetIndex===0?` Rej.: ${c.parsed.y.toLocaleString('pt-BR')}`:` Valor: ${brl(c.parsed.y)}`}}},
+      scales:{x:{...CDef.scales.x},y:{...CDef.scales.y,position:'left'},
+              y2:{...CDef.scales.y,position:'right',grid:{display:false},ticks:{...CDef.scales.y.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}}}}
+  });
+}
+function renderFunil(m,a){
+  const d=gr(m,a);
+  const ef=d.reduce((s,x)=>s+x.ef,0),ap=d.reduce((s,x)=>s+x.ap,0),rj=d.reduce((s,x)=>s+x.rj,0);
+  const pA=ef>0?(ap/ef*100).toFixed(1):'—',pR=ef>0?(rj/ef*100).toFixed(1):'—';
+  document.getElementById('funil').innerHTML=`
+    <div class="funnel">
+      <div class="f-step" style="width:100%;background:#2e3f6e">
+        <div><div class="f-label">Efetuados</div><div class="f-pct">100% — base</div></div>
+        <div class="f-val">${ef.toLocaleString('pt-BR')}</div>
+      </div>
+      <div class="f-conn"><div class="f-clbl">taxa de aprovação</div><div class="f-conv">${pA}%</div></div>
+      <div class="f-step" style="width:78%;background:#4a5684">
+        <div><div class="f-label">Aprovados</div><div class="f-pct">${pA}% dos efetuados</div></div>
+        <div class="f-val">${ap.toLocaleString('pt-BR')}</div>
+      </div>
+      <div class="f-conn"><div class="f-clbl">taxa de rejeição</div><div class="f-conv" style="color:#a02020">${pR}%</div></div>
+      <div class="f-step" style="width:55%;background:#a02020">
+        <div><div class="f-label">Rejeitados</div><div class="f-pct">${pR}% dos efetuados</div></div>
+        <div class="f-val">${rj.toLocaleString('pt-BR')}</div>
+      </div>
+    </div>`;
+}
+function renderTbl(m,a){
+  const d=[...gr(m,a)].sort((x,y)=>y.rj-x.rj);
+  const ef=d.reduce((s,x)=>s+x.ef,0),ap=d.reduce((s,x)=>s+x.ap,0),rj=d.reduce((s,x)=>s+x.rj,0),vt=d.reduce((s,x)=>s+x.vl,0);
+  const ai=ef>0?rj/ef*100:0;
+  const rows=d.map(x=>{
+    const bc=x.ix>50?'br':x.ix>25?'bb':'bg';
+    return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tc"><span class="badge ${bc}">${x.ix.toFixed(1)}%</span></td></tr>`;
+  }).join('');
+  document.getElementById('tbl').innerHTML=`<table class="dt"><thead><tr><th>Médico</th><th style="text-align:right">Efetuados</th><th style="text-align:right">Aprovados</th><th style="text-align:right">Rejeitados</th><th style="text-align:right">Valor Rejeitado</th><th style="text-align:center">Índice Rej.</th></tr></thead><tbody>${rows}<tr class="tot"><td><strong>Total (top 10)</strong></td><td class="tr"><strong>${ef.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${ap.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${rj.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${brl(vt)}</strong></td><td class="tc"><span class="badge ${ai>50?'br':ai>25?'bb':'bg'}">${ai.toFixed(1)}%</span></td></tr></tbody></table>`;
+}
+function renderTempos(){
+  const lbs=DT.map(d=>sl(d.mes,d.ano));
+  if(CH.t)CH.t.destroy();
+  CH.t=new Chart(document.getElementById('chT'),{type:'line',
+    data:{labels:lbs,datasets:[
+      {label:'Atendimento',data:DT.map(d=>d.at),borderColor:'#2e3f6e',backgroundColor:'rgba(46,63,110,.07)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#2e3f6e',fill:false,tension:.3},
+      {label:'Cálculos',data:DT.map(d=>d.ca),borderColor:'#4a5684',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#4a5684',fill:false,tension:.3},
+      {label:'Aprovações',data:DT.map(d=>d.ap),borderColor:'#85a0cc',backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#85a0cc',fill:false,tension:.3,borderDash:[4,3]},
+      {label:'Inclusões',data:DT.map(d=>d.in),borderColor:'#c8d5ee',backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#c8d5ee',fill:false,tension:.3,borderDash:[2,4]},
+    ]},
+    options:{...CDef,
+      plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${ft(c.parsed.y)}`}}},
+      scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>ft(v)}}}}
+  });
+}
+function renderTCards(m,a,pr,py){
+  const t=gt(m,a);if(!t){document.getElementById('tcards').innerHTML='';return}
+  const tPr=gt(pr.m,pr.a);
+  const fs=[{k:'at',l:'Atendimento'},{k:'ca',l:'Cálculos'},{k:'ap',l:'Aprovações'},{k:'in',l:'Inclusões'}];
+  document.getElementById('tcards').innerHTML=fs.map(f=>{
+    const d=tPr?t[f.k]-tPr[f.k]:null;
+    const cls=d===null?'d0':d<0?'dp':d>0?'dn':'d0';
+    const ar=d===null?'':d>0?'▲':d<0?'▼':'–';
+    return`<div class="tc-card"><div class="tc-lbl">${f.l}</div><div class="tc-val">${ft(t[f.k])}</div><div class="tc-delta ${cls}">${ar} ${d!==null?ft(Math.abs(d))+' vs mês ant.':''}</div></div>`;
+  }).join('');
+}
+function renderNPS(m,a){
+  const nps=gn(m,a);
+  const z=nps>=75?['Excelente','nz-g']:nps>=50?['Bom','nz-b']:['Neutro','nz-n'];
+  document.getElementById('npsd').innerHTML=`<div class="nps-big"><div class="nps-num">${nps!==null?nps:'—'}</div><div class="nps-lbl">Net Promoter Score</div><div class="nps-zone ${z[1]}">${z[0]}</div></div>`;
+}
+function renderNPSLine(){
+  const lbs=DN.map(d=>sl(d.mes,d.ano));
+  const pr=DN.map(d=>d.mes===cM&&d.ano===cA?'#2e3f6e':'rgba(46,63,110,.35)');
+  const ps=DN.map(d=>d.mes===cM&&d.ano===cA?7:3);
+  if(CH.n)CH.n.destroy();
+  CH.n=new Chart(document.getElementById('chN'),{type:'line',
+    data:{labels:lbs,datasets:[{label:'NPS',data:DN.map(d=>d.n),borderColor:'#2e3f6e',backgroundColor:'rgba(46,63,110,.07)',borderWidth:2.5,pointRadius:ps,pointBackgroundColor:pr,fill:true,tension:.3}]},
+    options:{...CDef,scales:{...CDef.scales,y:{...CDef.scales.y,min:0,max:100}}}
+  });
+}
+function renderDonut(id,lgId,data,colors){
+  if(CH[id])CH[id].destroy();
+  if(!data.length)return;
+  CH[id]=new Chart(document.getElementById(id),{type:'doughnut',
+    data:{labels:data.map(d=>d[0]),datasets:[{data:data.map(d=>d[1]),backgroundColor:colors.slice(0,data.length),borderWidth:0}]},
+    options:{...CDef,cutout:'60%',plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}}},scales:{x:{display:false},y:{display:false}}}
+  });
+  const el=document.getElementById(lgId);
+  if(el)el.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:4px 10px">${data.map((d,i)=>`<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#4a5684;font-weight:500"><span style="width:7px;height:7px;border-radius:50%;background:${colors[i]};display:inline-block"></span>${d[0]} (${d[1]}%)</div>`).join('')}</div>`;
+}
+
+/* ── Interactions ──────────────────────────────────────────── */
+function swTab(tab,btn){
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-switch-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('on'));
+  document.getElementById('tab-'+tab).classList.add('on');
+  if(tab==='comercial'){
+    document.getElementById('tb-title').textContent='Dashboard Comercial';
+  } else {
+    document.getElementById('tb-title').textContent='Dashboard de Marketing';
+  }
+  // sync all buttons
+  document.querySelectorAll('.tab-switch-btn').forEach(b=>{if(b.textContent.toLowerCase().includes(tab.substring(0,3).toLowerCase()))b.classList.add('on')});
+  document.querySelectorAll('.sb-item').forEach(b=>{if(b.textContent.trim().toLowerCase().startsWith(tab.substring(0,3).toLowerCase()))b.classList.add('active')});
+}
+
+function setM(m,btn){
+  cM=m;
+  document.querySelectorAll('.mbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+
+function scrollTo(id){
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function expCSV(){
+  const d=gr(cM,cA);
+  const t=gt(cM,cA),nps=gn(cM,cA);
+  const csv=[
+    ['Médico','Efetuados','Aprovados','Rejeitados','Valor Rejeitado (R$)','Índice (%)'],
+    ...d.map(x=>[x.med,x.ef,x.ap,x.rj,x.vl.toFixed(2).replace('.',','),x.ix.toFixed(2).replace('.',',')]),
+    [],['NPS',nps||''],['T. Atendimento',t?ft(t.at):''],['T. Cálculo',t?ft(t.ca):'']
+  ].map(r=>r.join(';')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download=`ALQ_Farma_${cM}_${cA}.csv`;a.click();
+}
+
+function refData(){
+  const b=document.getElementById('btn-ref');
+  b.textContent='↻ Atualizando...';b.disabled=true;
+  setTimeout(()=>{b.textContent='↻ Atualizar';b.disabled=false;render();},1000);
+}
+
+/* ── Init ──────────────────────────────────────────────────── */
+document.fonts.load('500 11px Poppins').then(()=>render());
+</script>
+</body>
+</html>
