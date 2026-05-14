@@ -813,7 +813,7 @@ body.auth-locked .auth-modal { display: flex; }
 <aside class="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-mark">
-      <img class="sb-logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABMCAYAAADX/oqbAAACL0lEQVR42u3cy3GDQBBAQWIhGuWfi85SCCwwM/vrd5UFWLBdrqmVj0OSJEmSJEnapLNz7oCkIXGCmKQlkIKXBKslciclUIFLEqygJWl7rKAlwQpakoAFLEnbYwUtCVbQaugXVNR5R3see30+AhawgAUsAQtYwAIWrKAFLGAJWMACFrAELGABC1jAAlbewut1/NEW9mifj4AFLGABS7CaAS1grQnWNzgSJYF1d4bw5JgVMFXNQoAFLGABC1jAAhawgAUsYAELWMAC1tJgkWQQsN5i0vL+CrBaz9H64AMLWMACFrCABSwBC1jAAhawgAUsYBWAFT3Ev/r56OPfPR+wgAUsYAELWM8WTHbAAhawgAUsYAELWMAC1l4bR6uBywap7PXoDZZPNpICC1jAAhawgAUsYAELWMACFrCAZVuDbQ3B17/r0D1syF0EZhpYqw7drx5oYAELWMACFrCABSxgAQtYwAIWsIAFrAEWfDYYwJps6O4f+AELWMACFrBSrqf69wIWsIAFLGABC1jAAtZsYBm6TwRWxubUu+c0dAcWsIAFLGABC1jAAhawgAUsYG0CVq8vY0dd5yxA62Wnmr78vPrQHVgCFrCABSwBC1jAAha0YHUAC1gCFrCABSwBa3SwJAELWBKwgBXdR1tHF2hN9deVJQssAQtYAhawgCUJWrCSBC1YScACliRowUoStGAlQQtWksAFKknQgpWkCfFypyQNiZg7IEmSJEmSJEnq3R/DMvmHcZMotAAAAABJRU5ErkJggg==" alt="Logo ALQ Farma">
+      <img class="sb-logo-img" src="logo.png" alt="Logo ALQ Farma">
     </div>
     <div class="sb-sub">Analytics Platform</div>
   </div>
@@ -1090,7 +1090,92 @@ body.auth-locked .auth-modal { display: flex; }
         <div class="page-hd-sub">Campanhas · ROAS por canal · Novos clientes · CAC</div>
       </div>
     </div>
-    <div class="sec">
+
+    <div class="filter-strip">
+      <span class="fl">Compare:</span>
+      <div class="comp-tag"><span class="dot da"></span><select class="comp-select" id="mk-comp-a" onchange="setMkComp(this.value)"></select></div>
+    </div>
+
+    <div class="insight-strip" id="mk-insight-strip"></div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-tag">Investimento</div>
+        <div class="kpi-val" id="mk-kv-invest">—</div>
+        <div class="kpi-comps" id="mk-kc-invest"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-tag">Receita atribuída</div>
+        <div class="kpi-val" id="mk-kv-rev">—</div>
+        <div class="kpi-comps" id="mk-kc-rev"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-tag">ROAS médio</div>
+        <div class="kpi-val" id="mk-kv-roas">—</div>
+        <div class="kpi-comps" id="mk-kc-roas"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-tag">CAC médio</div>
+        <div class="kpi-val" id="mk-kv-cac">—</div>
+        <div class="kpi-comps" id="mk-kc-cac"></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-canais">
+      <div class="sec-hd">
+        <div class="sec-hd-left">
+          <div class="sec-tag">Aquisição e Receita</div>
+          <div class="sec-title">Canais de Marketing — <span id="mk-s-mes">Abril/26</span></div>
+        </div>
+      </div>
+      <div class="sec-body">
+        <div class="g2">
+          <div>
+            <div class="leg">
+              <span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Receita atribuída</span>
+              <span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Investimento</span>
+            </div>
+            <div class="cwrap" style="height:300px"><canvas id="mkChSpend"></canvas></div>
+          </div>
+          <div>
+            <div class="leg">
+              <span class="li"><span class="ld" style="background:var(--chart-blue-1)"></span>ROAS por canal</span>
+            </div>
+            <div class="cwrap" style="height:300px"><canvas id="mkChRoas"></canvas></div>
+          </div>
+        </div>
+
+        <div class="sec-div">
+          <div class="g2">
+            <div>
+              <div class="sec-tag" style="margin-bottom:8px">Evolução Mar–Abr/26</div>
+              <div class="leg">
+                <span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Novos clientes</span>
+                <span class="li"><span class="lb" style="background:var(--chart-blue-3)"></span>Leads</span>
+              </div>
+              <div class="cwrap" style="height:220px"><canvas id="mkChEvo"></canvas></div>
+            </div>
+            <div>
+              <div class="sec-tag funnel-title" style="margin-bottom:8px">Funil de marketing</div>
+              <div id="mk-funil" class="funnel-panel"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:12px">Detalhamento por canal</div>
+          <div id="mk-tbl" style="overflow-x:auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-campanhas">
+      <div class="sec-hd">
+        <div class="sec-hd-left">
+          <div class="sec-tag">Campanhas</div>
+          <div class="sec-title">Ranking de Campanhas e Repescagem</div>
+        </div>
+      </div>
       <div class="sec-body">
         <div class="ph">
           <div class="ph-icon">📣</div>
