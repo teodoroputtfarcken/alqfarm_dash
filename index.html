@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALQ Farma — Analytics</title>
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAmklEQVR42u3YwQnAIAwAQCfqCt2o+//aBSokRIrVE/LTGO6RoO04r3vnaAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwFpEVOTuq8Eo9AAAEAbLJevtHAYyqBwAAAAAAZAGyCwAAPeAzgMq9AAAsNga3fwwBmB2gMk4jOafvAQD+BOBXGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWiwfVWRTsVcCv1QAAAABJRU5ErkJggg==">
+<link rel="icon" type="image/png" src="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -447,6 +447,13 @@ body {
 .dt .tot td { background: var(--pale) !important; font-weight: 600; }
 .dt .tr { text-align: right; }
 .dt .tc { text-align: center; }
+.dt-medicos { table-layout: fixed; min-width: 720px; }
+.dt-medicos th:nth-child(1), .dt-medicos td:nth-child(1) { width: 42%; }
+.dt-medicos th:nth-child(2), .dt-medicos td:nth-child(2),
+.dt-medicos th:nth-child(3), .dt-medicos td:nth-child(3),
+.dt-medicos th:nth-child(4), .dt-medicos td:nth-child(4) { width: 11%; }
+.dt-medicos th:nth-child(5), .dt-medicos td:nth-child(5) { width: 16%; }
+.dt-medicos th:nth-child(6), .dt-medicos td:nth-child(6) { width: 9%; min-width: 88px; }
 .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 9px; font-weight: 600; }
 .br { background: #fde8e8; color: var(--red); }
 .bg { background: #e8f5ee; color: var(--green); }
@@ -784,7 +791,7 @@ body.auth-locked .auth-modal { display: flex; }
 <aside class="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-mark">
-      <img class="sb-logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABMCAYAAADX/oqbAAACL0lEQVR42u3cy3GDQBBAQWIhGuWfi85SCCwwM/vrd5UFWLBdrqmVj0OSJEmSJEnapLNz7oCkIXGCmKQlkIKXBKslciclUIFLEqygJWl7rKAlwQpakoAFLEnbYwUtCVbQaugXVNR5R3see30+AhawgAUsAQtYwAIWrKAFLGAJWMACFrAELGABC1jAAlbewut1/NEW9mifj4AFLGABS7CaAS1grQnWNzgSJYF1d4bw5JgVMFXNQoAFLGABC1jAAhawgAUsYAELWMAC1tJgkWQQsN5i0vL+CrBaz9H64AMLWMACFrCABSwBC1jAAhawgAUsYBWAFT3Ev/r56OPfPR+wgAUsYAELWM8WTHbAAhawgAUsYAELWMAC1l4bR6uBywap7PXoDZZPNpICC1jAAhawgAUsYAELWMACFrCAZVuDbQ3B17/r0D1syF0EZhpYqw7drx5oYAELWMACFrCABSxgAQtYwAIWsIAFrAEWfDYYwJps6O4f+AELWMACFrBSrqf69wIWsIAFLGABC1jAAtZsYBm6TwRWxubUu+c0dAcWsIAFLGABC1jAAhawgAUsYG0CVq8vY0dd5yxA62Wnmr78vPrQHVgCFrCABSwBC1jAAha0YHUAC1gCFrCABSwBa3SwJAELWBKwgBXdR1tHF2hN9deVJQssAQtYAhawgCUJWrCSBC1YScACliRowUoStGAlQQtWksAFKknQgpWkCfFypyQNiZg7IEmSJEmSJEnq3R/DMvmHcZMotAAAAABJRU5ErkJggg==" alt="Logo ALQ Farma">
+      <img class="sb-logo-img" src="logo.png" alt="Logo ALQ Farma">
     </div>
     <div class="sb-sub">Analytics Platform</div>
   </div>
@@ -1624,9 +1631,9 @@ function renderTbl(){
   const rows=d.map(x=>{
     const ix=x.ef>0?x.rj/x.ef*100:0;
     const bc=ix>50?'br':ix>25?'bb':'bg';
-    return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tc"><span class="badge ${bc}">${ix.toFixed(1)}%</span></td></tr>`;
+    return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tc" style="white-space:nowrap"><span class="badge ${bc}">${ix.toFixed(1)}%</span></td></tr>`;
   }).join('');
-  document.getElementById('tbl').innerHTML=`<table class="dt"><thead><tr><th>Médico</th><th style="text-align:right">Efetuados</th><th style="text-align:right">Aprovados</th><th style="text-align:right">Rejeitados</th><th style="text-align:right">Valor Rejeitado</th><th style="text-align:center">Índice Rej.</th></tr></thead><tbody>${rows}<tr class="tot"><td><strong>Total (top 10)</strong></td><td class="tr"><strong>${ef.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${ap.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${rj.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${brl(vt)}</strong></td><td class="tc"><span class="badge ${ai>50?'br':ai>25?'bb':'bg'}">${ai.toFixed(1)}%</span></td></tr></tbody></table>`;
+  document.getElementById('tbl').innerHTML=`<table class="dt dt-medicos"><thead><tr><th>Médico</th><th style="text-align:right">Efetuados</th><th style="text-align:right">Aprovados</th><th style="text-align:right">Rejeitados</th><th style="text-align:right">Valor Rejeitado</th><th style="text-align:center">Índice Rej.</th></tr></thead><tbody>${rows}<tr class="tot"><td><strong>Total (top 10)</strong></td><td class="tr"><strong>${ef.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${ap.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${rj.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${brl(vt)}</strong></td><td class="tc" style="white-space:nowrap"><span class="badge ${ai>50?'br':ai>25?'bb':'bg'}">${ai.toFixed(1)}%</span></td></tr></tbody></table>`;
 }
 function renderTempos(){
   const lbs=DT.map(d=>sl(d.mes,d.ano));
