@@ -1069,7 +1069,7 @@ body.auth-locked .auth-modal { display: flex; }
       <div class="page-hd-left">
         <div class="page-hd-eyebrow">ALQ Farma · Marketing</div>
         <div class="page-hd-title">Performance de Marketing</div>
-        <div class="page-hd-sub">Campanhas · ROAS por canal · Novos clientes · CAC · Repescagem</div>
+        <div class="page-hd-sub">Campanhas · ROAS por canal · Novos clientes · CAC</div>
       </div>
       <div class="page-hd-actions">
         <span style="font-size:10px;color:var(--blue);font-weight:500">Período:</span>
@@ -1163,13 +1163,10 @@ body.auth-locked .auth-modal { display: flex; }
         </div>
       </div>
       <div class="sec-body">
-        <div class="g2">
-          <div id="mk-camp-tbl" style="overflow-x:auto"></div>
-          <div>
-            <div class="sec-tag" style="margin-bottom:8px">Origem dos leads</div>
-            <div class="cwrap" style="height:220px"><canvas id="mkChOrigem"></canvas></div>
-            <div id="mkLgOrigem" style="margin-top:8px"></div>
-          </div>
+        <div class="ph">
+          <div class="ph-icon">📣</div>
+          <div class="ph-title">Módulo em desenvolvimento</div>
+          <div class="ph-sub">Os dados de campanhas, ROAS por canal, novos clientes e CAC serão exibidos aqui em breve.</div>
         </div>
       </div>
     </div>
@@ -1634,9 +1631,9 @@ function renderTbl(){
   const rows=d.map(x=>{
     const ix=ixDoctor(x);
     const bc=ix>50?'br':ix>25?'bb':'bg';
-    return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tc" style="white-space:nowrap"><span class="badge ${bc}">${ix.toFixed(1)}%</span></td></tr>`;
+    return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tr" style="white-space:nowrap"><span class="badge ${bc}">${ix.toFixed(1)}%</span></td></tr>`;
   }).join('');
-  document.getElementById('tbl').innerHTML=`<table class="dt dt-medicos"><thead><tr><th>Médico</th><th style="text-align:right">Efetuados</th><th style="text-align:right">Aprovados</th><th style="text-align:right">Rejeitados</th><th style="text-align:right">Valor Rejeitado</th><th style="text-align:center">Índice Rej.</th></tr></thead><tbody>${rows}<tr class="tot"><td><strong>Total (top 10)</strong></td><td class="tr"><strong>${ef.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${ap.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${rj.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${brl(vt)}</strong></td><td class="tc" style="white-space:nowrap"><span class="badge ${ai>50?'br':ai>25?'bb':'bg'}">${ai.toFixed(1)}%</span></td></tr></tbody></table>`;
+  document.getElementById('tbl').innerHTML=`<table class="dt dt-medicos"><thead><tr><th>Médico</th><th style="text-align:right">Efetuados</th><th style="text-align:right">Aprovados</th><th style="text-align:right">Rejeitados</th><th style="text-align:right">Valor Rejeitado</th><th class="tr">Índice Rej.</th></tr></thead><tbody>${rows}<tr class="tot"><td><strong>Total (top 10)</strong></td><td class="tr"><strong>${ef.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${ap.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${rj.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${brl(vt)}</strong></td><td class="tr" style="white-space:nowrap"><span class="badge ${ai>50?'br':ai>25?'bb':'bg'}">${ai.toFixed(1)}%</span></td></tr></tbody></table>`;
 }
 function renderTempos(){
   const lbs=DT.map(d=>sl(d.mes,d.ano));
@@ -1690,43 +1687,9 @@ function renderDonut(id,lgId,data,colors){
 
 
 function renderMarketing(){
-  const mp=pById(mkPeriodId,true), cmp=pById(mkCompId,true);
-  const end=pEnd(mp); mkM=end.m; mkA=end.a;
-  const cur=mkSumP(mp),prev=cmp?mkSumP(cmp):null;
-  renderMkSelects();
-  document.getElementById('mk-s-mes').textContent=pLabel(mp);
   if(document.getElementById('tab-marketing').classList.contains('on')){
     document.getElementById('tb-path').textContent='Marketing';
   }
-
-  document.getElementById('mk-kv-invest').textContent=compactBrl(cur.invest);
-  document.getElementById('mk-kc-invest').innerHTML=cmp?kc(pLabel(cmp),dtag(pct(cur.invest,prev.invest),false,'%')):'';
-  document.getElementById('mk-kv-rev').textContent=compactBrl(cur.receita);
-  document.getElementById('mk-kc-rev').innerHTML=cmp?kc(pLabel(cmp),dtag(pct(cur.receita,prev.receita),true,'%')):'';
-  document.getElementById('mk-kv-roas').textContent=cur.roas.toFixed(1)+'x';
-  document.getElementById('mk-kc-roas').innerHTML=cmp?kc(pLabel(cmp),dtag(cur.roas-prev.roas,true,'x')):'';
-  document.getElementById('mk-kv-cac').textContent=brl(cur.cac);
-  document.getElementById('mk-kc-cac').innerHTML=cmp?kc(pLabel(cmp),dtag(pct(cur.cac,prev.cac),false,'%')):'';
-
-  const rows=mkRowsP(mp);
-  const bestRoas=rows.slice().sort((x,y)=>y.roas-x.roas)[0];
-  const bestNew=rows.slice().sort((x,y)=>y.novos-x.novos)[0];
-  const items=[
-    {icon:'🚀',label:'Canal com maior ROAS',val:()=>bestRoas?`${bestRoas.canal} — ${bestRoas.roas.toFixed(1)}x`:'—',delta:null},
-    {icon:'👥',label:'Maior volume de novos clientes',val:()=>bestNew?`${bestNew.canal} — ${bestNew.novos} clientes`:'—',delta:null},
-    {icon:'💰',label:'Receita atribuída',val:()=>compactBrl(cur.receita),delta:cmp?pct(cur.receita,prev.receita):null},
-    {icon:'🎯',label:'CAC médio',val:()=>brl(cur.cac),delta:cmp?pct(cur.cac,prev.cac):null,invert:true},
-  ];
-  document.getElementById('mk-insight-strip').innerHTML=items.map(it=>`
-    <div style="flex:1;min-width:160px;display:flex;align-items:center;gap:10px">
-      <div class="insight-icon">${it.icon}</div>
-      <div class="insight-text"><div class="insight-label">${it.label}</div><div class="insight-value">${it.val()}</div></div>
-      ${it.delta!==null?`<div class="insight-delta ${it.invert?(it.delta<0?'id-up':'id-dn'):(it.delta>0?'id-up':'id-dn')}">${it.delta>0?'▲':'▼'} ${Math.abs(it.delta).toFixed(1)}%</div>`:''}
-    </div>`).join('<div style="width:1px;background:rgba(255,255,255,.12);align-self:stretch"></div>');
-
-  renderMkCharts(mp);
-  renderMkFunil(cur);
-  renderMkTables(mp);
 }
 function renderMkCharts(mp){
   const rows=mkRowsP(mp), labels=rows.map(r=>r.canal);
