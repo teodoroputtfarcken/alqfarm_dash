@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALQ Farma — Analytics</title>
-<link rel="icon" type="image/png" src="favicon.png">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAmklEQVR42u3YwQnAIAwAQCfqCt2o+//aBSokRIrVE/LTGO6RoO04r3vnaAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwFpEVOTuq8Eo9AAAEAbLJevtHAYyqBwAAAAAAZAGyCwAAPeAzgMq9AAAsNga3fwwBmB2gMk4jOafvAQD+BOBXGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWiwfVWRTsVcCv1QAAAABJRU5ErkJggg==">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -1402,7 +1402,9 @@ function pById(id,marketing=false){return (marketing?MK_PERIODS:PERIODS).find(p=
 function pLabel(p){return p?p.label:''}
 function pEnd(p){return p.months[p.months.length-1]}
 function inP(d,p){return p&&p.months.some(x=>x.m===d.mes&&x.a===d.ano)}
-function grP(p){const map={};DR.filter(d=>inP(d,p)).forEach(d=>{const r=map[d.med]||(map[d.med]={ano:pEnd(p).a,mes:pLabel(p),med:d.med,ef:0,ap:0,rj:0,vl:0,ix:0});r.ef+=d.ef;r.ap+=d.ap;r.rj+=d.rj;r.vl+=d.vl});return Object.values(map).map(r=>({...r,ix:r.ef?r.rj/r.ef*100:0}))}
+function hasIx(d){return Number.isFinite(d.ix)}
+function ixDoctor(d){return hasIx(d)?d.ix:(d.ef?d.rj/d.ef*100:0)}
+function grP(p){const map={};DR.filter(d=>inP(d,p)).forEach(d=>{const r=map[d.med]||(map[d.med]={ano:pEnd(p).a,mes:pLabel(p),med:d.med,ef:0,ap:0,rj:0,vl:0,ixWeighted:0,ixWeight:0,ix:0});r.ef+=d.ef;r.ap+=d.ap;r.rj+=d.rj;r.vl+=d.vl;if(hasIx(d)){const w=d.ef||1;r.ixWeighted+=d.ix*w;r.ixWeight+=w}});return Object.values(map).map(r=>({...r,ix:r.ixWeight?r.ixWeighted/r.ixWeight:(r.ef?r.rj/r.ef*100:0)}))}
 function grAtP(p,st){const map={};DA.filter(d=>d.st===st&&inP(d,p)).forEach(d=>{const r=map[d.ativo]||(map[d.ativo]={ano:pEnd(p).a,mes:pLabel(p),ativo:d.ativo,ef:0,ap:0,rj:0,vl:0,ix:0});r.ef+=d.ef;r.ap+=d.ap;r.rj+=d.rj;r.vl+=d.vl});return Object.values(map).map(r=>({...r,ix:r.ef?r.rj/r.ef*100:0}))}
 function mkRowsP(p){const map={};MK.filter(d=>inP(d,p)).forEach(d=>{const r=map[d.canal]||(map[d.canal]={ano:pEnd(p).a,mes:pLabel(p),canal:d.canal,invest:0,receita:0,leads:0,novos:0,cac:0,roas:0});r.invest+=d.invest;r.receita+=d.receita;r.leads+=d.leads;r.novos+=d.novos});return Object.values(map).map(r=>({...r,cac:r.novos?r.invest/r.novos:0,roas:r.invest?r.receita/r.invest:0}))}
 function mkCampsP(p){const map={};MKC.filter(d=>inP(d,p)).forEach(d=>{const k=d.campanha+'|'+d.canal;const r=map[k]||(map[k]={ano:pEnd(p).a,mes:pLabel(p),campanha:d.campanha,canal:d.canal,leads:0,novos:0,receita:0,roas:0});r.leads+=d.leads;r.novos+=d.novos;r.receita+=d.receita;r.roas=Math.max(r.roas,d.roas)});return Object.values(map)}
@@ -1629,7 +1631,7 @@ function renderTbl(){
   const ef=d.reduce((s,x)=>s+x.ef,0),ap=d.reduce((s,x)=>s+x.ap,0),rj=d.reduce((s,x)=>s+x.rj,0),vt=d.reduce((s,x)=>s+x.vl,0);
   const ai=ef>0?rj/ef*100:0;
   const rows=d.map(x=>{
-    const ix=x.ef>0?x.rj/x.ef*100:0;
+    const ix=ixDoctor(x);
     const bc=ix>50?'br':ix>25?'bb':'bg';
     return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tc" style="white-space:nowrap"><span class="badge ${bc}">${ix.toFixed(1)}%</span></td></tr>`;
   }).join('');
