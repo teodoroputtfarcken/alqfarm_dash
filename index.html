@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALQ Farma — Analytics</title>
-<link rel="favicon" type="image/png" src="favicon.png">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAmklEQVR42u3YwQnAIAwAQCfqCt2o+//aBSokRIrVE/LTGO6RoO04r3vnaAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwFpEVOTuq8Eo9AAAEAbLJevtHAYyqBwAAAAAAZAGyCwAAPeAzgMq9AAAsNga3fwwBmB2gMk4jOafvAQD+BOBXGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWiwfVWRTsVcCv1QAAAABJRU5ErkJggg==">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -784,7 +784,7 @@ body.auth-locked .auth-modal { display: flex; }
 <aside class="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-mark">
-      <img class="sb-logo-img" src="logo.png" alt="Logo ALQ Farma">
+      <img class="sb-logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABMCAYAAADX/oqbAAACL0lEQVR42u3cy3GDQBBAQWIhGuWfi85SCCwwM/vrd5UFWLBdrqmVj0OSJEmSJEnapLNz7oCkIXGCmKQlkIKXBKslciclUIFLEqygJWl7rKAlwQpakoAFLEnbYwUtCVbQaugXVNR5R3see30+AhawgAUsAQtYwAIWrKAFLGAJWMACFrAELGABC1jAAlbewut1/NEW9mifj4AFLGABS7CaAS1grQnWNzgSJYF1d4bw5JgVMFXNQoAFLGABC1jAAhawgAUsYAELWMAC1tJgkWQQsN5i0vL+CrBaz9H64AMLWMACFrCABSwBC1jAAhawgAUsYBWAFT3Ev/r56OPfPR+wgAUsYAELWM8WTHbAAhawgAUsYAELWMAC1l4bR6uBywap7PXoDZZPNpICC1jAAhawgAUsYAELWMACFrCAZVuDbQ3B17/r0D1syF0EZhpYqw7drx5oYAELWMACFrCABSxgAQtYwAIWsIAFrAEWfDYYwJps6O4f+AELWMACFrBSrqf69wIWsIAFLGABC1jAAtZsYBm6TwRWxubUu+c0dAcWsIAFLGABC1jAAhawgAUsYG0CVq8vY0dd5yxA62Wnmr78vPrQHVgCFrCABSwBC1jAAha0YHUAC1gCFrCABSwBa3SwJAELWBKwgBXdR1tHF2hN9deVJQssAQtYAhawgCUJWrCSBC1YScACliRowUoStGAlQQtWksAFKknQgpWkCfFypyQNiZg7IEmSJEmSJEnq3R/DMvmHcZMotAAAAABJRU5ErkJggg==" alt="Logo ALQ Farma">
     </div>
     <div class="sb-sub">Analytics Platform</div>
   </div>
@@ -799,6 +799,9 @@ body.auth-locked .auth-modal { display: flex; }
     </button>
 
     <div class="sb-section-label" style="margin-top:8px">Análises</div>
+    <button class="sb-item" onclick="scrollTo('sec-ativos')">
+      <span class="sb-item-icon">🧪</span> Ativos
+    </button>
     <button class="sb-item" onclick="scrollTo('sec-rej')">
       <span class="sb-item-icon">📋</span> Rejeições
     </button>
@@ -820,10 +823,10 @@ body.auth-locked .auth-modal { display: flex; }
 
   <div class="sb-footer">
     <div class="sb-user">
-      <div class="sb-avatar">G</div>
+      <div class="sb-avatar" id="sb-avatar">—</div>
       <div>
-        <div class="sb-user-name">Gestão</div>
-        <div class="sb-user-role">ALQ Farma · Admin</div>
+        <div class="sb-user-name" id="sb-user-name">Usuário</div>
+        <div class="sb-user-role">ALQ Farma</div>
       </div>
     </div>
   </div>
@@ -906,6 +909,38 @@ body.auth-locked .auth-modal { display: flex; }
         <div class="kpi-tag">Tempo cálculo</div>
         <div class="kpi-val" id="kv-ca">—</div>
         <div class="kpi-comps" id="kc-ca"></div>
+      </div>
+    </div>
+
+    <!-- ── SEÇÃO ATIVOS REJEITADOS ───────────────────────────── -->
+    <div class="sec" id="sec-ativos">
+      <div class="sec-hd">
+        <div class="sec-hd-left">
+          <div class="sec-tag">Análise Comercial</div>
+          <div class="sec-title">Rejeição por Ativo — <span id="s-ativos-mes">Abril/26</span></div>
+        </div>
+      </div>
+      <div class="sec-body">
+        <div class="g2">
+          <div>
+            <div class="leg">
+              <span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Rejeitados</span>
+              <span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Aprovados</span>
+            </div>
+            <div class="cwrap" style="height:300px"><canvas id="chAQ"></canvas></div>
+          </div>
+          <div>
+            <div class="leg">
+              <span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Valor rejeitado (R$)</span>
+            </div>
+            <div class="cwrap" style="height:300px"><canvas id="chAV"></canvas></div>
+          </div>
+        </div>
+
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:12px">Ranking detalhado por ativo</div>
+          <div id="tbl-ativos" style="overflow-x:auto"></div>
+        </div>
       </div>
     </div>
 
@@ -1226,6 +1261,88 @@ const DP_DET={
   'Janeiro 2026':[['Preço Elevado',40],['Atendimento Confuso',24],['Tempo de Espera',20],['Outros',12]],
 };
 
+const DA=parseAtivos(`ano;mes;st;ativo;ef;ap;rj;vl;ix
+2026;Janeiro;num;VITAMINA K2MK7;371;188;183;1772.98;49.33
+2026;Janeiro;num;VITAMINA C REVESTIDA PO;337;181;156;399.13;46.29
+2026;Janeiro;num;ZINCO QUELATO;302;149;153;359.95;50.66
+2026;Janeiro;num;METILFOLATO DILUÍDO;302;151;151;278.60;50.00
+2026;Janeiro;num;VITAMINA D3 DILUIDA;264;126;138;165.26;52.27
+2026;Janeiro;num;VITAMINA D3 DILUÍDA LÍQUIDA;283;151;132;86.50;46.64
+2026;Janeiro;num;PIRIDOXAL 5-FOSFATO;265;134;131;590.93;49.43
+2026;Janeiro;num;MAGNESIO QUELATO;194;75;119;1271.25;61.34
+2026;Janeiro;num;TEANINA;203;85;118;554.74;58.13
+2026;Janeiro;num;VITAMINA B2;204;94;110;229.98;53.92
+2026;Janeiro;val;MAGTEIN;176;70;106;19564.02;60.23
+2026;Janeiro;val;PEPTISTRONG;20;5;15;13887.72;75.00
+2026;Janeiro;val;MOROSIL;54;6;48;10321.55;88.89
+2026;Janeiro;val;DILUICAO MINOXIDIL ORAL;85;29;56;7507.50;65.88
+2026;Janeiro;val;EXSYNUTRIMENT;83;42;41;7033.76;49.40
+2026;Janeiro;val;KERANAT;12;1;11;5853.15;91.67
+2026;Janeiro;val;MAXSOLVE;22;9;13;4512.50;59.09
+2026;Janeiro;val;COENZIMA Q10;196;105;91;3866.65;46.43
+2026;Janeiro;val;PHELODENDRON AMURENSE;59;19;40;3859.04;67.80
+2026;Janeiro;val;SILICIUMAX;38;11;27;3851.33;71.05
+2026;Fevereiro;num;PEPTISTRONG;22;4;18;15436.08;81.82
+2026;Fevereiro;num;MAGTEIN;131;59;72;12026.70;54.96
+2026;Fevereiro;num;MOROSIL;43;6;37;9506.04;86.05
+2026;Fevereiro;num;DILUICAO MINOXIDIL ORAL;80;25;55;8363.65;68.75
+2026;Fevereiro;num;EXSYNUTRIMENT;63;30;33;7259.82;52.38
+2026;Fevereiro;num;MAXSOLVE;26;12;14;4868.75;53.85
+2026;Fevereiro;num;LIPOFER;17;7;10;4599.16;58.82
+2026;Fevereiro;num;CINDURA;10;2;8;3980.24;80.00
+2026;Fevereiro;num;PHELODENDRON AMURENSE;49;16;33;3966.48;67.35
+2026;Fevereiro;num;KERANAT;8;0;8;3947.01;100.00
+2026;Fevereiro;val;PEPTISTRONG;22;4;18;15436.08;81.82
+2026;Fevereiro;val;MAGTEIN;131;59;72;12026.70;54.96
+2026;Fevereiro;val;MOROSIL;43;6;37;9506.04;86.05
+2026;Fevereiro;val;DILUICAO MINOXIDIL ORAL;80;25;55;8363.65;68.75
+2026;Fevereiro;val;EXSYNUTRIMENT;63;30;33;7259.82;52.38
+2026;Fevereiro;val;MAXSOLVE;26;12;14;4868.75;53.85
+2026;Fevereiro;val;LIPOFER;17;7;10;4599.16;58.82
+2026;Fevereiro;val;CINDURA;10;2;8;3980.24;80.00
+2026;Fevereiro;val;PHELODENDRON AMURENSE;49;16;33;3966.48;61.35
+2026;Fevereiro;val;KERANAT;8;0;8;3947.01;100.00
+2026;Março;num;VITAMINA K2MK7;413;238;175;1987.56;42.37
+2026;Março;num;VITAMINA C REVESTIDA PO;350;185;165;274.79;47.14
+2026;Março;num;ZINCO QUELATO;341;177;164;432.77;48.09
+2026;Março;num;METILFOLATO DILUÍDO;314;172;142;278.49;45.22
+2026;Março;num;MAGNESIO QUELATO;235;99;136;1489.74;57.87
+2026;Março;num;VITAMINA D3 DILUIDA;275;150;125;159.76;45.45
+2026;Março;num;PIRIDOXAL 5-FOSFATO;258;140;118;699.83;45.74
+2026;Março;num;BIOTINA DILUIDA USO ORAL;201;85;116;414.47;57.71
+2026;Março;num;TEANINA;193;79;114;573.94;59.07
+2026;Março;num;XAROPE SUGAR FREE;387;281;106;1430.47;27.39
+2026;Março;val;PEPTISTRONG;26;4;22;19418.80;84.62
+2026;Março;val;MAGTEIN;198;92;106;18114.00;53.54
+2026;Março;val;EXSYNUTRIMENT;90;44;46;8814.97;51.11
+2026;Março;val;KERANAT;18;4;14;7019.98;77.78
+2026;Março;val;MOROSIL;30;3;27;6668.85;90.00
+2026;Março;val;RELORA;38;13;25;6213.35;65.79
+2026;Março;val;RESVITECH;38;13;25;5700.29;65.79
+2026;Março;val;METILCOBALAMINA;133;72;61;5289.33;45.86
+2026;Março;val;CUREIT;34;13;21;4946.66;61.76
+2026;Março;val;PHELODENDRON AMURENSE;61;26;35;4614.77;57.38
+2026;Abril;num;VITAMINA K2MK7;411;225;186;1675.87;42.26
+2026;Abril;num;VITAMINA C REVESTIDA PO;358;193;165;275.89;46.09
+2026;Abril;num;ZINCO QUELATO;320;160;160;446.22;50.00
+2026;Abril;num;METILFOLATO DILUÍDO;320;181;139;414.63;43.44
+2026;Abril;num;PIRIDOXAL 5-FOSFATO;279;157;122;536.85;43.73
+2026;Abril;num;MAGNESIO QUELATO;218;96;122;1585.41;55.96
+2026;Abril;num;VITAMINA D3 DILUÍDA LÍQUIDA;259;139;120;109.53;46.33
+2026;Abril;num;VITAMINA D3 DILUIDA;265;146;119;178.66;44.91
+2026;Abril;num;XAROPE SUGAR FREE;375;263;112;1286.37;29.87
+2026;Abril;num;VITAMINA B2;221;110;111;277.51;50.23
+2026;Abril;val;MAGTEIN;160;74;86;12872.29;53.75
+2026;Abril;val;PEPTISTRONG;16;1;15;12738.55;93.75
+2026;Abril;val;MOROSIL;50;8;42;12368.45;84.00
+2026;Abril;val;EXSYNUTRIMENT;78;42;36;7223.79;46.15
+2026;Abril;val;PHELODENDRON AMURENSE;77;23;54;6998.54;70.13
+2026;Abril;val;MAXSOLVE;28;13;15;5533.75;53.57
+2026;Abril;val;COENZIMA Q10;183;91;92;5231.33;50.27
+2026;Abril;val;ZEMBRIM;25;6;19;5037.23;76.00
+2026;Abril;val;COREBIOME;21;2;19;4794.84;90.48
+2026;Abril;val;RELORA;36;15;21;4423.46;58.33`);
+
 const MK=[
   {ano:2026,mes:'Março',canal:'Google Ads',invest:12800,receita:71680,leads:286,novos:62,cac:206.45,roas:5.60},
   {ano:2026,mes:'Março',canal:'Meta Ads',invest:9400,receita:39480,leads:342,novos:47,cac:200.00,roas:4.20},
@@ -1262,6 +1379,7 @@ const CH={};
 
 /* ── Utils ────────────────────────────────────────────────── */
 function sl(m,a){return MS[MO.indexOf(m)]+'/'+String(a).slice(-2)}
+function parseAtivos(txt){return txt.trim().split('\n').slice(1).map(l=>{const [ano,mes,st,ativo,ef,ap,rj,vl,ix]=l.split(';');return {ano:+ano,mes,st,ativo,ef:+ef,ap:+ap,rj:+rj,vl:+vl,ix:+ix}})}
 const PERIODS=[
   {id:'abr26',label:'Abr/26',months:[{m:'Abril',a:2026}]},
   {id:'mar26',label:'Mar/26',months:[{m:'Março',a:2026}]},
@@ -1278,6 +1396,7 @@ function pLabel(p){return p?p.label:''}
 function pEnd(p){return p.months[p.months.length-1]}
 function inP(d,p){return p&&p.months.some(x=>x.m===d.mes&&x.a===d.ano)}
 function grP(p){const map={};DR.filter(d=>inP(d,p)).forEach(d=>{const r=map[d.med]||(map[d.med]={ano:pEnd(p).a,mes:pLabel(p),med:d.med,ef:0,ap:0,rj:0,vl:0,ix:0});r.ef+=d.ef;r.ap+=d.ap;r.rj+=d.rj;r.vl+=d.vl});return Object.values(map).map(r=>({...r,ix:r.ef?r.rj/r.ef*100:0}))}
+function grAtP(p,st){const map={};DA.filter(d=>d.st===st&&inP(d,p)).forEach(d=>{const r=map[d.ativo]||(map[d.ativo]={ano:pEnd(p).a,mes:pLabel(p),ativo:d.ativo,ef:0,ap:0,rj:0,vl:0,ix:0});r.ef+=d.ef;r.ap+=d.ap;r.rj+=d.rj;r.vl+=d.vl});return Object.values(map).map(r=>({...r,ix:r.ef?r.rj/r.ef*100:0}))}
 function mkRowsP(p){const map={};MK.filter(d=>inP(d,p)).forEach(d=>{const r=map[d.canal]||(map[d.canal]={ano:pEnd(p).a,mes:pLabel(p),canal:d.canal,invest:0,receita:0,leads:0,novos:0,cac:0,roas:0});r.invest+=d.invest;r.receita+=d.receita;r.leads+=d.leads;r.novos+=d.novos});return Object.values(map).map(r=>({...r,cac:r.novos?r.invest/r.novos:0,roas:r.invest?r.receita/r.invest:0}))}
 function mkCampsP(p){const map={};MKC.filter(d=>inP(d,p)).forEach(d=>{const k=d.campanha+'|'+d.canal;const r=map[k]||(map[k]={ano:pEnd(p).a,mes:pLabel(p),campanha:d.campanha,canal:d.canal,leads:0,novos:0,receita:0,roas:0});r.leads+=d.leads;r.novos+=d.novos;r.receita+=d.receita;r.roas=Math.max(r.roas,d.roas)});return Object.values(map)}
 function avg(nums){const v=nums.filter(n=>n!==null&&n!==undefined);return v.length?v.reduce((s,n)=>s+n,0)/v.length:null}
@@ -1330,12 +1449,14 @@ function render(){
   const end=pEnd(cp); cM=end.m; cA=end.a;
   renderCompSelects();
   document.getElementById('s-mes').textContent=pLabel(cp);
+  document.getElementById('s-ativos-mes').textContent=pLabel(cp);
   if(document.getElementById('tab-comercial').classList.contains('on')){
     document.getElementById('tb-path').textContent='Performance';
   }
 
   renderInsight(cp,pr);
   renderKPIs(cp,pr,py);
+  renderAtivos(cp);
   renderBarQty();
   renderBarVal();
   renderEvo();
@@ -1396,6 +1517,42 @@ function renderKPIs(cp,pr,py){
   document.getElementById('kc-ca').innerHTML=kc(pr&&pLabel(pr),t&&tPr?dtime(t.ca,tPr.ca):'<span class="dl d0">—</span>',py&&pLabel(py),t&&tAn?dtime(t.ca,tAn.ca):'<span class="dl d0">—</span>');
 }
 function kc(la,da,lb,db){return`${la?`<div class="kc"><span class="kc-per">vs ${la}</span>${da}</div>`:''}${lb?`<div class="kc"><span class="kc-per">vs ${lb}</span>${db}</div>`:''}`}
+
+
+function renderAtivos(cp){
+  renderAtivoQty(cp);
+  renderAtivoVal(cp);
+  renderAtivoTbl(cp);
+}
+function renderAtivoQty(cp){
+  const d=grAtP(cp,'num').sort((x,y)=>y.rj-x.rj).slice(0,8);
+  if(CH.aq)CH.aq.destroy();
+  CH.aq=new Chart(document.getElementById('chAQ'),{type:'bar',
+    data:{labels:d.map(x=>tc(x.ativo)),datasets:[
+      {label:'Rejeitados',data:d.map(x=>x.rj),backgroundColor:'#006bd6',borderRadius:4,barPercentage:.55,order:2},
+      {label:'Aprovados',data:d.map(x=>x.ap),backgroundColor:'#8ed8f8',borderRadius:4,barPercentage:.55,order:1}
+    ]},
+    options:{...CDef,indexAxis:'y',
+      plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.x.toLocaleString('pt-BR')}`}}},
+      scales:{x:{...CDef.scales.x},y:{...CDef.scales.y,grid:{display:false},ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e'}}}}
+  });
+}
+function renderAtivoVal(cp){
+  const d=grAtP(cp,'val').sort((x,y)=>y.vl-x.vl).slice(0,8);
+  if(CH.av)CH.av.destroy();
+  CH.av=new Chart(document.getElementById('chAV'),{type:'bar',
+    data:{labels:d.map(x=>tc(x.ativo)),datasets:[{label:'Valor',data:d.map(x=>x.vl),backgroundColor:'#123b7a',borderRadius:4,barPercentage:.5}]},
+    options:{...CDef,indexAxis:'y',
+      plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.label}: ${brl(c.parsed.x)}`}}},
+      scales:{x:{...CDef.scales.x,ticks:{...CDef.scales.x.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}},y:{...CDef.scales.y,grid:{display:false},ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e'}}}}
+  });
+}
+function renderAtivoTbl(cp){
+  const qty=grAtP(cp,'num').sort((x,y)=>y.rj-x.rj).slice(0,10);
+  const val=grAtP(cp,'val').sort((x,y)=>y.vl-x.vl).slice(0,10);
+  const rows=[...qty.map(x=>({...x,tipo:'Qtd.'})),...val.map(x=>({...x,tipo:'Valor'}))];
+  document.getElementById('tbl-ativos').innerHTML=`<table class="dt"><thead><tr><th>Tipo</th><th>Ativo</th><th class="tr">Efetuados</th><th class="tr">Aprovados</th><th class="tr">Rejeitados</th><th class="tr">Valor</th><th class="tr">Índice</th></tr></thead><tbody>${rows.map(x=>`<tr><td><span class="badge bb">${x.tipo}</span></td><td>${tc(x.ativo)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tr"><span class="badge ${x.ix>=60?'br':x.ix>=40?'bb':'bg'}">${x.ix.toFixed(1)}%</span></td></tr>`).join('')}</tbody></table>`;
+}
 
 function renderBarQty(){
   const d=[...grP(pById(cPeriodId))].sort((x,y)=>y.rj-x.rj).slice(0,8);
@@ -1465,8 +1622,9 @@ function renderTbl(){
   const ef=d.reduce((s,x)=>s+x.ef,0),ap=d.reduce((s,x)=>s+x.ap,0),rj=d.reduce((s,x)=>s+x.rj,0),vt=d.reduce((s,x)=>s+x.vl,0);
   const ai=ef>0?rj/ef*100:0;
   const rows=d.map(x=>{
-    const bc=x.ix>50?'br':x.ix>25?'bb':'bg';
-    return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tc"><span class="badge ${bc}">${x.ix.toFixed(1)}%</span></td></tr>`;
+    const ix=x.ef>0?x.rj/x.ef*100:0;
+    const bc=ix>50?'br':ix>25?'bb':'bg';
+    return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tc"><span class="badge ${bc}">${ix.toFixed(1)}%</span></td></tr>`;
   }).join('');
   document.getElementById('tbl').innerHTML=`<table class="dt"><thead><tr><th>Médico</th><th style="text-align:right">Efetuados</th><th style="text-align:right">Aprovados</th><th style="text-align:right">Rejeitados</th><th style="text-align:right">Valor Rejeitado</th><th style="text-align:center">Índice Rej.</th></tr></thead><tbody>${rows}<tr class="tot"><td><strong>Total (top 10)</strong></td><td class="tr"><strong>${ef.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${ap.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${rj.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${brl(vt)}</strong></td><td class="tc"><span class="badge ${ai>50?'br':ai>25?'bb':'bg'}">${ai.toFixed(1)}%</span></td></tr></tbody></table>`;
 }
@@ -1713,7 +1871,15 @@ const AUTH_DB={
     {username:'Teodoro',password:'Teodoro',name:'Teodoro'},
   ]
 };
+function renderLoggedUser(){
+  const name=sessionStorage.getItem('alq-user')||'Usuário';
+  const avatar=document.getElementById('sb-avatar');
+  const label=document.getElementById('sb-user-name');
+  if(avatar)avatar.textContent=name.trim().charAt(0).toUpperCase()||'U';
+  if(label)label.textContent=name;
+}
 function unlockDashboard(){
+  renderLoggedUser();
   document.body.classList.remove('auth-locked');
   document.getElementById('auth-error')?.classList.remove('on');
 }
