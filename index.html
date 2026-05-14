@@ -1087,100 +1087,56 @@ body.auth-locked .auth-modal { display: flex; }
       <div class="page-hd-left">
         <div class="page-hd-eyebrow">ALQ Farma · Marketing</div>
         <div class="page-hd-title">Performance de Marketing</div>
-        <div class="page-hd-sub">Campanhas · ROAS por canal · Novos clientes · CAC</div>
+        <div class="page-hd-sub">Dados das planilhas: Google Ads, clientes/CAC, ROAS, campanhas e repescagem</div>
+      </div>
+      <div class="page-hd-actions">
+        <span style="font-size:10px;color:var(--blue);font-weight:500">Período:</span>
+        <div class="comp-tag"><select class="comp-select" id="mk-period-main" onchange="setMkPeriod(this.value)"></select></div>
       </div>
     </div>
 
     <div class="filter-strip">
-      <span class="fl">Compare:</span>
+      <span class="fl">Período:</span>
       <div class="comp-tag"><span class="dot da"></span><select class="comp-select" id="mk-comp-a" onchange="setMkComp(this.value)"></select></div>
     </div>
 
     <div class="insight-strip" id="mk-insight-strip"></div>
 
     <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-tag">Investimento</div>
-        <div class="kpi-val" id="mk-kv-invest">—</div>
-        <div class="kpi-comps" id="mk-kc-invest"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-tag">Receita atribuída</div>
-        <div class="kpi-val" id="mk-kv-rev">—</div>
-        <div class="kpi-comps" id="mk-kc-rev"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-tag">ROAS médio</div>
-        <div class="kpi-val" id="mk-kv-roas">—</div>
-        <div class="kpi-comps" id="mk-kc-roas"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-tag">CAC médio</div>
-        <div class="kpi-val" id="mk-kv-cac">—</div>
-        <div class="kpi-comps" id="mk-kc-cac"></div>
-      </div>
+      <div class="kpi-card"><div class="kpi-tag">Investimento</div><div class="kpi-val" id="mk-kv-invest">—</div><div class="kpi-comps" id="mk-kc-invest"></div></div>
+      <div class="kpi-card"><div class="kpi-tag">Retorno</div><div class="kpi-val" id="mk-kv-rev">—</div><div class="kpi-comps" id="mk-kc-rev"></div></div>
+      <div class="kpi-card"><div class="kpi-tag">ROAS geral</div><div class="kpi-val" id="mk-kv-roas">—</div><div class="kpi-comps" id="mk-kc-roas"></div></div>
+      <div class="kpi-card"><div class="kpi-tag">CAC / compra</div><div class="kpi-val" id="mk-kv-cac">—</div><div class="kpi-comps" id="mk-kc-cac"></div></div>
     </div>
 
     <div class="sec" id="mk-sec-canais">
-      <div class="sec-hd">
-        <div class="sec-hd-left">
-          <div class="sec-tag">Aquisição e Receita</div>
-          <div class="sec-title">Canais de Marketing — <span id="mk-s-mes">Abril/26</span></div>
-        </div>
-      </div>
+      <div class="sec-hd"><div class="sec-hd-left"><div class="sec-tag">Aquisição e Receita</div><div class="sec-title">Canais de Marketing — <span id="mk-s-mes">Abril/26</span></div></div></div>
       <div class="sec-body">
         <div class="g2">
-          <div>
-            <div class="leg">
-              <span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Receita atribuída</span>
-              <span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Investimento</span>
-            </div>
-            <div class="cwrap" style="height:300px"><canvas id="mkChSpend"></canvas></div>
-          </div>
-          <div>
-            <div class="leg">
-              <span class="li"><span class="ld" style="background:var(--chart-blue-1)"></span>ROAS por canal</span>
-            </div>
-            <div class="cwrap" style="height:300px"><canvas id="mkChRoas"></canvas></div>
-          </div>
+          <div><div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Retorno</span><span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Investimento</span></div><div class="cwrap" style="height:300px"><canvas id="mkChSpend"></canvas></div></div>
+          <div><div class="leg"><span class="li"><span class="ld" style="background:var(--chart-blue-1)"></span>ROAS por canal</span></div><div class="cwrap" style="height:300px"><canvas id="mkChRoas"></canvas></div></div>
         </div>
-
         <div class="sec-div">
           <div class="g2">
-            <div>
-              <div class="sec-tag" style="margin-bottom:8px">Evolução Mar–Abr/26</div>
-              <div class="leg">
-                <span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Novos clientes</span>
-                <span class="li"><span class="lb" style="background:var(--chart-blue-3)"></span>Leads</span>
-              </div>
-              <div class="cwrap" style="height:220px"><canvas id="mkChEvo"></canvas></div>
-            </div>
-            <div>
-              <div class="sec-tag funnel-title" style="margin-bottom:8px">Funil de marketing</div>
-              <div id="mk-funil" class="funnel-panel"></div>
-            </div>
+            <div><div class="sec-tag" style="margin-bottom:8px">Evolução de clientes</div><div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Cadastros com compras</span><span class="li"><span class="lb" style="background:var(--chart-blue-3)"></span>Novos cadastros</span></div><div class="cwrap" style="height:220px"><canvas id="mkChEvo"></canvas></div></div>
+            <div><div class="sec-tag funnel-title" style="margin-bottom:8px">Repescagem diária</div><div id="mk-funil" class="funnel-panel"></div></div>
           </div>
         </div>
-
-        <div class="sec-div">
-          <div class="sec-tag" style="margin-bottom:12px">Detalhamento por canal</div>
-          <div id="mk-tbl" style="overflow-x:auto"></div>
-        </div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:12px">Detalhamento por canal</div><div id="mk-tbl" style="overflow-x:auto"></div></div>
       </div>
     </div>
 
     <div class="sec" id="mk-sec-campanhas">
-      <div class="sec-hd">
-        <div class="sec-hd-left">
-          <div class="sec-tag">Campanhas</div>
-          <div class="sec-title">Ranking de Campanhas e Repescagem</div>
-        </div>
-      </div>
+      <div class="sec-hd"><div class="sec-hd-left"><div class="sec-tag">Campanhas</div><div class="sec-title">Investimento, Retorno e ROAS</div></div></div>
       <div class="sec-body">
-        <div class="ph">
-          <div class="ph-icon">📣</div>
-          <div class="ph-title">Módulo em desenvolvimento</div>
-          <div class="ph-sub">Os dados de campanhas, ROAS por canal, novos clientes e CAC serão exibidos aqui em breve.</div>
+        <div class="g2">
+          <div id="mk-camp-tbl" style="overflow-x:auto"></div>
+          <div>
+            <div class="sec-tag" style="margin-bottom:8px">Origem dos cadastros</div>
+            <div class="cwrap" style="height:220px"><canvas id="mkChOrigem"></canvas></div>
+            <div id="mkLgOrigem" style="margin-top:8px"></div>
+            <div class="sec-div"><div class="sec-tag" style="margin-bottom:12px">Google Ads — Solicitações</div><div id="mk-google-tbl" style="overflow-x:auto"></div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1363,25 +1319,73 @@ const DA=parseAtivos(`ano;mes;st;ativo;ef;ap;rj;vl;ix
 2026;Abril;val;RELORA;36;15;21;4423.46;58.33`);
 
 const MK=[
-  {ano:2026,mes:'Março',canal:'Google Ads',invest:12800,receita:71680,leads:286,novos:62,cac:206.45,roas:5.60},
-  {ano:2026,mes:'Março',canal:'Meta Ads',invest:9400,receita:39480,leads:342,novos:47,cac:200.00,roas:4.20},
-  {ano:2026,mes:'Março',canal:'Orgânico/SEO',invest:2800,receita:24360,leads:118,novos:29,cac:96.55,roas:8.70},
-  {ano:2026,mes:'Março',canal:'WhatsApp Ativo',invest:3600,receita:21600,leads:164,novos:31,cac:116.13,roas:6.00},
-  {ano:2026,mes:'Março',canal:'Repescagem',invest:1900,receita:15200,leads:96,novos:19,cac:100.00,roas:8.00},
-  {ano:2026,mes:'Abril',canal:'Google Ads',invest:14200,receita:85200,leads:318,novos:74,cac:191.89,roas:6.00},
-  {ano:2026,mes:'Abril',canal:'Meta Ads',invest:10400,receita:49920,leads:386,novos:56,cac:185.71,roas:4.80},
-  {ano:2026,mes:'Abril',canal:'Orgânico/SEO',invest:3000,receita:29400,leads:134,novos:34,cac:88.24,roas:9.80},
-  {ano:2026,mes:'Abril',canal:'WhatsApp Ativo',invest:4200,receita:28140,leads:188,novos:37,cac:113.51,roas:6.70},
-  {ano:2026,mes:'Abril',canal:'Repescagem',invest:2400,receita:22080,leads:126,novos:29,cac:82.76,roas:9.20},
+  {ano:2025,mes:'Novembro',canal:'Meta Ads',invest:286.45,receita:0.00,leads:0,novos:0},
+  {ano:2025,mes:'Dezembro',canal:'Pedido Pago',invest:59.76,receita:5100.88,leads:0,novos:0},
+  {ano:2025,mes:'Dezembro',canal:'Google Ads',invest:473.01,receita:312.00,leads:0,novos:0},
+  {ano:2025,mes:'Dezembro',canal:'Meta Ads',invest:260.97,receita:320.67,leads:0,novos:0},
+  {ano:2026,mes:'Janeiro',canal:'Pedido Pago',invest:131.04,receita:6931.47,leads:49,novos:22},
+  {ano:2026,mes:'Janeiro',canal:'Google Ads',invest:1064.09,receita:1678.58,leads:399,novos:175},
+  {ano:2026,mes:'Fevereiro',canal:'Google Ads',invest:957.00,receita:1815.93,leads:80,novos:106},
+  {ano:2026,mes:'Fevereiro',canal:'Meta Ads',invest:423.03,receita:921.84,leads:35,novos:47},
+  {ano:2026,mes:'Fevereiro',canal:'Pedido Pago',invest:473.76,receita:665.80,leads:40,novos:53},
+  {ano:2026,mes:'Março',canal:'Google Ads',invest:563.67,receita:4429.64,leads:153,novos:62},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',invest:1012.80,receita:5799.95,leads:275,novos:111},
+  {ano:2026,mes:'Março',canal:'Meta Ads',invest:299.36,receita:27989.90,leads:81,novos:33},
+  {ano:2026,mes:'Abril',canal:'Google Ads',invest:1222.24,receita:2546.89,leads:302,novos:122},
+  {ano:2026,mes:'Abril',canal:'Pedido Pago',invest:668.16,receita:55926.79,leads:165,novos:67},
 ];
 const MKC=[
-  {ano:2026,mes:'Março',campanha:'Check-up Preventivo',canal:'Google Ads',leads:112,novos:28,receita:34160,roas:6.10},
-  {ano:2026,mes:'Março',campanha:'Dermocosméticos',canal:'Meta Ads',leads:148,novos:21,receita:17640,roas:4.90},
-  {ano:2026,mes:'Março',campanha:'Repescagem Orçamentos',canal:'WhatsApp',leads:96,novos:19,receita:15200,roas:8.00},
-  {ano:2026,mes:'Abril',campanha:'Check-up Preventivo',canal:'Google Ads',leads:126,novos:34,receita:42840,roas:6.80},
-  {ano:2026,mes:'Abril',campanha:'Dermocosméticos',canal:'Meta Ads',leads:172,novos:27,receita:24840,roas:5.40},
-  {ano:2026,mes:'Abril',campanha:'Repescagem Orçamentos',canal:'WhatsApp',leads:126,novos:29,receita:22080,roas:9.20},
+  {ano:2025,mes:'Novembro',canal:'Meta Ads',campanha:'ALQ Friday',invest:286.45,receita:0.00,roas:0},
+  {ano:2025,mes:'Dezembro',canal:'Pedido Pago',campanha:'retomada_nov._pepti',invest:22.68,receita:1316.82,roas:58.05},
+  {ano:2025,mes:'Dezembro',canal:'Pedido Pago',campanha:'ayuer_dez2025pr_natal',invest:9.72,receita:1454.71,roas:149.67},
+  {ano:2025,mes:'Dezembro',canal:'Pedido Pago',campanha:'KitsAyur _ Natal2025',invest:27.36,receita:2329.35,roas:85.14},
+  {ano:2025,mes:'Dezembro',canal:'Google Ads',campanha:'Orçamentos',invest:473.01,receita:312.00,roas:0.66},
+  {ano:2025,mes:'Dezembro',canal:'Meta Ads',campanha:'[COMPRA][E-COMMERCE] - Kits Ayur Natal 2025',invest:260.97,receita:320.67,roas:1.23},
+  {ano:2026,mes:'Janeiro',canal:'Pedido Pago',campanha:'venc_jan_curcumina',invest:49.68,receita:3848.06,roas:77.46},
+  {ano:2026,mes:'Janeiro',canal:'Pedido Pago',campanha:'retomada_jan_morosil',invest:81.36,receita:3083.41,roas:37.90},
+  {ano:2026,mes:'Janeiro',canal:'Google Ads',campanha:'Orçamentos',invest:1064.09,receita:1678.58,roas:1.58},
+  {ano:2026,mes:'Fevereiro',canal:'Google Ads',campanha:'Orçamentos',invest:957.00,receita:1815.93,roas:1.90},
+  {ano:2026,mes:'Fevereiro',canal:'Meta Ads',campanha:'Bote - Fevereiro [ORÇAMENTOS]',invest:292.50,receita:554.84,roas:1.90},
+  {ano:2026,mes:'Fevereiro',canal:'Meta Ads',campanha:'[COMPRA][E-COMMERCE] - venc_jan',invest:130.53,receita:367.00,roas:2.81},
+  {ano:2026,mes:'Fevereiro',canal:'Pedido Pago',campanha:'vencimentos2026',invest:473.76,receita:665.80,roas:1.40},
+  {ano:2026,mes:'Março',canal:'Google Ads',campanha:'Orçamentos',invest:563.67,receita:4429.64,roas:7.86},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',campanha:'vencimentos_mar2026',invest:193.68,receita:31.08,roas:0.16},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',campanha:'aviso_profresh',invest:68.40,receita:2572.75,roas:37.61},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',campanha:'lancamento_caramelo',invest:593.64,receita:944.30,roas:1.59},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',campanha:'repesc_15_dias_15/03',invest:110.52,receita:2116.92,roas:19.15},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',campanha:'lanc_cara_omekids',invest:46.56,receita:134.90,roas:2.90},
+  {ano:2026,mes:'Março',canal:'Meta Ads',campanha:'Consumidor',invest:299.36,receita:27989.90,roas:93.50},
+  {ano:2026,mes:'Abril',canal:'Google Ads',campanha:'Orçamentos',invest:1222.24,receita:2546.89,roas:2.08},
+  {ano:2026,mes:'Abril',canal:'Pedido Pago',campanha:'repesc_15_dias_31/03',invest:242.28,receita:20899.57,roas:86.26},
+  {ano:2026,mes:'Abril',canal:'Pedido Pago',campanha:'leve3pague2_profresh_1',invest:59.04,receita:10482.72,roas:177.55},
+  {ano:2026,mes:'Abril',canal:'Pedido Pago',campanha:'repesc_15_dias_15/04',invest:180.00,receita:5014.68,roas:27.86},
+  {ano:2026,mes:'Abril',canal:'Pedido Pago',campanha:'caramelo_pub_persona',invest:186.84,receita:19529.82,roas:104.53},
 ];
+const MKS=[
+  {ano:2026,mes:'Março',metrica:'Primeiras aprovações',valor:7},
+  {ano:2026,mes:'Março',metrica:'Não calculadas',valor:15},
+  {ano:2026,mes:'Março',metrica:'Pag. via Pix',valor:6},
+  {ano:2026,mes:'Março',metrica:'Pag. via Cartão',valor:4},
+  {ano:2026,mes:'Março',metrica:'Tempo médio atendimento',valor:'02h36m'},
+  {ano:2026,mes:'Março',metrica:'Tempo médio cálculo',valor:'03h33m'},
+  {ano:2026,mes:'Abril',metrica:'Primeiras aprovações',valor:6},
+  {ano:2026,mes:'Abril',metrica:'Não calculadas',valor:26},
+  {ano:2026,mes:'Abril',metrica:'Pag. via Pix',valor:6},
+  {ano:2026,mes:'Abril',metrica:'Pag. via Cartão',valor:4},
+  {ano:2026,mes:'Abril',metrica:'Tempo médio atendimento',valor:'02h45m'},
+  {ano:2026,mes:'Abril',metrica:'Tempo médio cálculo',valor:'03h30m'},
+];
+const MKR=[
+  {ano:2026,mes:'Março',metrica:'Envios totais',valor:190},
+  {ano:2026,mes:'Março',metrica:'Aprovações',valor:30},
+  {ano:2026,mes:'Março',metrica:'Taxa de conversão (%)',valor:15.79},
+  {ano:2026,mes:'Março',metrica:'Vendas geradas (R$)',valor:24643.72},
+  {ano:2026,mes:'Abril',metrica:'Envios totais',valor:242},
+  {ano:2026,mes:'Abril',metrica:'Aprovações',valor:39},
+  {ano:2026,mes:'Abril',metrica:'Taxa de conversão (%)',valor:16.10},
+  {ano:2026,mes:'Abril',metrica:'Vendas geradas (R$)',valor:32032.72},
+];
+
 
 const DP_NEU={
   'Abril 2026':[['Não especificado',69],['Preço Competitivo',15],['Atendimento',12],['Serviço',3]],
@@ -1411,7 +1415,15 @@ const PERIODS=[
 ];
 const MONTH_PERIODS=PERIODS.filter(p=>p.months.length===1);
 const LATEST_MONTH_ID=MONTH_PERIODS[0].id;
-const MK_PERIODS=PERIODS.filter(p=>p.months.every(x=>x.a===2026&&['Março','Abril'].includes(x.m))).map(p=>({...p,id:'mk-'+p.id}));
+const MK_PERIODS=[
+  {id:'mk-abr26',label:'Abr/26',months:[{m:'Abril',a:2026}]},
+  {id:'mk-mar26',label:'Mar/26',months:[{m:'Março',a:2026}]},
+  {id:'mk-fev26',label:'Fev/26',months:[{m:'Fevereiro',a:2026}]},
+  {id:'mk-jan26',label:'Jan/26',months:[{m:'Janeiro',a:2026}]},
+  {id:'mk-dez25',label:'Dez/25',months:[{m:'Dezembro',a:2025}]},
+  {id:'mk-nov25',label:'Nov/25',months:[{m:'Novembro',a:2025}]},
+  {id:'mk-mar-abr26',label:'Mar–Abr/26',months:[{m:'Março',a:2026},{m:'Abril',a:2026}]},
+];
 function pById(id,marketing=false){return (marketing?MK_PERIODS:PERIODS).find(p=>p.id===id)||null}
 function pLabel(p){return p?p.label:''}
 function pEnd(p){return p.months[p.months.length-1]}
@@ -1421,11 +1433,12 @@ function ixDoctor(d){return hasIx(d)?d.ix:(d.ef?d.rj/d.ef*100:0)}
 function grP(p){const map={};DR.filter(d=>inP(d,p)).forEach(d=>{const r=map[d.med]||(map[d.med]={ano:pEnd(p).a,mes:pLabel(p),med:d.med,ef:0,ap:0,rj:0,vl:0,ixWeighted:0,ixWeight:0,ix:0});r.ef+=d.ef;r.ap+=d.ap;r.rj+=d.rj;r.vl+=d.vl;if(hasIx(d)){const w=d.ef||1;r.ixWeighted+=d.ix*w;r.ixWeight+=w}});return Object.values(map).map(r=>({...r,ix:r.ixWeight?r.ixWeighted/r.ixWeight:(r.ef?r.rj/r.ef*100:0)}))}
 function grAtP(p,st){const map={};DA.filter(d=>d.st===st&&inP(d,p)).forEach(d=>{const r=map[d.ativo]||(map[d.ativo]={ano:pEnd(p).a,mes:pLabel(p),ativo:d.ativo,ef:0,ap:0,rj:0,vl:0,ix:0});r.ef+=d.ef;r.ap+=d.ap;r.rj+=d.rj;r.vl+=d.vl});return Object.values(map).map(r=>({...r,ix:r.ef?r.rj/r.ef*100:0}))}
 function mkRowsP(p){const map={};MK.filter(d=>inP(d,p)).forEach(d=>{const r=map[d.canal]||(map[d.canal]={ano:pEnd(p).a,mes:pLabel(p),canal:d.canal,invest:0,receita:0,leads:0,novos:0,cac:0,roas:0});r.invest+=d.invest;r.receita+=d.receita;r.leads+=d.leads;r.novos+=d.novos});return Object.values(map).map(r=>({...r,cac:r.novos?r.invest/r.novos:0,roas:r.invest?r.receita/r.invest:0}))}
-function mkCampsP(p){const map={};MKC.filter(d=>inP(d,p)).forEach(d=>{const k=d.campanha+'|'+d.canal;const r=map[k]||(map[k]={ano:pEnd(p).a,mes:pLabel(p),campanha:d.campanha,canal:d.canal,leads:0,novos:0,receita:0,roas:0});r.leads+=d.leads;r.novos+=d.novos;r.receita+=d.receita;r.roas=Math.max(r.roas,d.roas)});return Object.values(map)}
+function mkCampsP(p){return MKC.filter(d=>inP(d,p)).sort((x,y)=>y.receita-x.receita)}
 function avg(nums){const v=nums.filter(n=>n!==null&&n!==undefined);return v.length?v.reduce((s,n)=>s+n,0)/v.length:null}
 function npsP(p){return avg(p.months.map(x=>gn(x.m,x.a)))}
 function timeP(p){const rows=p.months.map(x=>gt(x.m,x.a)).filter(Boolean);if(!rows.length)return null;return {at:Math.round(avg(rows.map(x=>x.at))),ca:Math.round(avg(rows.map(x=>x.ca))),ap:Math.round(avg(rows.map(x=>x.ap))),in:Math.round(avg(rows.map(x=>x.in)))}}
 function mkSumP(p){const rows=mkRowsP(p);const invest=rows.reduce((s,x)=>s+x.invest,0),receita=rows.reduce((s,x)=>s+x.receita,0),leads=rows.reduce((s,x)=>s+x.leads,0),novos=rows.reduce((s,x)=>s+x.novos,0);return {invest,receita,leads,novos,roas:invest?receita/invest:0,cac:novos?invest/novos:0}}
+function mkMetricP(src,p,name){return src.filter(d=>inP(d,p)&&d.metrica===name).reduce((s,d)=>s+d.valor,0)}
 function pm(m,a){const i=MO.indexOf(m);return i===0?{m:'Dezembro',a:a-1}:{m:MO[i-1],a}}
 function gr(m,a){return DR.filter(d=>d.mes===m&&d.ano===a)}
 function gt(m,a){return DT.find(d=>d.mes===m&&d.ano===a)||null}
@@ -1703,32 +1716,81 @@ function renderDonut(id,lgId,data,colors){
 
 
 function renderMarketing(){
+  const mp=pById(mkPeriodId,true), cmp=pById(mkCompId,true);
+  const end=pEnd(mp); mkM=end.m; mkA=end.a;
+  const cur=mkSumP(mp),prev=cmp?mkSumP(cmp):null;
+  renderMkSelects();
+  document.getElementById('mk-s-mes').textContent=pLabel(mp);
   if(document.getElementById('tab-marketing').classList.contains('on')){
     document.getElementById('tb-path').textContent='Marketing';
   }
+
+  document.getElementById('mk-kv-invest').textContent=compactBrl(cur.invest);
+  document.getElementById('mk-kc-invest').innerHTML=cmp?kc(pLabel(cmp),dtag(pct(cur.invest,prev.invest),false,'%')):'';
+  document.getElementById('mk-kv-rev').textContent=compactBrl(cur.receita);
+  document.getElementById('mk-kc-rev').innerHTML=cmp?kc(pLabel(cmp),dtag(pct(cur.receita,prev.receita),true,'%')):'';
+  document.getElementById('mk-kv-roas').textContent=cur.roas.toFixed(1)+'x';
+  document.getElementById('mk-kc-roas').innerHTML=cmp?kc(pLabel(cmp),dtag(cur.roas-prev.roas,true,'x')):'';
+  document.getElementById('mk-kv-cac').textContent=cur.cac?brl(cur.cac):'—';
+  document.getElementById('mk-kc-cac').innerHTML=cmp?kc(pLabel(cmp),dtag(pct(cur.cac,prev.cac),false,'%')):'';
+
+  const rows=mkRowsP(mp);
+  const bestRoas=rows.slice().sort((x,y)=>y.roas-x.roas)[0];
+  const bestRev=rows.slice().sort((x,y)=>y.receita-x.receita)[0];
+  const repEnv=mkMetricP(MKR,mp,'Envios totais');
+  const repAp=mkMetricP(MKR,mp,'Aprovações');
+  const repVendas=mkMetricP(MKR,mp,'Vendas geradas (R$)');
+  const repConv=repEnv?repAp/repEnv*100:0;
+  const items=[
+    {icon:'🚀',label:'Canal com maior ROAS',val:()=>bestRoas?`${bestRoas.canal} — ${bestRoas.roas.toFixed(1)}x`:'—',delta:null},
+    {icon:'💰',label:'Maior retorno',val:()=>bestRev?`${bestRev.canal} — ${compactBrl(bestRev.receita)}`:'—',delta:null},
+    {icon:'🔁',label:'Repescagem',val:()=>repVendas?`${brl(repVendas)} em vendas`: '—',delta:repConv||null},
+    {icon:'🎯',label:'CAC / compra',val:()=>cur.cac?brl(cur.cac):'—',delta:cmp?pct(cur.cac,prev.cac):null,invert:true},
+  ];
+  document.getElementById('mk-insight-strip').innerHTML=items.map(it=>`
+    <div style="flex:1;min-width:160px;display:flex;align-items:center;gap:10px">
+      <div class="insight-icon">${it.icon}</div>
+      <div class="insight-text"><div class="insight-label">${it.label}</div><div class="insight-value">${it.val()}</div></div>
+      ${it.delta!==null?`<div class="insight-delta ${it.invert?(it.delta<0?'id-up':'id-dn'):'id-up'}">${it.invert?(it.delta>0?'▲':'▼'):'▲'} ${Math.abs(it.delta).toFixed(1)}${it.invert?'%':'%'}</div>`:''}
+    </div>`).join('<div style="width:1px;background:rgba(255,255,255,.12);align-self:stretch"></div>');
+
+  renderMkCharts(mp);
+  renderMkFunil(mp);
+  renderMkTables(mp);
 }
 function renderMkCharts(mp){
   const rows=mkRowsP(mp), labels=rows.map(r=>r.canal);
   if(CH.mkSpend)CH.mkSpend.destroy();
-  CH.mkSpend=new Chart(document.getElementById('mkChSpend'),{type:'bar',data:{labels,datasets:[{label:'Receita',data:rows.map(r=>r.receita),backgroundColor:'#006bd6',borderRadius:6},{label:'Investimento',data:rows.map(r=>r.invest),backgroundColor:'#8ed8f8',borderRadius:6}]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},scales:{...CDef.scales,x:{...CDef.scales.x,ticks:{...CDef.scales.x.ticks,callback:(v,i)=>labels[i].replace('/SEO','')}}}}});
+  CH.mkSpend=new Chart(document.getElementById('mkChSpend'),{type:'bar',data:{labels,datasets:[{label:'Retorno',data:rows.map(r=>r.receita),backgroundColor:'#006bd6',borderRadius:6},{label:'Investimento',data:rows.map(r=>r.invest),backgroundColor:'#8ed8f8',borderRadius:6}]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},scales:{...CDef.scales,x:{...CDef.scales.x,ticks:{...CDef.scales.x.ticks,callback:(v,i)=>labels[i]}}}}});
   if(CH.mkRoas)CH.mkRoas.destroy();
   CH.mkRoas=new Chart(document.getElementById('mkChRoas'),{type:'bar',data:{labels,datasets:[{label:'ROAS',data:rows.map(r=>r.roas),backgroundColor:'#123b7a',borderRadius:6}]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ROAS: ${c.parsed.y.toFixed(1)}x`}}}}});
-  const months=['Março','Abril'], sums=months.map(mm=>mkSum(mm,2026));
+  const months=MONTH_PERIODS.filter(p=>p.months[0].a===2026).slice().reverse();
+  const sums=months.map(p=>mkSumP(p));
   if(CH.mkEvo)CH.mkEvo.destroy();
-  CH.mkEvo=new Chart(document.getElementById('mkChEvo'),{type:'line',data:{labels:months.map(mm=>sl(mm,2026)),datasets:[{label:'Novos clientes',data:sums.map(s=>s.novos),borderColor:'#006bd6',backgroundColor:'rgba(0,107,214,.12)',fill:true,tension:.3},{label:'Leads',data:sums.map(s=>s.leads),borderColor:'#00a6c8',backgroundColor:'rgba(0,166,200,.12)',fill:true,tension:.3}]},options:CDef});
-  renderDonut('mkChOrigem','mkLgOrigem',rows.map(r=>[r.canal,Math.round(r.leads/mkSumP(mp).leads*100)]),['#123b7a','#006bd6','#00a6c8','#8ed8f8','#1a6e4e']);
+  CH.mkEvo=new Chart(document.getElementById('mkChEvo'),{type:'line',data:{labels:months.map(p=>p.label),datasets:[{label:'Cadastros com compras',data:sums.map(s=>s.novos),borderColor:'#006bd6',backgroundColor:'rgba(0,107,214,.12)',fill:true,tension:.3},{label:'Novos cadastros',data:sums.map(s=>s.leads),borderColor:'#00a6c8',backgroundColor:'rgba(0,166,200,.12)',fill:true,tension:.3}]},options:CDef});
+  const totalLeads=rows.reduce((s,r)=>s+r.leads,0);
+  renderDonut('mkChOrigem','mkLgOrigem',rows.map(r=>[r.canal,totalLeads?Math.round(r.leads/totalLeads*100):0]).filter(r=>r[1]>0),['#123b7a','#006bd6','#00a6c8','#8ed8f8','#1a6e4e']);
 }
-function renderMkFunil(cur){
-  const steps=[['Impressões qualificadas',cur.leads*42,100],['Leads captados',cur.leads,Math.round(cur.leads/(cur.leads*42)*100)],['Atendimentos iniciados',Math.round(cur.leads*.62),62],['Novos clientes',cur.novos,Math.round(cur.novos/cur.leads*100)]];
-  const colors=['#123b7a','#006bd6','#00a6c8','#8ed8f8'];
-  document.getElementById('mk-funil').innerHTML=`<div class="funnel">${steps.map((s,i)=>`<div class="f-step" style="width:${100-i*12}%;background:${colors[i]}"><div><div class="f-label">${s[0]}</div><div class="f-pct">${s[2]}% do estágio base</div></div><div class="f-val">${s[1].toLocaleString('pt-BR')}</div></div>${i<steps.length-1?`<div class="f-conn"><div class="f-clbl">conversão</div><div class="f-conv">${Math.round(steps[i+1][1]/s[1]*100)}%</div></div>`:''}`).join('')}</div>`;
+function renderMkFunil(mp){
+  const env=mkMetricP(MKR,mp,'Envios totais');
+  const ap=mkMetricP(MKR,mp,'Aprovações');
+  const tx=env?ap/env*100:0;
+  const vendas=mkMetricP(MKR,mp,'Vendas geradas (R$)');
+  document.getElementById('mk-funil').innerHTML=`<div class="funnel">
+    <div class="f-step" style="width:100%;background:#123b7a"><div><div class="f-label">Envios totais</div><div class="f-pct">base da repescagem</div></div><div class="f-val">${env.toLocaleString('pt-BR')}</div></div>
+    <div class="f-conn"><div class="f-clbl">conversão</div><div class="f-conv">${tx.toFixed(2)}%</div></div>
+    <div class="f-step" style="width:76%;background:#006bd6"><div><div class="f-label">Aprovações</div><div class="f-pct">pedidos recuperados</div></div><div class="f-val">${ap.toLocaleString('pt-BR')}</div></div>
+    <div class="f-conn"><div class="f-clbl">vendas geradas</div><div class="f-conv">${brl(vendas)}</div></div>
+  </div>`;
 }
 function renderMkTables(mp){
   const rows=mkRowsP(mp).slice().sort((x,y)=>y.receita-x.receita);
   const tot=mkSumP(mp);
-  document.getElementById('mk-tbl').innerHTML=`<table class="dt"><thead><tr><th>Canal</th><th class="tr">Invest.</th><th class="tr">Receita</th><th class="tr">Leads</th><th class="tr">Novos</th><th class="tr">CAC</th><th class="tr">ROAS</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.canal}</td><td class="tr">${brl(r.invest)}</td><td class="tr">${brl(r.receita)}</td><td class="tr">${r.leads}</td><td class="tr">${r.novos}</td><td class="tr">${brl(r.cac)}</td><td class="tr"><span class="badge ${r.roas>=6?'bg':'bb'}">${r.roas.toFixed(1)}x</span></td></tr>`).join('')}<tr class="tot"><td>Total</td><td class="tr">${brl(tot.invest)}</td><td class="tr">${brl(tot.receita)}</td><td class="tr">${tot.leads}</td><td class="tr">${tot.novos}</td><td class="tr">${brl(tot.cac)}</td><td class="tr">${tot.roas.toFixed(1)}x</td></tr></tbody></table>`;
-  const camps=mkCampsP(mp).sort((x,y)=>y.roas-x.roas);
-  document.getElementById('mk-camp-tbl').innerHTML=`<table class="dt"><thead><tr><th>Campanha</th><th>Canal</th><th class="tr">Leads</th><th class="tr">Novos</th><th class="tr">Receita</th><th class="tr">ROAS</th></tr></thead><tbody>${camps.map(c=>`<tr><td>${c.campanha}</td><td>${c.canal}</td><td class="tr">${c.leads}</td><td class="tr">${c.novos}</td><td class="tr">${brl(c.receita)}</td><td class="tr"><span class="badge ${c.roas>=6?'bg':'bb'}">${c.roas.toFixed(1)}x</span></td></tr>`).join('')}</tbody></table>`;
+  document.getElementById('mk-tbl').innerHTML=`<table class="dt"><thead><tr><th>Canal</th><th class="tr">Invest.</th><th class="tr">Retorno</th><th class="tr">Cadastros</th><th class="tr">Compras</th><th class="tr">CAC</th><th class="tr">ROAS</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.canal}</td><td class="tr">${brl(r.invest)}</td><td class="tr">${brl(r.receita)}</td><td class="tr">${r.leads}</td><td class="tr">${r.novos}</td><td class="tr">${r.cac?brl(r.cac):'—'}</td><td class="tr"><span class="badge ${r.roas>=6?'bg':'bb'}">${r.roas.toFixed(1)}x</span></td></tr>`).join('')}<tr class="tot"><td>Total</td><td class="tr">${brl(tot.invest)}</td><td class="tr">${brl(tot.receita)}</td><td class="tr">${tot.leads}</td><td class="tr">${tot.novos}</td><td class="tr">${tot.cac?brl(tot.cac):'—'}</td><td class="tr">${tot.roas.toFixed(1)}x</td></tr></tbody></table>`;
+  const camps=mkCampsP(mp);
+  document.getElementById('mk-camp-tbl').innerHTML=`<table class="dt"><thead><tr><th>Campanha</th><th>Canal</th><th class="tr">Invest.</th><th class="tr">Retorno</th><th class="tr">ROAS</th></tr></thead><tbody>${camps.map(c=>`<tr><td>${c.campanha}</td><td>${c.canal}</td><td class="tr">${brl(c.invest)}</td><td class="tr">${brl(c.receita)}</td><td class="tr"><span class="badge ${c.roas>=6?'bg':'bb'}">${c.roas.toFixed(1)}x</span></td></tr>`).join('')}</tbody></table>`;
+  const google=MKS.filter(d=>inP(d,mp));
+  document.getElementById('mk-google-tbl').innerHTML=`<table class="dt"><thead><tr><th>Métrica</th><th class="tr">Valor</th></tr></thead><tbody>${google.map(g=>`<tr><td>${g.metrica}</td><td class="tr">${g.valor}</td></tr>`).join('')}</tbody></table>`;
 }
 
 /* ── Interactions ──────────────────────────────────────────── */
