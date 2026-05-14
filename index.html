@@ -383,6 +383,7 @@ body {
 
 /* ── Section ─────────────────────────────────────────────────── */
 .sec {
+  scroll-margin-top: calc(var(--topbar) + 16px);
   background: var(--white);
   border: 1px solid var(--surface-border);
   border-radius: 14px;
@@ -806,16 +807,16 @@ body.auth-locked .auth-modal { display: flex; }
     </button>
 
     <div class="sb-section-label" style="margin-top:8px">Análises</div>
-    <button class="sb-item" onclick="scrollTo('sec-ativos')">
+    <button class="sb-item" onclick="goSection('sec-ativos',this)">
       <span class="sb-item-icon">🧪</span> Ativos
     </button>
-    <button class="sb-item" onclick="scrollTo('sec-rej')">
+    <button class="sb-item" onclick="goSection('sec-rej',this)">
       <span class="sb-item-icon">📋</span> Rejeições
     </button>
-    <button class="sb-item" onclick="scrollTo('sec-tempo')">
+    <button class="sb-item" onclick="goSection('sec-tempo',this)">
       <span class="sb-item-icon">⏱</span> Tempos
     </button>
-    <button class="sb-item" onclick="scrollTo('sec-nps')">
+    <button class="sb-item" onclick="goSection('sec-nps',this)">
       <span class="sb-item-icon">⭐</span> NPS
     </button>
 
@@ -1753,20 +1754,12 @@ function renderMkTables(mp){
 
 /* ── Interactions ──────────────────────────────────────────── */
 function swTab(tab,btn){
-  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.tab-switch-btn').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('on'));
-  document.getElementById('tab-'+tab).classList.add('on');
-  if(tab==='comercial'){
-    document.getElementById('tb-title').textContent='Dashboard Comercial';
-    document.getElementById('tb-path').textContent='Performance';
-  } else {
-    document.getElementById('tb-title').textContent='Dashboard de Marketing';
-    document.getElementById('tb-path').textContent='Marketing';
-    renderMarketing();
-  }
-  document.querySelectorAll('.tab-switch-btn').forEach(b=>{if(b.textContent.toLowerCase().includes(tab.substring(0,3).toLowerCase()))b.classList.add('on')});
-  document.querySelectorAll('.sb-item').forEach(b=>{if(b.textContent.trim().toLowerCase().startsWith(tab.substring(0,3).toLowerCase()))b.classList.add('active')});
+  showTab(tab);
+  const label=tab.substring(0,3).toLowerCase();
+  const nav=btn?.classList.contains('sb-item')
+    ? btn
+    : [...document.querySelectorAll('.sb-item')].find(b=>b.textContent.trim().toLowerCase().startsWith(label));
+  setSidebarActive(nav);
   if(window.innerWidth <= 768) closeSidebar();
 }
 
@@ -1807,9 +1800,35 @@ function setMkM(m,btn){
     document.getElementById('tb-path').textContent='Marketing';
   }
 }
-function scrollTo(id){
-  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
-  // close sidebar on mobile after nav click
+function setSidebarActive(btn){
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+}
+function setTopbarTab(tab){
+  document.querySelectorAll('.tab-switch-btn').forEach(b=>{
+    const isTab=b.textContent.toLowerCase().includes(tab.substring(0,3).toLowerCase());
+    b.classList.toggle('on',isTab);
+  });
+}
+function showTab(tab){
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('on'));
+  document.getElementById('tab-'+tab).classList.add('on');
+  if(tab==='comercial'){
+    document.getElementById('tb-title').textContent='Dashboard Comercial';
+    document.getElementById('tb-path').textContent='Performance';
+  } else {
+    document.getElementById('tb-title').textContent='Dashboard de Marketing';
+    document.getElementById('tb-path').textContent='Marketing';
+    renderMarketing();
+  }
+  setTopbarTab(tab);
+}
+function goSection(id,btn){
+  const target=document.getElementById(id);
+  if(!target)return;
+  if(!document.getElementById('tab-comercial').classList.contains('on'))showTab('comercial');
+  setSidebarActive(btn);
+  requestAnimationFrame(()=>target.scrollIntoView({behavior:'smooth',block:'start'}));
   if(window.innerWidth <= 768) closeSidebar();
 }
 
