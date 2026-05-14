@@ -328,6 +328,27 @@ body {
   font-weight: 500;
   color: var(--navy);
 }
+.filter-caption {
+  color: var(--blue);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.last-month-btn {
+  border: 1px solid var(--navy);
+  background: linear-gradient(135deg, var(--navy), #4a5684);
+  color: #fff;
+  border-radius: 99px;
+  padding: 7px 14px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(46,63,110,.16);
+}
+.last-month-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
 .comp-select {
   border: none;
   background: transparent;
@@ -880,17 +901,14 @@ body.auth-locked .auth-modal { display: flex; }
       <div class="page-hd-left">
         <div class="page-hd-title page-hd-title-lg">Performance Comercial</div>
       </div>
-      <div class="page-hd-actions">
-        <span style="font-size:10px;color:var(--blue);font-weight:500">Período:</span>
-        <div class="comp-tag"><select class="comp-select" id="period-main" onchange="setPeriod(this.value)"></select></div>
-      </div>
     </div>
 
     <!-- Filter strip -->
     <div class="filter-strip">
-      <span class="fl">Compare:</span>
-      <div class="comp-tag"><span class="dot da"></span><select class="comp-select" id="comp-a" onchange="setComp('a',this.value)"></select></div>
-      <div class="comp-tag"><span class="dot db"></span><select class="comp-select" id="comp-b" onchange="setComp('b',this.value)"></select></div>
+      <span class="fl">Período:</span>
+      <div class="comp-tag"><span class="filter-caption">Mês</span><span class="dot da"></span><select class="comp-select" id="period-main" onchange="setPeriod(this.value)"></select></div>
+      <div class="comp-tag"><span class="filter-caption">Comparar com</span><span class="dot db"></span><select class="comp-select" id="comp-a" onchange="setComp('a',this.value)"></select></div>
+      <button class="last-month-btn" type="button" onclick="setLastMonth()">Último mês</button>
     </div>
 
     <!-- Insight strip -->
@@ -1070,10 +1088,6 @@ body.auth-locked .auth-modal { display: flex; }
         <div class="page-hd-eyebrow">ALQ Farma · Marketing</div>
         <div class="page-hd-title">Performance de Marketing</div>
         <div class="page-hd-sub">Campanhas · ROAS por canal · Novos clientes · CAC</div>
-      </div>
-      <div class="page-hd-actions">
-        <span style="font-size:10px;color:var(--blue);font-weight:500">Período:</span>
-        <div class="comp-tag"><select class="comp-select" id="mk-period-main" onchange="setMkPeriod(this.value)"></select></div>
       </div>
     </div>
 
@@ -1395,6 +1409,8 @@ const PERIODS=[
   {id:'abr25',label:'Abr/25',months:[{m:'Abril',a:2025}]},
   {id:'q4-25',label:'Out–Dez/25',months:[{m:'Outubro',a:2025},{m:'Novembro',a:2025},{m:'Dezembro',a:2025}]},
 ];
+const MONTH_PERIODS=PERIODS.filter(p=>p.months.length===1);
+const LATEST_MONTH_ID=MONTH_PERIODS[0].id;
 const MK_PERIODS=PERIODS.filter(p=>p.months.every(x=>x.a===2026&&['Março','Abril'].includes(x.m))).map(p=>({...p,id:'mk-'+p.id}));
 function pById(id,marketing=false){return (marketing?MK_PERIODS:PERIODS).find(p=>p.id===id)||null}
 function pLabel(p){return p?p.label:''}
@@ -1728,17 +1744,21 @@ function swTab(tab,btn){
 
 
 function renderCompSelects(){
-  const period=document.getElementById('period-main'),a=document.getElementById('comp-a'),b=document.getElementById('comp-b');
-  if(period)period.innerHTML=PERIODS.map(p=>`<option value="${p.id}" ${p.id===cPeriodId?'selected':''}>${p.label}</option>`).join('');
-  const opts=id=>'<option value="">Sem comparativo</option>'+PERIODS.map(p=>`<option value="${p.id}" ${p.id===id?'selected':''}>${p.label}</option>`).join('');
-  if(a)a.innerHTML=opts(cCompAId);
-  if(b)b.innerHTML=opts(cCompBId);
+  const period=document.getElementById('period-main'),a=document.getElementById('comp-a');
+  const monthOpts=id=>MONTH_PERIODS.map(p=>`<option value="${p.id}" ${p.id===id?'selected':''}>${p.label}</option>`).join('');
+  if(period)period.innerHTML=monthOpts(cPeriodId);
+  if(a)a.innerHTML='<option value="">Sem comparativo</option>'+monthOpts(cCompAId);
 }
 
-function setPeriod(value){cPeriodId=value;render()}
+function setPeriod(value){cPeriodId=value;cCompBId='';render()}
 function setComp(which,value){
   if(which==='a')cCompAId=value;
-  if(which==='b')cCompBId=value;
+  if(which==='b')cCompBId='';
+  render();
+}
+function setLastMonth(){
+  cPeriodId=LATEST_MONTH_ID;
+  cCompBId='';
   render();
 }
 
