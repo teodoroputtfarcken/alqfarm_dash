@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALQ Farma — Analytics</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232e3f6e'/%3E%3Ctext x='50%25' y='56%25' text-anchor='middle' font-family='Arial,sans-serif' font-size='24' font-weight='700' fill='white'%3EALQ%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAmklEQVR42u3YwQnAIAwAQCfqCt2o+//aBSokRIrVE/LTGO6RoO04r3vnaAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwFpEVOTuq8Eo9AAAEAbLJevtHAYyqBwAAAAAAZAGyCwAAPeAzgMq9AAAsNga3fwwBmB2gMk4jOafvAQD+BOBXGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWiwfVWRTsVcCv1QAAAABJRU5ErkJggg==">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -591,7 +591,6 @@ body.auth-locked .auth-modal { display: flex; }
   transition: background .15s, transform .15s;
 }
 .auth-submit:hover { background: #3a4f87; transform: translateY(-1px); }
-.auth-note { margin-top: 12px; font-size: 10px; color: var(--blue); line-height: 1.5; }
 
 /* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
@@ -776,7 +775,6 @@ body.auth-locked .auth-modal { display: flex; }
     </div>
     <div class="auth-error" id="auth-error">Usuário ou senha inválidos.</div>
     <button class="auth-submit" type="submit">Entrar</button>
-    <div class="auth-note">Proteção visual local para arquivo HTML estático. Para dados sensíveis em produção, use autenticação em servidor.</div>
   </form>
 </div>
 
@@ -1707,8 +1705,14 @@ function refData(){
 }
 
 /* ── Auth ──────────────────────────────────────────────────── */
-const AUTH_USER='admin';
-const AUTH_PASS='alq2026';
+const AUTH_DB={
+  users:[
+    {username:'admin',password:'alq2026',name:'Gestão'},
+    {username:'gestao',password:'alqfarma2026',name:'Gestão ALQ'},
+    {username:'Mainni',password:'Mainni',name:'Mainni'},
+    {username:'Teodoro',password:'Teodoro',name:'Teodoro'},
+  ]
+};
 function unlockDashboard(){
   document.body.classList.remove('auth-locked');
   document.getElementById('auth-error')?.classList.remove('on');
@@ -1717,8 +1721,10 @@ function doLogin(ev){
   ev.preventDefault();
   const user=document.getElementById('auth-user').value.trim();
   const pass=document.getElementById('auth-pass').value;
-  if(user===AUTH_USER&&pass===AUTH_PASS){
+  const account=AUTH_DB.users.find(u=>u.username===user&&u.password===pass);
+  if(account){
     sessionStorage.setItem('alq-auth','ok');
+    sessionStorage.setItem('alq-user',account.name);
     unlockDashboard();
   } else {
     document.getElementById('auth-error').classList.add('on');
