@@ -364,7 +364,7 @@ body {
 .mk-small-v { font-size:16px; color:var(--navy); font-weight:800; margin-top:6px; }
 .mk-small-s { font-size:10px; margin-top:3px; font-weight:600; }
 .mk-note { font-size:12px; line-height:1.6; color:#0a0f1e; margin:10px 0 14px; }
-.multi-select { min-width: 190px; max-height: 96px; padding: 2px 4px; }
+.multi-select { min-width: 190px; padding: 2px 4px; }
 .mk-bar-list { display:flex; flex-direction:column; gap:12px; padding:8px 4px; }
 .mk-bar-row { display:grid; grid-template-columns:110px 1fr 52px; align-items:center; gap:12px; font-size:12px; color:#0a0f1e; }
 .mk-bar-track { height:18px; background:#eef3fb; border-radius:999px; overflow:hidden; border:1px solid #d8e2f4; }
@@ -1118,8 +1118,8 @@ body.auth-locked .auth-modal { display: flex; }
 
     <div class="filter-strip">
       <span class="fl">Período:</span>
-      <div class="comp-tag"><span class="filter-caption">Meses do período</span><span class="dot da"></span><select class="comp-select multi-select" id="mk-period-main" multiple size="6" onchange="setMkPeriodFromSelect(this)"></select></div>
-      <div class="comp-tag"><span class="filter-caption">Comparar com</span><span class="dot db"></span><select class="comp-select multi-select" id="mk-comp-a" multiple size="6" onchange="setMkCompFromSelect(this)"></select></div>
+      <div class="comp-tag"><span class="dot da"></span><select class="comp-select multi-select" id="mk-period-main" onchange="setMkPeriodFromSelect(this)"></select></div>
+      <div class="comp-tag"><span class="dot db"></span><select class="comp-select multi-select" id="mk-comp-a" onchange="setMkCompFromSelect(this)"></select></div>
       <button class="last-month-btn" type="button" onclick="setLastMkMonth()">Último mês</button>
     </div>
 
@@ -1897,9 +1897,9 @@ function renderMkSelects(){
   if(period)period.innerHTML=opts(mkPeriodIds);
   if(comp)comp.innerHTML=opts(mkCompIds);
 }
-function selectedValues(sel){return [...sel.selectedOptions].map(o=>o.value)}
-function setMkPeriodFromSelect(sel){mkPeriodIds=selectedValues(sel);if(!mkPeriodIds.length)mkPeriodIds=['mk-abr26'];mkPeriodId='mk-custom:'+mkPeriodIds.join(',');renderMarketing()}
-function setMkCompFromSelect(sel){mkCompIds=selectedValues(sel);mkCompId=mkCompIds.length?'mk-custom:'+mkCompIds.join(','):'';renderMarketing()}
+function selectedValues(sel){return sel.multiple?[...sel.selectedOptions].map(o=>o.value):(sel.value?[sel.value]:[])}
+function setMkPeriodFromSelect(sel){mkPeriodIds=selectedValues(sel);if(!mkPeriodIds.length)mkPeriodIds=['mk-abr26'];mkPeriodId=mkPeriodIds.length===1?mkPeriodIds[0]:'mk-custom:'+mkPeriodIds.join(',');renderMarketing()}
+function setMkCompFromSelect(sel){mkCompIds=selectedValues(sel);mkCompId=mkCompIds.length===1?mkCompIds[0]:mkCompIds.length?'mk-custom:'+mkCompIds.join(','):'';renderMarketing()}
 function setMkPeriod(value){mkPeriodIds=[value];mkPeriodId=value;renderMarketing()}
 function setMkComp(value){mkCompIds=value?[value]:[];mkCompId=value;renderMarketing()}
 function setLastMkMonth(){mkPeriodIds=['mk-abr26'];mkCompIds=[];mkPeriodId='mk-abr26';mkCompId='';renderMarketing()}
