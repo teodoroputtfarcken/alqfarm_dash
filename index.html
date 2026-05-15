@@ -349,6 +349,21 @@ body {
   box-shadow: 0 8px 18px rgba(46,63,110,.16);
 }
 .last-month-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.mk-hero { background: var(--navy); color:#fff; border-radius:16px; padding:28px 32px; margin-bottom:24px; box-shadow: var(--soft-shadow); }
+.mk-hero-ey { font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; opacity:.9; margin-bottom:10px; }
+.mk-hero-title { font-size:28px; font-weight:800; margin-bottom:8px; }
+.mk-hero-sub { font-size:14px; opacity:.78; margin-bottom:22px; }
+.mk-hero-metrics { border-top:1px solid rgba(255,255,255,.22); display:grid; grid-template-columns:repeat(4,1fr); gap:22px; padding-top:18px; }
+.mk-hero-k { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; opacity:.62; }
+.mk-hero-v { font-size:16px; font-weight:800; margin-top:4px; }
+.mk-panel { background:#fff; border:1px solid var(--surface-border); border-radius:12px; padding:18px; box-shadow:var(--soft-shadow-sm); }
+.mk-panel-bordered { border-color:#b9caec; }
+.mk-small-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:14px 0; }
+.mk-small-card { background:#fff; border:1px solid #b9caec; border-radius:10px; padding:12px; }
+.mk-small-k { font-size:9px; color:var(--navy); font-weight:800; text-transform:uppercase; }
+.mk-small-v { font-size:16px; color:var(--navy); font-weight:800; margin-top:6px; }
+.mk-small-s { font-size:10px; margin-top:3px; font-weight:600; }
+.mk-note { font-size:12px; line-height:1.6; color:#0a0f1e; margin:10px 0 14px; }
 .comp-select {
   border: none;
   background: transparent;
@@ -1083,61 +1098,80 @@ body.auth-locked .auth-modal { display: flex; }
   <!-- ════════════════════════════════════════════════════════ -->
   <div class="tc" id="tab-marketing">
   <div class="content">
-    <div class="page-hd">
-      <div class="page-hd-left">
-        <div class="page-hd-eyebrow">ALQ Farma · Marketing</div>
-        <div class="page-hd-title">Performance de Marketing</div>
-        <div class="page-hd-sub">Dados das planilhas: Google Ads, clientes/CAC, ROAS, campanhas e repescagem</div>
-      </div>
-      <div class="page-hd-actions">
-        <span style="font-size:10px;color:var(--blue);font-weight:500">Período:</span>
-        <div class="comp-tag"><select class="comp-select" id="mk-period-main" onchange="setMkPeriod(this.value)"></select></div>
+    <div class="mk-hero">
+      <div class="mk-hero-ey">ALQ Farma — Relatório de Marketing</div>
+      <div class="mk-hero-title">Performance · <span id="mk-hero-period">Abril 2026</span></div>
+      <div class="mk-hero-sub">Análise de campanhas, novos clientes, solicitações pelo site e projeção.</div>
+      <div class="mk-hero-metrics">
+        <div><div class="mk-hero-k">Investimento total</div><div class="mk-hero-v" id="mk-hero-invest">—</div></div>
+        <div><div class="mk-hero-k">Retorno total</div><div class="mk-hero-v" id="mk-hero-rev">—</div></div>
+        <div><div class="mk-hero-k">ROAS geral</div><div class="mk-hero-v" id="mk-hero-roas">—</div></div>
+        <div><div class="mk-hero-k">Melhor mês</div><div class="mk-hero-v" id="mk-hero-best">—</div></div>
       </div>
     </div>
 
     <div class="filter-strip">
       <span class="fl">Período:</span>
-      <div class="comp-tag"><span class="dot da"></span><select class="comp-select" id="mk-comp-a" onchange="setMkComp(this.value)"></select></div>
+      <div class="comp-tag"><span class="filter-caption">Mês</span><span class="dot da"></span><select class="comp-select" id="mk-period-main" onchange="setMkPeriod(this.value)"></select></div>
+      <div class="comp-tag"><span class="filter-caption">Comparar com</span><span class="dot db"></span><select class="comp-select" id="mk-comp-a" onchange="setMkComp(this.value)"></select></div>
+      <button class="last-month-btn" type="button" onclick="setLastMkMonth()">Último mês</button>
     </div>
 
-    <div class="insight-strip" id="mk-insight-strip"></div>
-
-    <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-tag">Investimento</div><div class="kpi-val" id="mk-kv-invest">—</div><div class="kpi-comps" id="mk-kc-invest"></div></div>
-      <div class="kpi-card"><div class="kpi-tag">Retorno</div><div class="kpi-val" id="mk-kv-rev">—</div><div class="kpi-comps" id="mk-kc-rev"></div></div>
-      <div class="kpi-card"><div class="kpi-tag">ROAS geral</div><div class="kpi-val" id="mk-kv-roas">—</div><div class="kpi-comps" id="mk-kc-roas"></div></div>
-      <div class="kpi-card"><div class="kpi-tag">CAC / compra</div><div class="kpi-val" id="mk-kv-cac">—</div><div class="kpi-comps" id="mk-kc-cac"></div></div>
-    </div>
-
-    <div class="sec" id="mk-sec-canais">
-      <div class="sec-hd"><div class="sec-hd-left"><div class="sec-tag">Aquisição e Receita</div><div class="sec-title">Canais de Marketing — <span id="mk-s-mes">Abril/26</span></div></div></div>
+    <div class="sec" id="mk-sec-visao">
+      <div class="sec-hd"><div><div class="sec-tag">Visão geral</div><div class="sec-title">Performance de campanhas — nov/25 a abr/26</div></div></div>
       <div class="sec-body">
-        <div class="g2">
-          <div><div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Retorno</span><span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Investimento</span></div><div class="cwrap" style="height:300px"><canvas id="mkChSpend"></canvas></div></div>
-          <div><div class="leg"><span class="li"><span class="ld" style="background:var(--chart-blue-1)"></span>ROAS por canal</span></div><div class="cwrap" style="height:300px"><canvas id="mkChRoas"></canvas></div></div>
+        <div class="sec-tag" style="margin-bottom:8px">Investimento vs retorno por mês</div>
+        <div class="cwrap" style="height:340px"><canvas id="mkChMonthly"></canvas></div>
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:8px">ROAS médio por mês</div>
+          <div class="cwrap" style="height:245px"><canvas id="mkChRoasMonth"></canvas></div>
         </div>
         <div class="sec-div">
           <div class="g2">
-            <div><div class="sec-tag" style="margin-bottom:8px">Evolução de clientes</div><div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Cadastros com compras</span><span class="li"><span class="lb" style="background:var(--chart-blue-3)"></span>Novos cadastros</span></div><div class="cwrap" style="height:220px"><canvas id="mkChEvo"></canvas></div></div>
-            <div><div class="sec-tag funnel-title" style="margin-bottom:8px">Repescagem diária</div><div id="mk-funil" class="funnel-panel"></div></div>
+            <div class="mk-panel mk-panel-bordered"><div class="sec-tag" style="margin-bottom:10px">Destaques de <span id="mk-highlight-period">Abril/26</span></div><div id="mk-camp-tbl" style="overflow-x:auto"></div></div>
+            <div class="mk-panel mk-panel-bordered"><div class="sec-tag" style="margin-bottom:10px">ROAS por canal — <span id="mk-roas-period">Abril/26</span></div><div class="cwrap" style="height:190px"><canvas id="mkChRoasChannel"></canvas></div></div>
           </div>
         </div>
-        <div class="sec-div"><div class="sec-tag" style="margin-bottom:12px">Detalhamento por canal</div><div id="mk-tbl" style="overflow-x:auto"></div></div>
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:8px">Evolução do ROAS por canal</div>
+          <div class="cwrap" style="height:300px"><canvas id="mkChRoasEvo"></canvas></div>
+        </div>
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:8px">Google Ads — ROAS isolado</div>
+          <div class="cwrap" style="height:220px"><canvas id="mkChGoogleRoas"></canvas></div>
+        </div>
       </div>
     </div>
 
-    <div class="sec" id="mk-sec-campanhas">
-      <div class="sec-hd"><div class="sec-hd-left"><div class="sec-tag">Campanhas</div><div class="sec-title">Investimento, Retorno e ROAS</div></div></div>
+    <div class="sec" id="mk-sec-clientes">
+      <div class="sec-hd"><div><div class="sec-tag">Novos clientes</div><div class="sec-title">Cadastros e conversões — jan a abr/26</div></div></div>
       <div class="sec-body">
-        <div class="g2">
-          <div id="mk-camp-tbl" style="overflow-x:auto"></div>
-          <div>
-            <div class="sec-tag" style="margin-bottom:8px">Origem dos cadastros</div>
-            <div class="cwrap" style="height:220px"><canvas id="mkChOrigem"></canvas></div>
-            <div id="mkLgOrigem" style="margin-top:8px"></div>
-            <div class="sec-div"><div class="sec-tag" style="margin-bottom:12px">Google Ads — Solicitações</div><div id="mk-google-tbl" style="overflow-x:auto"></div></div>
-          </div>
-        </div>
+        <div class="mk-small-cards" id="mk-client-cards"></div>
+        <div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Cadastros novos</span><span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Com compras</span></div>
+        <div class="sec-tag" style="margin:10px 0 8px">Cadastros novos vs com compras</div>
+        <div class="cwrap" style="height:320px"><canvas id="mkChCadastros"></canvas></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Taxa de conversão por mês (%)</div><div class="cwrap" style="height:230px"><canvas id="mkChConv"></canvas></div></div>
+        <div class="sec-div"><div class="g2"><div class="mk-panel mk-panel-bordered" id="mk-cac-new"></div><div class="mk-panel mk-panel-bordered" id="mk-cac-buy"></div></div></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">CAC comparativo (R$)</div><div class="cwrap" style="height:260px"><canvas id="mkChCac"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-google">
+      <div class="sec-hd"><div><div class="sec-tag">Google Ads — solicitações pelo site</div><div class="sec-title">Resultados de <span id="mk-google-period">abril</span></div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-google-cards"></div>
+        <div class="sec-title" style="font-size:15px;margin:8px 0">Projeção — Maio</div>
+        <p class="mk-note">Projeção baseada na eficiência de abril com investimento previsto para maio. Se conversão e ticket médio voltarem ao patamar de março, o valor aprovado pode chegar ao cenário projetado.</p>
+        <div id="mk-proj-tbl" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-repescagem">
+      <div class="sec-hd"><div><div class="sec-tag">Pedido Pago — ação recorrente</div><div class="sec-title">Repescagem diária</div></div></div>
+      <div class="sec-body">
+        <p class="mk-note">Ação contínua do canal Pedido Pago com envios automáticos para a base de clientes.</p>
+        <div class="g2" id="mk-rep-cards"></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Evolução março → abril</div><div class="cwrap" style="height:280px"><canvas id="mkChRepescagem"></canvas></div></div>
       </div>
     </div>
   </div>
@@ -1715,83 +1749,99 @@ function renderDonut(id,lgId,data,colors){
 }
 
 
+function mkReportPeriods(){return MK_PERIODS.filter(p=>p.months.length===1).slice().reverse()}
+function mkMonthName(p){return pEnd(p).m.toLowerCase()}
+function mkGoogleMetrics(p){const rows=MKS.filter(d=>inP(d,p));const val=name=>rows.find(d=>d.metrica===name)?.valor||'—';return {
+  solicitacoes:70,aprovacoes:10,ticket:233.75,valor:2337.50,at:val('Tempo médio atendimento'),calc:val('Tempo médio cálculo'),pix:val('Pag. via Pix'),cartao:val('Pag. via Cartão'),naoCalc:val('Não calculadas'),primeiras:61,primeirasAp:val('Primeiras aprovações'),bairro:'Tijuca · Recreio'
+}}
 function renderMarketing(){
   const mp=pById(mkPeriodId,true), cmp=pById(mkCompId,true);
   const end=pEnd(mp); mkM=end.m; mkA=end.a;
   const cur=mkSumP(mp),prev=cmp?mkSumP(cmp):null;
   renderMkSelects();
-  document.getElementById('mk-s-mes').textContent=pLabel(mp);
-  if(document.getElementById('tab-marketing').classList.contains('on')){
-    document.getElementById('tb-path').textContent='Marketing';
-  }
-
-  document.getElementById('mk-kv-invest').textContent=compactBrl(cur.invest);
-  document.getElementById('mk-kc-invest').innerHTML=cmp?kc(pLabel(cmp),dtag(pct(cur.invest,prev.invest),false,'%')):'';
-  document.getElementById('mk-kv-rev').textContent=compactBrl(cur.receita);
-  document.getElementById('mk-kc-rev').innerHTML=cmp?kc(pLabel(cmp),dtag(pct(cur.receita,prev.receita),true,'%')):'';
-  document.getElementById('mk-kv-roas').textContent=cur.roas.toFixed(1)+'x';
-  document.getElementById('mk-kc-roas').innerHTML=cmp?kc(pLabel(cmp),dtag(cur.roas-prev.roas,true,'x')):'';
-  document.getElementById('mk-kv-cac').textContent=cur.cac?brl(cur.cac):'—';
-  document.getElementById('mk-kc-cac').innerHTML=cmp?kc(pLabel(cmp),dtag(pct(cur.cac,prev.cac),false,'%')):'';
-
-  const rows=mkRowsP(mp);
-  const bestRoas=rows.slice().sort((x,y)=>y.roas-x.roas)[0];
-  const bestRev=rows.slice().sort((x,y)=>y.receita-x.receita)[0];
-  const repEnv=mkMetricP(MKR,mp,'Envios totais');
-  const repAp=mkMetricP(MKR,mp,'Aprovações');
-  const repVendas=mkMetricP(MKR,mp,'Vendas geradas (R$)');
-  const repConv=repEnv?repAp/repEnv*100:0;
-  const items=[
-    {icon:'🚀',label:'Canal com maior ROAS',val:()=>bestRoas?`${bestRoas.canal} — ${bestRoas.roas.toFixed(1)}x`:'—',delta:null},
-    {icon:'💰',label:'Maior retorno',val:()=>bestRev?`${bestRev.canal} — ${compactBrl(bestRev.receita)}`:'—',delta:null},
-    {icon:'🔁',label:'Repescagem',val:()=>repVendas?`${brl(repVendas)} em vendas`: '—',delta:repConv||null},
-    {icon:'🎯',label:'CAC / compra',val:()=>cur.cac?brl(cur.cac):'—',delta:cmp?pct(cur.cac,prev.cac):null,invert:true},
-  ];
-  document.getElementById('mk-insight-strip').innerHTML=items.map(it=>`
-    <div style="flex:1;min-width:160px;display:flex;align-items:center;gap:10px">
-      <div class="insight-icon">${it.icon}</div>
-      <div class="insight-text"><div class="insight-label">${it.label}</div><div class="insight-value">${it.val()}</div></div>
-      ${it.delta!==null?`<div class="insight-delta ${it.invert?(it.delta<0?'id-up':'id-dn'):'id-up'}">${it.invert?(it.delta>0?'▲':'▼'):'▲'} ${Math.abs(it.delta).toFixed(1)}${it.invert?'%':'%'}</div>`:''}
-    </div>`).join('<div style="width:1px;background:rgba(255,255,255,.12);align-self:stretch"></div>');
-
-  renderMkCharts(mp);
-  renderMkFunil(mp);
+  if(document.getElementById('tab-marketing').classList.contains('on'))document.getElementById('tb-path').textContent='Marketing';
+  const periods=mkReportPeriods(), monthly=periods.map(p=>({p,sum:mkSumP(p)}));
+  const best=monthly.slice().sort((a,b)=>b.sum.roas-a.sum.roas)[0];
+  document.getElementById('mk-hero-period').textContent=`${end.m} ${end.a}`;
+  document.getElementById('mk-hero-invest').textContent=brl(cur.invest).replace(',00','');
+  document.getElementById('mk-hero-rev').textContent=brl(cur.receita).replace(',00','');
+  document.getElementById('mk-hero-roas').textContent=cur.roas.toFixed(1)+'×';
+  document.getElementById('mk-hero-best').textContent=best?pLabel(best.p).replace('/','/'):'—';
+  document.getElementById('mk-highlight-period').textContent=pLabel(mp);
+  document.getElementById('mk-roas-period').textContent=pLabel(mp);
+  document.getElementById('mk-google-period').textContent=mkMonthName(mp);
+  renderMkCharts(mp,periods,monthly);
   renderMkTables(mp);
+  renderMkClientes();
+  renderMkGoogle(mp);
+  renderMkRepescagem();
 }
-function renderMkCharts(mp){
-  const rows=mkRowsP(mp), labels=rows.map(r=>r.canal);
-  if(CH.mkSpend)CH.mkSpend.destroy();
-  CH.mkSpend=new Chart(document.getElementById('mkChSpend'),{type:'bar',data:{labels,datasets:[{label:'Retorno',data:rows.map(r=>r.receita),backgroundColor:'#006bd6',borderRadius:6},{label:'Investimento',data:rows.map(r=>r.invest),backgroundColor:'#8ed8f8',borderRadius:6}]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},scales:{...CDef.scales,x:{...CDef.scales.x,ticks:{...CDef.scales.x.ticks,callback:(v,i)=>labels[i]}}}}});
-  if(CH.mkRoas)CH.mkRoas.destroy();
-  CH.mkRoas=new Chart(document.getElementById('mkChRoas'),{type:'bar',data:{labels,datasets:[{label:'ROAS',data:rows.map(r=>r.roas),backgroundColor:'#123b7a',borderRadius:6}]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ROAS: ${c.parsed.y.toFixed(1)}x`}}}}});
-  const months=MONTH_PERIODS.filter(p=>p.months[0].a===2026).slice().reverse();
-  const sums=months.map(p=>mkSumP(p));
-  if(CH.mkEvo)CH.mkEvo.destroy();
-  CH.mkEvo=new Chart(document.getElementById('mkChEvo'),{type:'line',data:{labels:months.map(p=>p.label),datasets:[{label:'Cadastros com compras',data:sums.map(s=>s.novos),borderColor:'#006bd6',backgroundColor:'rgba(0,107,214,.12)',fill:true,tension:.3},{label:'Novos cadastros',data:sums.map(s=>s.leads),borderColor:'#00a6c8',backgroundColor:'rgba(0,166,200,.12)',fill:true,tension:.3}]},options:CDef});
-  const totalLeads=rows.reduce((s,r)=>s+r.leads,0);
-  renderDonut('mkChOrigem','mkLgOrigem',rows.map(r=>[r.canal,totalLeads?Math.round(r.leads/totalLeads*100):0]).filter(r=>r[1]>0),['#123b7a','#006bd6','#00a6c8','#8ed8f8','#1a6e4e']);
-}
-function renderMkFunil(mp){
-  const env=mkMetricP(MKR,mp,'Envios totais');
-  const ap=mkMetricP(MKR,mp,'Aprovações');
-  const tx=env?ap/env*100:0;
-  const vendas=mkMetricP(MKR,mp,'Vendas geradas (R$)');
-  document.getElementById('mk-funil').innerHTML=`<div class="funnel">
-    <div class="f-step" style="width:100%;background:#123b7a"><div><div class="f-label">Envios totais</div><div class="f-pct">base da repescagem</div></div><div class="f-val">${env.toLocaleString('pt-BR')}</div></div>
-    <div class="f-conn"><div class="f-clbl">conversão</div><div class="f-conv">${tx.toFixed(2)}%</div></div>
-    <div class="f-step" style="width:76%;background:#006bd6"><div><div class="f-label">Aprovações</div><div class="f-pct">pedidos recuperados</div></div><div class="f-val">${ap.toLocaleString('pt-BR')}</div></div>
-    <div class="f-conn"><div class="f-clbl">vendas geradas</div><div class="f-conv">${brl(vendas)}</div></div>
-  </div>`;
+function renderMkCharts(mp,periods,monthed){
+  const labels=periods.map(p=>p.label);
+  if(CH.mkMonthly)CH.mkMonthly.destroy();
+  CH.mkMonthly=new Chart(document.getElementById('mkChMonthly'),{type:'bar',data:{labels,datasets:[
+    {label:'Investimento',data:monthed.map(x=>x.sum.invest),backgroundColor:'#2f4174',borderRadius:0,barPercentage:.35},
+    {label:'Retorno',data:monthed.map(x=>x.sum.receita),backgroundColor:'#86a1cf',borderRadius:0,barPercentage:.35}
+  ]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}}}}});
+  if(CH.mkRoasMonth)CH.mkRoasMonth.destroy();
+  CH.mkRoasMonth=new Chart(document.getElementById('mkChRoasMonth'),{type:'line',data:{labels,datasets:[{label:'ROAS',data:monthed.map(x=>x.sum.roas),borderColor:'#2f4174',backgroundColor:'rgba(47,65,116,.10)',fill:true,tension:.25,pointRadius:5,pointBackgroundColor:'#2f4174'}]},options:{...CDef,scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v.toFixed(1)+'×'}}}}});
+  const rows=mkRowsP(mp).sort((a,b)=>b.roas-a.roas);
+  if(CH.mkRoasChannel)CH.mkRoasChannel.destroy();
+  CH.mkRoasChannel=new Chart(document.getElementById('mkChRoasChannel'),{type:'bar',data:{labels:rows.map(r=>r.canal),datasets:[{label:'ROAS',data:rows.map(r=>r.roas),backgroundColor:'#2f4174',borderRadius:0}]},options:{...CDef,indexAxis:'y',plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ROAS: ${c.parsed.x.toFixed(1)}×`}}},scales:{x:{...CDef.scales.x,ticks:{...CDef.scales.x.ticks,callback:v=>v+'×'}},y:{...CDef.scales.y,grid:{display:false}}}}});
+  const channels=[...new Set(MK.map(r=>r.canal))];
+  if(CH.mkRoasEvo)CH.mkRoasEvo.destroy();
+  CH.mkRoasEvo=new Chart(document.getElementById('mkChRoasEvo'),{type:'line',data:{labels,datasets:channels.map((ch,i)=>({label:ch,data:periods.map(p=>mkRowsP(p).find(r=>r.canal===ch)?.roas||null),borderColor:['#2f4174','#86a1cf','#182a5c'][i%3],backgroundColor:'transparent',tension:.2,pointRadius:3,borderDash:i===1?[6,4]:[]}))},options:{...CDef,plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:8,font:{family:'Poppins',size:10}}}},scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v+'×'}}}}});
+  if(CH.mkGoogleRoas)CH.mkGoogleRoas.destroy();
+  const googlePeriods=periods.filter(p=>mkRowsP(p).some(r=>r.canal==='Google Ads'));
+  CH.mkGoogleRoas=new Chart(document.getElementById('mkChGoogleRoas'),{type:'line',data:{labels:googlePeriods.map(p=>p.label),datasets:[{label:'Google Ads',data:googlePeriods.map(p=>mkRowsP(p).find(r=>r.canal==='Google Ads').roas),borderColor:'#46598f',backgroundColor:'rgba(70,89,143,.10)',fill:true,tension:.25,pointRadius:4,pointBackgroundColor:'#46598f'}]},options:{...CDef,scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v.toFixed(1)+'×'}}}}});
 }
 function renderMkTables(mp){
-  const rows=mkRowsP(mp).slice().sort((x,y)=>y.receita-x.receita);
-  const tot=mkSumP(mp);
-  document.getElementById('mk-tbl').innerHTML=`<table class="dt"><thead><tr><th>Canal</th><th class="tr">Invest.</th><th class="tr">Retorno</th><th class="tr">Cadastros</th><th class="tr">Compras</th><th class="tr">CAC</th><th class="tr">ROAS</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.canal}</td><td class="tr">${brl(r.invest)}</td><td class="tr">${brl(r.receita)}</td><td class="tr">${r.leads}</td><td class="tr">${r.novos}</td><td class="tr">${r.cac?brl(r.cac):'—'}</td><td class="tr"><span class="badge ${r.roas>=6?'bg':'bb'}">${r.roas.toFixed(1)}x</span></td></tr>`).join('')}<tr class="tot"><td>Total</td><td class="tr">${brl(tot.invest)}</td><td class="tr">${brl(tot.receita)}</td><td class="tr">${tot.leads}</td><td class="tr">${tot.novos}</td><td class="tr">${tot.cac?brl(tot.cac):'—'}</td><td class="tr">${tot.roas.toFixed(1)}x</td></tr></tbody></table>`;
-  const camps=mkCampsP(mp);
-  document.getElementById('mk-camp-tbl').innerHTML=`<table class="dt"><thead><tr><th>Campanha</th><th>Canal</th><th class="tr">Invest.</th><th class="tr">Retorno</th><th class="tr">ROAS</th></tr></thead><tbody>${camps.map(c=>`<tr><td>${c.campanha}</td><td>${c.canal}</td><td class="tr">${brl(c.invest)}</td><td class="tr">${brl(c.receita)}</td><td class="tr"><span class="badge ${c.roas>=6?'bg':'bb'}">${c.roas.toFixed(1)}x</span></td></tr>`).join('')}</tbody></table>`;
-  const google=MKS.filter(d=>inP(d,mp));
-  document.getElementById('mk-google-tbl').innerHTML=`<table class="dt"><thead><tr><th>Métrica</th><th class="tr">Valor</th></tr></thead><tbody>${google.map(g=>`<tr><td>${g.metrica}</td><td class="tr">${g.valor}</td></tr>`).join('')}</tbody></table>`;
+  const camps=mkCampsP(mp).slice().sort((a,b)=>b.roas-a.roas).slice(0,5);
+  document.getElementById('mk-camp-tbl').innerHTML=`<table class="dt"><thead><tr><th>Campanha</th><th>Canal</th><th class="tr">ROAS</th></tr></thead><tbody>${camps.map(c=>`<tr><td>${c.campanha}</td><td><span class="badge bg">${c.canal}</span></td><td class="tr"><strong>${c.roas>=10?c.roas.toFixed(0):c.roas.toFixed(1)}×</strong></td></tr>`).join('')}</tbody></table>`;
 }
+function renderMkClientes(){
+  const ps=MONTH_PERIODS.filter(p=>p.months[0].a===2026).slice().reverse();
+  const sums=ps.map(p=>mkSumP(p));
+  const janAbr=sums.reduce((a,s)=>({invest:a.invest+s.invest,leads:a.leads+s.leads,novos:a.novos+s.novos}),{invest:0,leads:0,novos:0});
+  const best=ps.map((p,i)=>({p,cac:sums[i].novos?sums[i].invest/sums[i].novos:Infinity})).sort((a,b)=>a.cac-b.cac)[0];
+  document.getElementById('mk-client-cards').innerHTML=`
+    <div class="mk-small-card"><div class="mk-small-k">Total cadastros</div><div class="mk-small-v">${janAbr.leads.toLocaleString('pt-BR')}</div><div class="mk-small-s">jan – abr/26</div></div>
+    <div class="mk-small-card"><div class="mk-small-k">Com compras</div><div class="mk-small-v">${janAbr.novos.toLocaleString('pt-BR')}</div><div class="mk-small-s">jan – abr/26</div></div>
+    <div class="mk-small-card"><div class="mk-small-k">Conversão média</div><div class="mk-small-v">${(janAbr.novos/janAbr.leads*100).toFixed(1)}%</div><div class="mk-small-s">cadastros → compra</div></div>
+    <div class="mk-small-card"><div class="mk-small-k">Melhor CAC/compra</div><div class="mk-small-v">${brl(best.cac)}</div><div class="mk-small-s">${pEnd(best.p).m}/26</div></div>`;
+  if(CH.mkCadastros)CH.mkCadastros.destroy();
+  CH.mkCadastros=new Chart(document.getElementById('mkChCadastros'),{type:'bar',data:{labels:ps.map(p=>pEnd(p).m),datasets:[{label:'Cadastros novos',data:sums.map(s=>s.leads),backgroundColor:'#46598f'},{label:'Com compras',data:sums.map(s=>s.novos),backgroundColor:'#86a1cf'}]},options:CDef});
+  if(CH.mkConv)CH.mkConv.destroy();
+  CH.mkConv=new Chart(document.getElementById('mkChConv'),{type:'line',data:{labels:ps.map(p=>pEnd(p).m),datasets:[{label:'Conversão',data:sums.map(s=>s.leads?s.novos/s.leads*100:0),borderColor:'#2f4174',backgroundColor:'rgba(47,65,116,.10)',fill:true,tension:.2,pointRadius:5,pointBackgroundColor:'#2f4174'}]},options:{...CDef,scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v+'%'}}}}});
+  const table=(title,mode)=>`<div class="sec-tag" style="margin-bottom:8px">${title}</div><table class="dt"><thead><tr><th>Mês</th><th class="tr">Invest.</th><th class="tr">${mode==='leads'?'Cadastros':'Compraram'}</th><th class="tr">CAC</th></tr></thead><tbody>${ps.map((p,i)=>{const base=mode==='leads'?sums[i].leads:sums[i].novos;return`<tr><td>${pEnd(p).m}</td><td class="tr">${brl(sums[i].invest).replace(',00','')}</td><td class="tr">${base}</td><td class="tr">${base?brl(sums[i].invest/base):'—'}</td></tr>`}).join('')}</tbody></table>`;
+  document.getElementById('mk-cac-new').innerHTML=table('CAC por cadastro novo','leads');
+  document.getElementById('mk-cac-buy').innerHTML=table('CAC por cadastro com compra','novos');
+  if(CH.mkCac)CH.mkCac.destroy();
+  CH.mkCac=new Chart(document.getElementById('mkChCac'),{type:'bar',data:{labels:ps.map(p=>pEnd(p).m),datasets:[{label:'CAC cadastro',data:sums.map(s=>s.leads?s.invest/s.leads:0),backgroundColor:'#46598f'},{label:'CAC compra',data:sums.map(s=>s.novos?s.invest/s.novos:0),backgroundColor:'#86a1cf'}]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>'R$ '+Number(v).toFixed(2)}}}}});
+}
+function renderMkGoogle(mp){
+  const g=mkGoogleMetrics(mp);
+  document.getElementById('mk-google-cards').innerHTML=`
+    ${[['Solicitações',g.solicitacoes,'vs 45 em março (+55,6%)'],['Aprovações',g.aprovacoes,'conversão 14,3%'],['Ticket médio',brl(g.ticket),'vs R$ 402,69 em março'],['Valor aprovado',brl(g.valor),'vs R$ 9.072,42 em março'],['Tempo atendimento',g.at,''],['Tempo cálculo',g.calc,''],['Pagamentos',`${g.pix} Pix · ${g.cartao} Cartão`,''],['Não calculadas',g.naoCalc,''],['Primeiras solicitações',g.primeiras,''],['Primeiras aprovações',g.primeirasAp,''],['Bairros (maioria)',g.bairro,'']].map(c=>`<div class="mk-small-card"><div class="mk-small-k">${c[0]}</div><div class="mk-small-v">${c[1]}</div><div class="mk-small-s">${c[2]}</div></div>`).join('')}`;
+  document.getElementById('mk-proj-tbl').innerHTML=`<table class="dt"><thead><tr><th>Métrica</th><th class="tr">Março (real)</th><th class="tr">Abril (real)</th><th class="tr">Maio (projeção)</th></tr></thead><tbody>
+    <tr><td>Investimento Google Ads</td><td class="tr">R$ 563,67</td><td class="tr">R$ 1.222,24</td><td class="tr">R$ 1.500,00</td></tr>
+    <tr><td>Solicitações</td><td class="tr">45</td><td class="tr">70</td><td class="tr">~86</td></tr>
+    <tr><td>Custo por solicitação</td><td class="tr">R$ 12,57</td><td class="tr">R$ 17,46</td><td class="tr">R$ 17,46 mantido</td></tr>
+    <tr><td>Aprovações</td><td class="tr">11</td><td class="tr">10</td><td class="tr">~12</td></tr>
+    <tr><td>Taxa de conversão</td><td class="tr">24,4%</td><td class="tr">14,3%</td><td class="tr">14,3% mantida</td></tr>
+    <tr><td>Ticket médio</td><td class="tr">R$ 402,69</td><td class="tr">R$ 233,75</td><td class="tr">R$ 233,75 mantido</td></tr>
+    <tr><td>Valor total aprovado</td><td class="tr">R$ 9.072,42</td><td class="tr">R$ 2.337,50</td><td class="tr">~R$ 2.805,00</td></tr>
+  </tbody></table>`;
+}
+function renderMkRepescagem(){
+  const mar=pById('mk-mar26',true),abr=pById('mk-abr26',true);
+  const card=p=>{const env=mkMetricP(MKR,p,'Envios totais'),ap=mkMetricP(MKR,p,'Aprovações'),ven=mkMetricP(MKR,p,'Vendas geradas (R$)'),tx=env?ap/env*100:0;return`<div class="mk-panel mk-panel-bordered"><span class="badge bg">${pEnd(p).m}</span><div class="mk-small-cards" style="grid-template-columns:1fr 1fr"><div><div class="mk-small-k">Envios</div><div class="mk-small-v">${env}</div></div><div><div class="mk-small-k">Aprovações</div><div class="mk-small-v">${ap}</div></div><div><div class="mk-small-k">Taxa de conversão</div><div class="mk-small-v">${tx.toFixed(1)}%</div></div><div><div class="mk-small-k">Vendas geradas</div><div class="mk-small-v">${brl(ven)}</div></div></div></div>`};
+  document.getElementById('mk-rep-cards').innerHTML=card(mar)+card(abr);
+  const labels=['Março','Abril'], env=[mkMetricP(MKR,mar,'Envios totais'),mkMetricP(MKR,abr,'Envios totais')], ap=[mkMetricP(MKR,mar,'Aprovações'),mkMetricP(MKR,abr,'Aprovações')], ven=[mkMetricP(MKR,mar,'Vendas geradas (R$)'),mkMetricP(MKR,abr,'Vendas geradas (R$)')];
+  if(CH.mkRep)CH.mkRep.destroy();
+  CH.mkRep=new Chart(document.getElementById('mkChRepescagem'),{type:'bar',data:{labels,datasets:[{label:'Envios',data:env,backgroundColor:'#86a1cf',yAxisID:'y'},{label:'Aprovações',data:ap,backgroundColor:'#46598f',yAxisID:'y'},{label:'Vendas',data:ven,backgroundColor:'#2f4174',yAxisID:'y2'}]},options:{...CDef,plugins:{...CDef.plugins,legend:{display:true,position:'top'}},scales:{x:CDef.scales.x,y:{...CDef.scales.y,position:'left'},y2:{...CDef.scales.y,position:'right',grid:{display:false},ticks:{...CDef.scales.y.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}}}}});
+}
+
 
 /* ── Interactions ──────────────────────────────────────────── */
 function swTab(tab,btn){
@@ -1826,12 +1876,15 @@ function setLastMonth(){
 
 function renderMkSelects(){
   const period=document.getElementById('mk-period-main'),comp=document.getElementById('mk-comp-a');
-  if(period)period.innerHTML=MK_PERIODS.map(p=>`<option value="${p.id}" ${p.id===mkPeriodId?'selected':''}>${p.label}</option>`).join('');
-  if(comp)comp.innerHTML='<option value="">Sem comparativo</option>'+MK_PERIODS.map(p=>`<option value="${p.id}" ${p.id===mkCompId?'selected':''}>${p.label}</option>`).join('');
+  const months=MK_PERIODS.filter(p=>p.months.length===1);
+  const opts=id=>months.map(p=>`<option value="${p.id}" ${p.id===id?'selected':''}>${p.label}</option>`).join('');
+  if(period)period.innerHTML=opts(mkPeriodId);
+  if(comp)comp.innerHTML='<option value="">Sem comparativo</option>'+opts(mkCompId);
 }
 
 function setMkPeriod(value){mkPeriodId=value;renderMarketing()}
 function setMkComp(value){mkCompId=value;renderMarketing()}
+function setLastMkMonth(){mkPeriodId='mk-abr26';mkCompId='';renderMarketing()}
 
 function setM(m,btn){
   const map={Janeiro:'jan26',Fevereiro:'fev26',Março:'mar26',Abril:'abr26'};
