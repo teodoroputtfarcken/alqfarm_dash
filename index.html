@@ -700,10 +700,7 @@ body.auth-locked .auth-modal { display: flex; }
 
 /* ── Mobile (≤768px) ─────────────────────────────────────────── */
 @media (max-width: 768px) {
-  /* Body */
   body { flex-direction: column; font-size: 12px; }
-
-  /* Sidebar: off-canvas by default */
   .sidebar {
     transform: translateX(-100%);
     transition: transform .28s cubic-bezier(.4,0,.2,1);
@@ -711,14 +708,8 @@ body.auth-locked .auth-modal { display: flex; }
     overflow-y: auto;
   }
   .sidebar.open { transform: translateX(0); }
-
-  /* Overlay: show when sidebar open */
   .overlay { display: block; }
-
-  /* Main: full width */
   .main { margin-left: 0; }
-
-  /* Topbar */
   .topbar { padding: 0 14px; height: 52px; gap: 8px; }
   .topbar-title { font-size: 13px; }
   .topbar-sep { display: none; }
@@ -729,22 +720,14 @@ body.auth-locked .auth-modal { display: flex; }
   .topbar-btn:not(.topbar-btn-p) { display: none; }
   .topbar-btn-p { padding: 5px 10px; font-size: 10px; }
   .hamburger { display: flex; }
-
-  /* Content */
   .content { padding: 14px 16px; }
-
-  /* Page header */
   .page-hd { flex-direction: column; gap: 10px; margin-bottom: 16px; }
   .page-hd-title { font-size: 18px; }
   .page-hd-sub { font-size: 11px; }
   .page-hd-actions { flex-wrap: wrap; gap: 6px; }
-
-  /* Filter strip */
   .filter-strip { gap: 8px; padding: 10px 12px; }
   .fl { display: none; }
   #fs-info { display: none; }
-
-  /* Insight strip */
   .insight-strip { flex-direction: column; gap: 0; padding: 0; }
   .insight-strip > div {
     padding: 12px 14px;
@@ -754,46 +737,28 @@ body.auth-locked .auth-modal { display: flex; }
   }
   .insight-strip > div:last-child { border-bottom: none; }
   .insight-strip > div[style*="width:1px"] { display: none; }
-
-  /* KPI grid */
   .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
   .kpi-val { font-size: 22px; }
   .kpi-card { padding: 14px 16px; }
-
-  /* Grids */
   .g2, .g3 { grid-template-columns: 1fr; gap: 16px; }
   .g4 { grid-template-columns: 1fr 1fr; gap: 10px; }
-
-  /* Chart heights */
   .cwrap[style*="height:300px"] { height: 220px !important; }
   .cwrap[style*="height:280px"] { height: 220px !important; }
   .cwrap[style*="height:220px"] { height: 180px !important; }
   .cwrap[style*="height:180px"] { height: 150px !important; }
   .cwrap[style*="height:160px"] { height: 140px !important; }
   .cwrap[style*="height:130px"] { height: 120px !important; }
-
-  /* Section */
   .sec-hd { padding: 12px 16px; }
   .sec-body { padding: 16px; }
   .sec-div { margin-top: 16px; padding-top: 16px; }
   .sec-title { font-size: 13px; }
-
-  /* Table: horizontal scroll */
   #tbl { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .dt { min-width: 540px; }
   .dt th, .dt td { padding: 8px 10px; }
-
-  /* Funnel */
   .f-step { padding: 10px 14px; }
   .f-val { font-size: 15px; }
-
-  /* Time cards */
   .tc-val { font-size: 17px; }
-
-  /* NPS */
   .nps-num { font-size: 52px; }
-
-  /* Month buttons: shorter labels handled in JS */
   .mbtns { flex-wrap: wrap; }
 }
 
@@ -828,9 +793,6 @@ body.auth-locked .auth-modal { display: flex; }
   </form>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!--  SIDEBAR                                                   -->
-<!-- ═══════════════════════════════════════════════════════════ -->
 <aside class="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-mark">
@@ -882,15 +844,10 @@ body.auth-locked .auth-modal { display: flex; }
   </div>
 </aside>
 
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!--  MAIN                                                      -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- Overlay mobile -->
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <main class="main">
 
-  <!-- Topbar -->
   <header class="topbar">
     <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -911,20 +868,15 @@ body.auth-locked .auth-modal { display: flex; }
     </div>
   </header>
 
-  <!-- ════════════════════════════════════════════════════════ -->
-  <!-- TAB COMERCIAL                                          -->
-  <!-- ════════════════════════════════════════════════════════ -->
   <div class="tc on" id="tab-comercial">
   <div class="content">
 
-    <!-- Page header -->
     <div class="page-hd">
       <div class="page-hd-left">
         <div class="page-hd-title page-hd-title-lg">Performance Comercial</div>
       </div>
     </div>
 
-    <!-- Filter strip -->
     <div class="filter-strip">
       <span class="fl">Período:</span>
       <div class="comp-tag"><span class="dot da"></span><select class="comp-select multi-select" id="period-main" onchange="setPeriodFromSelect(this)"></select></div>
@@ -932,10 +884,8 @@ body.auth-locked .auth-modal { display: flex; }
       <button class="last-month-btn" type="button" onclick="setLastMonth()">Último mês</button>
     </div>
 
-    <!-- Insight strip -->
     <div class="insight-strip" id="insight-strip"></div>
 
-    <!-- KPIs -->
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-tag">NPS do mês</div>
@@ -959,7 +909,6 @@ body.auth-locked .auth-modal { display: flex; }
       </div>
     </div>
 
-    <!-- ── SEÇÃO ATIVOS REJEITADOS ───────────────────────────── -->
     <div class="sec" id="sec-ativos">
       <div class="sec-hd">
         <div class="sec-hd-left">
@@ -990,7 +939,6 @@ body.auth-locked .auth-modal { display: flex; }
       </div>
     </div>
 
-    <!-- ── SEÇÃO REJEIÇÃO ────────────────────────────────── -->
     <div class="sec" id="sec-rej">
       <div class="sec-hd">
         <div class="sec-hd-left">
@@ -1038,7 +986,6 @@ body.auth-locked .auth-modal { display: flex; }
       </div>
     </div>
 
-    <!-- ── SEÇÃO TEMPOS ──────────────────────────────────── -->
     <div class="sec" id="sec-tempo">
       <div class="sec-hd">
         <div class="sec-hd-left">
@@ -1058,7 +1005,6 @@ body.auth-locked .auth-modal { display: flex; }
       </div>
     </div>
 
-    <!-- ── SEÇÃO NPS ─────────────────────────────────────── -->
     <div class="sec" id="sec-nps">
       <div class="sec-hd">
         <div class="sec-hd-left">
@@ -1094,12 +1040,9 @@ body.auth-locked .auth-modal { display: flex; }
       </div>
     </div>
 
-  </div><!-- /content -->
-  </div><!-- /tab-comercial -->
+  </div>
+  </div>
 
-  <!-- ════════════════════════════════════════════════════════ -->
-  <!-- TAB MARKETING                                          -->
-  <!-- ════════════════════════════════════════════════════════ -->
   <div class="tc" id="tab-marketing">
   <div class="content">
     <div class="mk-hero">
@@ -1183,14 +1126,10 @@ body.auth-locked .auth-modal { display: flex; }
 
 </main>
 
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!--  JAVASCRIPT                                               -->
-<!-- ═══════════════════════════════════════════════════════════ -->
 <script>
 const MO=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const MS=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
-/* ── Datasets ─────────────────────────────────────────────── */
 const DR=[
   {ano:2026,mes:'Janeiro',med:'PATRICIA MACHADO',ef:307,ap:54,rj:253,vl:42298.91,ix:82.41},
   {ano:2026,mes:'Janeiro',med:'ISIS CARLA QUEIROZ DE SOUZA',ef:126,ap:45,rj:81,vl:12536.85,ix:64.29},
@@ -1424,7 +1363,6 @@ const MKR=[
   {ano:2026,mes:'Abril',metrica:'Vendas geradas (R$)',valor:32032.72},
 ];
 
-
 const DP_NEU={
   'Abril 2026':[['Não especificado',69],['Preço Competitivo',15],['Atendimento',12],['Serviço',3]],
   'Março 2026':[['Não especificado',62],['Atendimento',25],['Preço Competitivo',7],['Serviço',3]],
@@ -1628,7 +1566,6 @@ function renderKPIs(cp,pr,py){
 }
 function kc(la,da,lb,db){return`${la?`<div class="kc"><span class="kc-per">vs ${la}</span>${da}</div>`:''}${lb?`<div class="kc"><span class="kc-per">vs ${lb}</span>${db}</div>`:''}`}
 
-
 const MONTH_STACK_COLORS=['#8ed8f8','#00a6c8','#006bd6','#123b7a','#4a5684','#85a0cc'];
 function monthDatasets(p,rows,keys,keyField,valueField){
   return p.months.map((m,i)=>({
@@ -1809,7 +1746,6 @@ function renderDonut(id,lgId,data,colors){
   if(el)el.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:4px 10px">${data.map((d,i)=>`<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#006bd6;font-weight:500"><span style="width:7px;height:7px;border-radius:50%;background:${colors[i]};display:inline-block"></span>${d[0]} (${d[1]}%)</div>`).join('')}</div>`;
 }
 
-
 function mkReportPeriods(){return MK_PERIODS.filter(p=>p.months.length===1).slice().reverse()}
 function mkMonthName(p){return pEnd(p).m.toLowerCase()}
 function mkGoogleMetrics(p){const rows=MKS.filter(d=>inP(d,p));const val=name=>rows.find(d=>d.metrica===name)?.valor||'—';return {
@@ -1906,7 +1842,6 @@ function renderMkRepescagem(){
   CH.mkRep=new Chart(document.getElementById('mkChRepescagem'),{type:'bar',data:{labels,datasets:[{label:'Envios',data:env,backgroundColor:'#86a1cf',yAxisID:'y'},{label:'Aprovações',data:ap,backgroundColor:'#46598f',yAxisID:'y'},{label:'Vendas',data:ven,backgroundColor:'#2f4174',yAxisID:'y2'}]},options:{...CDef,plugins:{...CDef.plugins,legend:{display:true,position:'top'}},scales:{x:CDef.scales.x,y:{...CDef.scales.y,position:'left'},y2:{...CDef.scales.y,position:'right',grid:{display:false},ticks:{...CDef.scales.y.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}}}}});
 }
 
-
 /* ── Interactions ──────────────────────────────────────────── */
 function swTab(tab,btn){
   showTab(tab);
@@ -1918,17 +1853,16 @@ function swTab(tab,btn){
   if(window.innerWidth <= 768) closeSidebar();
 }
 
-
+/* ── FIX: removido requestAnimationFrame duplicado que causava
+   double-render dos gráficos de ativos e médicos ao filtrar.
+   render() já chama renderAtivos(cp), renderBarQty(cp) e
+   renderBarVal(cp) internamente — o RAF extra destruía os charts
+   corretamente renderizados e os recriava com contexto de canvas
+   em estado inválido, resultando em valores zerados e indexAxis
+   incorreto nos gráficos horizontais stacked. ─────────────────── */
 function renderAfterCommercialFilter(){
   render();
-  requestAnimationFrame(()=>{
-    const cp=periodFromIds(cPeriodIds);
-    renderAtivos(cp);
-    renderBarQty(cp);
-    renderBarVal(cp);
-  });
 }
-
 
 function renderCompSelects(){
   const period=document.getElementById('period-main'),a=document.getElementById('comp-a');
@@ -2056,7 +1990,7 @@ function expCSV(){
       ...rows.map(x=>[x.canal,x.invest.toFixed(2).replace('.',','),x.receita.toFixed(2).replace('.',','),x.leads,x.novos,x.cac.toFixed(2).replace('.',','),x.roas.toFixed(2).replace('.',',')]),
       [],['Total Investimento',tot.invest.toFixed(2).replace('.',',')],['Total Receita',tot.receita.toFixed(2).replace('.',',')],['ROAS Médio',tot.roas.toFixed(2).replace('.',',')]
     ].map(r=>r.join(';')).join('\n');
-    file=`ALQ_Farma_Marketing_${pLabel(mp).replace(/[^A-Za-z0-9]+/g,'_')}.csv`;
+    file=`ALQ_Farma_Marketing_${pLabel(mkPeriodFromIds(mkPeriodIds)).replace(/[^A-Za-z0-9]+/g,'_')}.csv`;
   } else {
     const cp=periodFromIds(cPeriodIds),d=grP(cp);
     const t=timeP(cp),nps=npsP(cp);
