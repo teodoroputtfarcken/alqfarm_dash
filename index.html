@@ -1567,8 +1567,8 @@ function render(){
   renderInsight(cp,pr);
   renderKPIs(cp,pr,py);
   renderAtivos(cp);
-  renderBarQty();
-  renderBarVal();
+  renderBarQty(cp);
+  renderBarVal(cp);
   renderEvo();
   renderFunil();
   renderTbl();
@@ -1654,10 +1654,18 @@ function renderAtivos(cp){
   renderAtivoVal(cp);
   renderAtivoTbl(cp);
 }
+function chartCanvas(id){return document.getElementById(id)}
+function destroyChart(key,id){
+  const canvas=chartCanvas(id),existing=canvas&&window.Chart?.getChart?Chart.getChart(canvas):null;
+  if(existing)existing.destroy();
+  else if(CH[key])CH[key].destroy();
+  CH[key]=null;
+  return canvas;
+}
 function renderAtivoQty(cp){
   const rows=DA.filter(x=>x.st==='num'&&inP(x,cp)),keys=topKeysByMonth(rows,cp,'ativo','rj');
-  if(CH.aq)CH.aq.destroy();
-  CH.aq=new Chart(document.getElementById('chAQ'),{type:'bar',
+  const canvas=destroyChart('aq','chAQ');
+  CH.aq=new Chart(canvas,{type:'bar',
     data:{labels:keys.map(tc),datasets:monthDatasets(cp,rows,keys,'ativo','rj')},
     options:{...CDef,indexAxis:'y',
       plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:10,font:{family:'Poppins',size:10,weight:'600'}}},tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.x.toLocaleString('pt-BR')} rejeitados`}}},
@@ -1666,8 +1674,8 @@ function renderAtivoQty(cp){
 }
 function renderAtivoVal(cp){
   const rows=DA.filter(x=>x.st==='val'&&inP(x,cp)),keys=topKeysByMonth(rows,cp,'ativo','vl');
-  if(CH.av)CH.av.destroy();
-  CH.av=new Chart(document.getElementById('chAV'),{type:'bar',
+  const canvas=destroyChart('av','chAV');
+  CH.av=new Chart(canvas,{type:'bar',
     data:{labels:keys.map(tc),datasets:monthDatasets(cp,rows,keys,'ativo','vl')},
     options:{...CDef,indexAxis:'y',
       plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:10,font:{family:'Poppins',size:10,weight:'600'}}},tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.x)}`}}},
@@ -1681,20 +1689,20 @@ function renderAtivoTbl(cp){
   document.getElementById('tbl-ativos').innerHTML=`<table class="dt"><thead><tr><th>Tipo</th><th>Ativo</th><th class="tr">Efetuados</th><th class="tr">Aprovados</th><th class="tr">Rejeitados</th><th class="tr">Valor</th><th class="tr">Índice</th></tr></thead><tbody>${rows.map(x=>`<tr><td><span class="badge bb">${x.tipo}</span></td><td>${tc(x.ativo)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tr"><span class="badge ${x.ix>=60?'br':x.ix>=40?'bb':'bg'}">${x.ix.toFixed(1)}%</span></td></tr>`).join('')}</tbody></table>`;
 }
 
-function renderBarQty(){
-  const cp=periodFromIds(cPeriodIds),rows=DR.filter(x=>inP(x,cp)),keys=topKeysByMonth(rows,cp,'med','rj');
-  if(CH.q)CH.q.destroy();
-  CH.q=new Chart(document.getElementById('chQ'),{type:'bar',
+function renderBarQty(cp=periodFromIds(cPeriodIds)){
+  const rows=DR.filter(x=>inP(x,cp)),keys=topKeysByMonth(rows,cp,'med','rj');
+  const canvas=destroyChart('q','chQ');
+  CH.q=new Chart(canvas,{type:'bar',
     data:{labels:keys.map(sn),datasets:monthDatasets(cp,rows,keys,'med','rj')},
     options:{...CDef,indexAxis:'y',
       plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:10,font:{family:'Poppins',size:10,weight:'600'}}},tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.x.toLocaleString('pt-BR')} rejeitados`}}},
       scales:stackedScales()}
   });
 }
-function renderBarVal(){
-  const cp=periodFromIds(cPeriodIds),rows=DR.filter(x=>inP(x,cp)),keys=topKeysByMonth(rows,cp,'med','vl');
-  if(CH.v)CH.v.destroy();
-  CH.v=new Chart(document.getElementById('chV'),{type:'bar',
+function renderBarVal(cp=periodFromIds(cPeriodIds)){
+  const rows=DR.filter(x=>inP(x,cp)),keys=topKeysByMonth(rows,cp,'med','vl');
+  const canvas=destroyChart('v','chV');
+  CH.v=new Chart(canvas,{type:'bar',
     data:{labels:keys.map(sn),datasets:monthDatasets(cp,rows,keys,'med','vl')},
     options:{...CDef,indexAxis:'y',
       plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:10,font:{family:'Poppins',size:10,weight:'600'}}},tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.x)}`}}},
@@ -1911,6 +1919,17 @@ function swTab(tab,btn){
 }
 
 
+function renderAfterCommercialFilter(){
+  render();
+  requestAnimationFrame(()=>{
+    const cp=periodFromIds(cPeriodIds);
+    renderAtivos(cp);
+    renderBarQty(cp);
+    renderBarVal(cp);
+  });
+}
+
+
 function renderCompSelects(){
   const period=document.getElementById('period-main'),a=document.getElementById('comp-a');
   const opts=selected=>MONTH_PERIODS.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.label}</option>`).join('');
@@ -1922,15 +1941,15 @@ function updateCommercialPeriod(){
   cPeriodId=customIdFromIds(cPeriodIds,'custom:');
   cCompAIds=[];cCompAId='';cCompBId='';
 }
-function setPeriodFromSelect(sel){cPeriodStartId=sel.value||LATEST_MONTH_ID;updateCommercialPeriod();render()}
-function setCompFromSelect(which,sel){if(which==='a')cPeriodEndId=sel.value||cPeriodStartId;updateCommercialPeriod();render()}
-function setPeriod(value){cPeriodStartId=value;cPeriodEndId=value;updateCommercialPeriod();render()}
-function setComp(which,value){if(which==='a')cPeriodEndId=value||cPeriodStartId;updateCommercialPeriod();render()}
+function setPeriodFromSelect(sel){cPeriodStartId=sel.value||LATEST_MONTH_ID;updateCommercialPeriod();renderAfterCommercialFilter()}
+function setCompFromSelect(which,sel){if(which==='a')cPeriodEndId=sel.value||cPeriodStartId;updateCommercialPeriod();renderAfterCommercialFilter()}
+function setPeriod(value){cPeriodStartId=value;cPeriodEndId=value;updateCommercialPeriod();renderAfterCommercialFilter()}
+function setComp(which,value){if(which==='a')cPeriodEndId=value||cPeriodStartId;updateCommercialPeriod();renderAfterCommercialFilter()}
 function setLastMonth(){
   cPeriodStartId=LATEST_MONTH_ID;
   cPeriodEndId=LATEST_MONTH_ID;
   updateCommercialPeriod();
-  render();
+  renderAfterCommercialFilter();
 }
 
 function renderMkSelects(){
@@ -1957,7 +1976,7 @@ function setM(m,btn){
   cPeriodStartId=cPeriodId;
   cPeriodEndId=cPeriodId;
   cPeriodIds=[cPeriodId];
-  render();
+  renderAfterCommercialFilter();
 }
 function setMkM(m,btn){
   mkPeriodId=m==='Março'?'mk-mar26':'mk-abr26';
