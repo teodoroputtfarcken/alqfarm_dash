@@ -1146,6 +1146,42 @@ body.auth-locked .auth-modal { display: flex; }
           <div class="sec-tag" style="margin-bottom:8px">Google Ads — ROAS isolado</div>
           <div class="cwrap" style="height:220px"><canvas id="mkChGoogleRoas"></canvas></div>
         </div>
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:8px">Google Ads — ROAS isolado</div>
+          <div class="cwrap" style="height:220px"><canvas id="mkChGoogleRoas"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-clientes">
+      <div class="sec-hd"><div><div class="sec-tag">Novos clientes</div><div class="sec-title">Cadastros e conversões — jan a abr/26</div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-client-cards"></div>
+        <div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Cadastros novos</span><span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Com compras</span></div>
+        <div class="sec-tag" style="margin:10px 0 8px">Cadastros novos vs com compras</div>
+        <div class="cwrap" style="height:320px"><canvas id="mkChCadastros"></canvas></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Taxa de conversão por mês (%)</div><div class="cwrap" style="height:230px"><canvas id="mkChConv"></canvas></div></div>
+        <div class="sec-div"><div class="g2"><div class="mk-panel mk-panel-bordered" id="mk-cac-new"></div><div class="mk-panel mk-panel-bordered" id="mk-cac-buy"></div></div></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">CAC comparativo (R$)</div><div class="cwrap" style="height:260px"><canvas id="mkChCac"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-google">
+      <div class="sec-hd"><div><div class="sec-tag">Google Ads — solicitações pelo site</div><div class="sec-title">Resultados de <span id="mk-google-period">abril</span></div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-google-cards"></div>
+        <div class="sec-title" style="font-size:15px;margin:8px 0">Projeção — Maio</div>
+        <p class="mk-note">Projeção baseada na eficiência de abril com investimento previsto para maio. Se conversão e ticket médio voltarem ao patamar de março, o valor aprovado pode chegar ao cenário projetado.</p>
+        <div id="mk-proj-tbl" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-repescagem">
+      <div class="sec-hd"><div><div class="sec-tag">Pedido Pago — ação recorrente</div><div class="sec-title">Repescagem diária</div></div></div>
+      <div class="sec-body">
+        <p class="mk-note">Ação contínua do canal Pedido Pago com envios automáticos para a base de clientes.</p>
+        <div class="g2" id="mk-rep-cards"></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Evolução março → abril</div><div class="cwrap" style="height:280px"><canvas id="mkChRepescagem"></canvas></div></div>
       </div>
     </div>
 
@@ -1500,8 +1536,8 @@ const DP_NEU={
 
 /* ── State ────────────────────────────────────────────────── */
 let cM='Abril', cA=2026;
-let cPeriodId='abr26', cCompAId='', cCompBId='', cPeriodIds=['abr26'], cCompAIds=[];
-let mkM='Abril', mkA=2026, mkPeriodId='mk-abr26', mkCompId='', mkPeriodIds=['mk-abr26'], mkCompIds=[];
+let cPeriodId='abr26', cCompAId='', cCompBId='', cPeriodIds=['abr26'], cCompAIds=[], cPeriodStartId='abr26', cPeriodEndId='abr26';
+let mkM='Abril', mkA=2026, mkPeriodId='mk-abr26', mkCompId='', mkPeriodIds=['mk-abr26'], mkCompIds=[], mkPeriodStartId='mk-abr26', mkPeriodEndId='mk-abr26';
 const CH={};
 
 /* ── Utils ────────────────────────────────────────────────── */
@@ -1526,18 +1562,19 @@ function periodFromIds(ids){
   if(periods.length===1)return periods[0];
   return {id:'custom:'+periods.map(p=>p.id).join(','),label:`${periods[0].label}–${periods[periods.length-1].label}`,months:periods.flatMap(p=>p.months)};
 }
-function periodOptionList(months,prefix='custom:'){
+function rangeIdsBetween(startId,endId,months){
   const asc=months.slice().sort((a,b)=>monthKey(a.months[0])-monthKey(b.months[0]));
-  const ranges=[];
-  for(let i=0;i<asc.length;i++){
-    for(let j=i+1;j<asc.length;j++){
-      ranges.push({id:prefix+asc.slice(i,j+1).map(p=>p.id).join(','),label:`${asc[i].label}–${asc[j].label}`});
-    }
-  }
-  return [...months,...ranges.reverse()];
+  let i=asc.findIndex(p=>p.id===startId),j=asc.findIndex(p=>p.id===endId);
+  if(i<0)i=asc.length-1;
+  if(j<0)j=i;
+  const [a,b]=i<=j?[i,j]:[j,i];
+  return asc.slice(a,b+1).map(p=>p.id);
 }
 function idsFromPeriodValue(value,prefix='custom:'){
   return value&&value.startsWith(prefix)?value.replace(prefix,'').split(','):(value?[value]:[]);
+}
+function customIdFromIds(ids,prefix='custom:'){
+  return ids.length===1?ids[0]:prefix+ids.join(',');
 }
 const MK_PERIODS=[
   {id:'mk-abr26',label:'Abr/26',months:[{m:'Abril',a:2026}]},
@@ -1570,6 +1607,14 @@ function npsP(p){return avg(p.months.map(x=>gn(x.m,x.a)))}
 function timeP(p){const rows=p.months.map(x=>gt(x.m,x.a)).filter(Boolean);if(!rows.length)return null;return {at:Math.round(avg(rows.map(x=>x.at))),ca:Math.round(avg(rows.map(x=>x.ca))),ap:Math.round(avg(rows.map(x=>x.ap))),in:Math.round(avg(rows.map(x=>x.in)))}}
 function mkSumP(p){const rows=mkRowsP(p);const invest=rows.reduce((s,x)=>s+x.invest,0),receita=rows.reduce((s,x)=>s+x.receita,0),leads=rows.reduce((s,x)=>s+x.leads,0),novos=rows.reduce((s,x)=>s+x.novos,0);return {invest,receita,leads,novos,roas:invest?receita/invest:0,cac:novos?invest/novos:0}}
 function mkMetricP(src,p,name){return src.filter(d=>inP(d,p)&&d.metrica===name).reduce((s,d)=>s+d.valor,0)}
+function motiveP(src,p){
+  const map={},counts={};
+  p.months.forEach(x=>{
+    const rows=src[`${x.m} ${x.a}`]||[];
+    rows.forEach(([label,val])=>{map[label]=(map[label]||0)+val;counts[label]=(counts[label]||0)+1});
+  });
+  return Object.entries(map).map(([label,val])=>[label,Math.round(val/(counts[label]||1))]).sort((a,b)=>b[1]-a[1]).slice(0,4);
+}
 function pm(m,a){const i=MO.indexOf(m);return i===0?{m:'Dezembro',a:a-1}:{m:MO[i-1],a}}
 function gr(m,a){return DR.filter(d=>d.mes===m&&d.ano===a)}
 function gt(m,a){return DT.find(d=>d.mes===m&&d.ano===a)||null}
@@ -1612,7 +1657,7 @@ const CDef={
 
 /* ── Render ────────────────────────────────────────────────── */
 function render(){
-  const cp=periodFromIds(cPeriodIds), pr=cCompAIds.length?periodFromIds(cCompAIds):null, py=pById(cCompBId);
+  const cp=periodFromIds(cPeriodIds), pr=null, py=null;
   const end=pEnd(cp); cM=end.m; cA=end.a;
   renderCompSelects();
   document.getElementById('s-mes').textContent=pLabel(cp);
@@ -1633,9 +1678,9 @@ function render(){
   renderTCards(cp,pr,py);
   renderNPS(cp);
   renderNPSLine(cp);
-  renderDonut('chP','lgP',DP_PROM[`${end.m} ${end.a}`]||[],['#123b7a','#006bd6','#00a6c8','#8ed8f8']);
-  renderDonut('chD','lgD',DP_DET[`${end.m} ${end.a}`]||[],['#a02020','#c44040','#e07070','#f5a0a0']);
-  renderDonut('chNeu','lgNeu',DP_NEU[`${end.m} ${end.a}`]||[],['#006bd6','#00a6c8','#123b7a','#8ed8f8']);
+  renderDonut('chP','lgP',motiveP(DP_PROM,cp),['#123b7a','#006bd6','#00a6c8','#8ed8f8']);
+  renderDonut('chD','lgD',motiveP(DP_DET,cp),['#a02020','#c44040','#e07070','#f5a0a0']);
+  renderDonut('chNeu','lgNeu',motiveP(DP_NEU,cp),['#006bd6','#00a6c8','#123b7a','#8ed8f8']);
   renderMarketing();
   if(document.getElementById('tab-comercial').classList.contains('on')){
     document.getElementById('tb-path').textContent='Performance';
@@ -1722,7 +1767,7 @@ function renderAtivoTbl(cp){
 }
 
 function renderBarQty(){
-  const d=[...grP(pById(cPeriodId))].sort((x,y)=>y.rj-x.rj).slice(0,8);
+  const d=[...grP(periodFromIds(cPeriodIds))].sort((x,y)=>y.rj-x.rj).slice(0,8);
   if(CH.q)CH.q.destroy();
   CH.q=new Chart(document.getElementById('chQ'),{type:'bar',
     data:{labels:d.map(x=>sn(x.med)),datasets:[
@@ -1735,7 +1780,7 @@ function renderBarQty(){
   });
 }
 function renderBarVal(){
-  const d=[...grP(pById(cPeriodId))].sort((x,y)=>y.vl-x.vl).slice(0,8);
+  const d=[...grP(periodFromIds(cPeriodIds))].sort((x,y)=>y.vl-x.vl).slice(0,8);
   if(CH.v)CH.v.destroy();
   CH.v=new Chart(document.getElementById('chV'),{type:'bar',
     data:{labels:d.map(x=>sn(x.med)),datasets:[{label:'Valor',data:d.map(x=>x.vl),backgroundColor:'#123b7a',borderRadius:4,barPercentage:.5}]},
@@ -1763,7 +1808,7 @@ function renderEvo(){
   });
 }
 function renderFunil(){
-  const d=grP(pById(cPeriodId));
+  const d=grP(periodFromIds(cPeriodIds));
   const ef=d.reduce((s,x)=>s+x.ef,0),ap=d.reduce((s,x)=>s+x.ap,0),rj=d.reduce((s,x)=>s+x.rj,0);
   const pA=ef>0?(ap/ef*100).toFixed(1):'—',pR=ef>0?(rj/ef*100).toFixed(1):'—';
   document.getElementById('funil').innerHTML=`
@@ -1785,7 +1830,7 @@ function renderFunil(){
     </div>`;
 }
 function renderTbl(){
-  const d=[...grP(pById(cPeriodId))].sort((x,y)=>y.rj-x.rj);
+  const d=[...grP(periodFromIds(cPeriodIds))].sort((x,y)=>y.rj-x.rj);
   const ef=d.reduce((s,x)=>s+x.ef,0),ap=d.reduce((s,x)=>s+x.ap,0),rj=d.reduce((s,x)=>s+x.rj,0),vt=d.reduce((s,x)=>s+x.vl,0);
   const ai=ef>0?rj/ef*100:0;
   const rows=d.map(x=>{
@@ -1852,7 +1897,7 @@ function mkGoogleMetrics(p){const rows=MKS.filter(d=>inP(d,p));const val=name=>r
   solicitacoes:70,aprovacoes:10,ticket:233.75,valor:2337.50,at:val('Tempo médio atendimento'),calc:val('Tempo médio cálculo'),pix:val('Pag. via Pix'),cartao:val('Pag. via Cartão'),naoCalc:val('Não calculadas'),primeiras:61,primeirasAp:val('Primeiras aprovações'),bairro:'Tijuca · Recreio'
 }}
 function renderMarketing(){
-  const mp=mkPeriodFromIds(mkPeriodIds), cmp=mkCompIds.length?mkPeriodFromIds(mkCompIds):null;
+  const mp=mkPeriodFromIds(mkPeriodIds), cmp=null;
   const end=pEnd(mp); mkM=end.m; mkA=end.a;
   const cur=mkSumP(mp),prev=cmp?mkSumP(cmp):null;
   renderMkSelects();
@@ -1957,59 +2002,56 @@ function swTab(tab,btn){
 
 function renderCompSelects(){
   const period=document.getElementById('period-main'),a=document.getElementById('comp-a');
-  const options=periodOptionList(MONTH_PERIODS,'custom:');
-  const opts=(selected,blank=false)=>(blank?'<option value="">Sem comparativo</option>':'')+options.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.label}</option>`).join('');
-  if(period)period.innerHTML=opts(cPeriodId);
-  if(a)a.innerHTML=opts(cCompAId,true);
+  const opts=selected=>MONTH_PERIODS.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.label}</option>`).join('');
+  if(period)period.innerHTML=opts(cPeriodStartId);
+  if(a)a.innerHTML=opts(cPeriodEndId);
 }
-
-function setPeriodFromSelect(sel){const value=sel.value; cPeriodIds=idsFromPeriodValue(value,'custom:');if(!cPeriodIds.length)cPeriodIds=[LATEST_MONTH_ID];cPeriodId=value||LATEST_MONTH_ID;cCompBId='';render()}
-function setCompFromSelect(which,sel){
-  if(which==='a'){
-    const value=sel.value;
-    cCompAIds=idsFromPeriodValue(value,'custom:');
-    cCompAId=value||'';
-  }
-  if(which==='b')cCompBId='';
-  render();
+function updateCommercialPeriod(){
+  cPeriodIds=rangeIdsBetween(cPeriodStartId,cPeriodEndId,MONTH_PERIODS);
+  cPeriodId=customIdFromIds(cPeriodIds,'custom:');
+  cCompAIds=[];cCompAId='';cCompBId='';
 }
-function setPeriod(value){cPeriodIds=[value];cPeriodId=value;cCompBId='';render()}
-function setComp(which,value){
-  if(which==='a'){cCompAIds=value?[value]:[];cCompAId=value;}
-  if(which==='b')cCompBId='';
-  render();
-}
+function setPeriodFromSelect(sel){cPeriodStartId=sel.value||LATEST_MONTH_ID;updateCommercialPeriod();render()}
+function setCompFromSelect(which,sel){if(which==='a')cPeriodEndId=sel.value||cPeriodStartId;updateCommercialPeriod();render()}
+function setPeriod(value){cPeriodStartId=value;cPeriodEndId=value;updateCommercialPeriod();render()}
+function setComp(which,value){if(which==='a')cPeriodEndId=value||cPeriodStartId;updateCommercialPeriod();render()}
 function setLastMonth(){
-  cPeriodIds=[LATEST_MONTH_ID];
-  cCompAIds=[];
-  cPeriodId=LATEST_MONTH_ID;
-  cCompAId='';
-  cCompBId='';
+  cPeriodStartId=LATEST_MONTH_ID;
+  cPeriodEndId=LATEST_MONTH_ID;
+  updateCommercialPeriod();
   render();
 }
 
 function renderMkSelects(){
   const period=document.getElementById('mk-period-main'),comp=document.getElementById('mk-comp-a');
-  const options=periodOptionList(MK_MONTH_PERIODS,'mk-custom:');
-  const opts=(selected,blank=false)=>(blank?'<option value="">Sem comparativo</option>':'')+options.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.label}</option>`).join('');
-  if(period)period.innerHTML=opts(mkPeriodId);
-  if(comp)comp.innerHTML=opts(mkCompId,true);
+  const opts=selected=>MK_MONTH_PERIODS.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.label}</option>`).join('');
+  if(period)period.innerHTML=opts(mkPeriodStartId);
+  if(comp)comp.innerHTML=opts(mkPeriodEndId);
 }
 function selectedValues(sel){return sel.multiple?[...sel.selectedOptions].map(o=>o.value):(sel.value?[sel.value]:[])}
-function setMkPeriodFromSelect(sel){const value=sel.value;mkPeriodIds=idsFromPeriodValue(value,'mk-custom:');if(!mkPeriodIds.length)mkPeriodIds=['mk-abr26'];mkPeriodId=value||'mk-abr26';renderMarketing()}
-function setMkCompFromSelect(sel){const value=sel.value;mkCompIds=idsFromPeriodValue(value,'mk-custom:');mkCompId=value||'';renderMarketing()}
-function setMkPeriod(value){mkPeriodIds=[value];mkPeriodId=value;renderMarketing()}
-function setMkComp(value){mkCompIds=value?[value]:[];mkCompId=value;renderMarketing()}
-function setLastMkMonth(){mkPeriodIds=['mk-abr26'];mkCompIds=[];mkPeriodId='mk-abr26';mkCompId='';renderMarketing()}
+function updateMarketingPeriod(){
+  mkPeriodIds=rangeIdsBetween(mkPeriodStartId,mkPeriodEndId,MK_MONTH_PERIODS);
+  mkPeriodId=customIdFromIds(mkPeriodIds,'mk-custom:');
+  mkCompIds=[];mkCompId='';
+}
+function setMkPeriodFromSelect(sel){mkPeriodStartId=sel.value||'mk-abr26';updateMarketingPeriod();renderMarketing()}
+function setMkCompFromSelect(sel){mkPeriodEndId=sel.value||mkPeriodStartId;updateMarketingPeriod();renderMarketing()}
+function setMkPeriod(value){mkPeriodStartId=value;mkPeriodEndId=value;updateMarketingPeriod();renderMarketing()}
+function setMkComp(value){mkPeriodEndId=value||mkPeriodStartId;updateMarketingPeriod();renderMarketing()}
+function setLastMkMonth(){mkPeriodStartId='mk-abr26';mkPeriodEndId='mk-abr26';updateMarketingPeriod();renderMarketing()}
 
 function setM(m,btn){
   const map={Janeiro:'jan26',Fevereiro:'fev26',Março:'mar26',Abril:'abr26'};
   cPeriodId=map[m]||'abr26';
+  cPeriodStartId=cPeriodId;
+  cPeriodEndId=cPeriodId;
   cPeriodIds=[cPeriodId];
   render();
 }
 function setMkM(m,btn){
   mkPeriodId=m==='Março'?'mk-mar26':'mk-abr26';
+  mkPeriodStartId=mkPeriodId;
+  mkPeriodEndId=mkPeriodId;
   mkPeriodIds=[mkPeriodId];
   renderMarketing();
   if(document.getElementById('tab-marketing').classList.contains('on')){
