@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ALQ Farma — Analytics</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAmklEQVR42u3YwQnAIAwAQCfqCt2o+//aBSokRIrVE/LTGO6RoO04r3vnaAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwFpEVOTuq8Eo9AAAEAbLJevtHAYyqBwAAAAAAZAGyCwAAPeAzgMq9AAAsNga3fwwBmB2gMk4jOafvAQD+BOBXGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWiwfVWRTsVcCv1QAAAABJRU5ErkJggg==">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -17,6 +18,13 @@
   --bg:      #f0f4fb;
   --white:   #ffffff;
   --border:  #c8d5ee;
+  --surface-border: rgba(10, 15, 30, .06);
+  --soft-shadow: 0 10px 28px rgba(46, 63, 110, .09);
+  --soft-shadow-sm: 0 6px 18px rgba(46, 63, 110, .07);
+  --chart-blue-1: #123b7a;
+  --chart-blue-2: #006bd6;
+  --chart-blue-3: #00a6c8;
+  --chart-blue-4: #8ed8f8;
   --text:    #0a0f1e;
   --green:   #1a6e4e;
   --red:     #a02020;
@@ -64,23 +72,13 @@ body {
 .sb-logo-mark {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
-.sb-icon {
-  width: 34px; height: 34px;
-  background: rgba(255,255,255,.12);
-  border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 700; color: #fff;
-  letter-spacing: -.02em;
+.sb-logo-img {
+  width: 150px;
+  height: 38px;
+  display: block;
   flex-shrink: 0;
-}
-.sb-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -.01em;
 }
 .sb-sub {
   font-size: 9px;
@@ -109,7 +107,7 @@ body {
   border-radius: 9px;
   color: rgba(255,255,255,.6);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   cursor: pointer;
   transition: all .18s;
   margin-bottom: 2px;
@@ -126,7 +124,7 @@ body {
 .sb-item.active {
   background: rgba(255,255,255,.12);
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
 }
 .sb-item-icon {
   font-size: 15px;
@@ -280,6 +278,11 @@ body {
   letter-spacing: -.02em;
   margin-bottom: 4px;
 }
+.page-hd-title-lg {
+  font-size: 38px;
+  line-height: 1.08;
+  margin-bottom: 0;
+}
 .page-hd-sub {
   font-size: 12px;
   color: var(--blue);
@@ -290,7 +293,7 @@ body {
 /* ── Filter strip ────────────────────────────────────────────── */
 .filter-strip {
   background: var(--white);
-  border: 1px solid var(--border);
+  border: 1px solid var(--surface-border);
   border-radius: 12px;
   padding: 12px 18px;
   margin-bottom: 22px;
@@ -298,7 +301,7 @@ body {
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
-  box-shadow: 0 1px 4px rgba(46,63,110,.06);
+  box-shadow: var(--soft-shadow-sm);
 }
 .fl { font-size: 9px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .07em; }
 .mbtns { display: flex; gap: 3px; }
@@ -325,6 +328,58 @@ body {
   font-weight: 500;
   color: var(--navy);
 }
+.filter-caption {
+  color: var(--blue);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.last-month-btn {
+  border: 1px solid var(--navy);
+  background: linear-gradient(135deg, var(--navy), #4a5684);
+  color: #fff;
+  border-radius: 99px;
+  padding: 7px 14px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(46,63,110,.16);
+}
+.last-month-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.mk-hero { background: var(--navy); color:#fff; border-radius:16px; padding:28px 32px; margin-bottom:24px; box-shadow: var(--soft-shadow); }
+.mk-hero-ey { font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; opacity:.9; margin-bottom:10px; }
+.mk-hero-title { font-size:28px; font-weight:800; margin-bottom:8px; }
+.mk-hero-sub { font-size:14px; opacity:.78; margin-bottom:22px; }
+.mk-hero-metrics { border-top:1px solid rgba(255,255,255,.22); display:grid; grid-template-columns:repeat(4,1fr); gap:22px; padding-top:18px; }
+.mk-hero-k { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.07em; opacity:.62; }
+.mk-hero-v { font-size:16px; font-weight:800; margin-top:4px; }
+.mk-panel { background:#fff; border:1px solid var(--surface-border); border-radius:12px; padding:18px; box-shadow:var(--soft-shadow-sm); }
+.mk-panel-bordered { border-color:#b9caec; }
+.mk-small-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:14px 0; }
+.mk-small-card { background:#fff; border:1px solid #b9caec; border-radius:10px; padding:12px; }
+.mk-small-k { font-size:9px; color:var(--navy); font-weight:800; text-transform:uppercase; }
+.mk-small-v { font-size:16px; color:var(--navy); font-weight:800; margin-top:6px; }
+.mk-small-s { font-size:10px; margin-top:3px; font-weight:600; }
+.mk-note { font-size:12px; line-height:1.6; color:#0a0f1e; margin:10px 0 14px; }
+.multi-select { min-width: 190px; padding: 2px 4px; }
+.mk-bar-list { display:flex; flex-direction:column; gap:12px; padding:8px 4px; }
+.mk-bar-row { display:grid; grid-template-columns:110px 1fr 52px; align-items:center; gap:12px; font-size:12px; color:#0a0f1e; }
+.mk-bar-track { height:18px; background:#eef3fb; border-radius:999px; overflow:hidden; border:1px solid #d8e2f4; }
+.mk-bar-fill { height:100%; background:#2f4174; border-radius:999px; min-width:3px; }
+.mk-bar-value { font-weight:800; color:var(--navy); text-align:right; }
+.comp-select {
+  border: none;
+  background: transparent;
+  color: var(--navy);
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
 .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
 .da { background: var(--blue); }
 .db { background: var(--lt); }
@@ -338,20 +393,12 @@ body {
 }
 .kpi-card {
   background: var(--white);
-  border: 1px solid var(--border);
+  border: 1px solid var(--surface-border);
   border-radius: 14px;
   padding: 20px 22px;
-  box-shadow: 0 1px 4px rgba(46,63,110,.07);
+  box-shadow: var(--soft-shadow);
   position: relative;
   overflow: hidden;
-}
-.kpi-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 3px; height: 100%;
-  background: var(--pale);
-  border-radius: 14px 0 0 14px;
 }
 .kpi-tag {
   font-size: 9px;
@@ -378,16 +425,17 @@ body {
 
 /* ── Section ─────────────────────────────────────────────────── */
 .sec {
+  scroll-margin-top: calc(var(--topbar) + 16px);
   background: var(--white);
-  border: 1px solid var(--border);
+  border: 1px solid var(--surface-border);
   border-radius: 14px;
   margin-bottom: 22px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(46,63,110,.07);
+  box-shadow: var(--soft-shadow);
 }
 .sec-hd {
   padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--surface-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -442,13 +490,22 @@ body {
 .dt .tot td { background: var(--pale) !important; font-weight: 600; }
 .dt .tr { text-align: right; }
 .dt .tc { text-align: center; }
+.dt-medicos { table-layout: fixed; min-width: 720px; }
+.dt-medicos th:nth-child(1), .dt-medicos td:nth-child(1) { width: 42%; }
+.dt-medicos th:nth-child(2), .dt-medicos td:nth-child(2),
+.dt-medicos th:nth-child(3), .dt-medicos td:nth-child(3),
+.dt-medicos th:nth-child(4), .dt-medicos td:nth-child(4) { width: 11%; }
+.dt-medicos th:nth-child(5), .dt-medicos td:nth-child(5) { width: 16%; }
+.dt-medicos th:nth-child(6), .dt-medicos td:nth-child(6) { width: 9%; min-width: 88px; }
 .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 9px; font-weight: 600; }
 .br { background: #fde8e8; color: var(--red); }
 .bg { background: #e8f5ee; color: var(--green); }
 .bb { background: var(--pale); color: var(--navy); }
 
 /* ── Funnel ──────────────────────────────────────────────────── */
-.funnel { display: flex; flex-direction: column; align-items: center; }
+.funnel-panel { width: 100%; max-width: 420px; margin: 0 auto; }
+.funnel-title { text-align: center; }
+.funnel { display: flex; flex-direction: column; align-items: center; width: 100%; }
 .f-step { display: flex; align-items: center; justify-content: space-between; border-radius: 10px; padding: 14px 24px; color: #fff; transition: width .3s; }
 .f-label { font-size: 12px; font-weight: 600; }
 .f-pct { font-size: 10px; color: rgba(255,255,255,.7); margin-top: 2px; }
@@ -459,11 +516,12 @@ body {
 
 /* ── Time cards ──────────────────────────────────────────────── */
 .tc-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: var(--white);
+  border: 1px solid var(--surface-border);
   border-radius: 10px;
   padding: 14px;
   text-align: center;
+  box-shadow: var(--soft-shadow-sm);
 }
 .tc-lbl { font-size: 9px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
 .tc-val { font-size: 22px; font-weight: 700; color: var(--navy); }
@@ -512,6 +570,77 @@ body {
 .ph-icon { font-size: 48px; margin-bottom: 16px; }
 .ph-title { font-size: 18px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
 .ph-sub { font-size: 13px; line-height: 1.6; max-width: 400px; margin: 0 auto; }
+
+/* ── Auth lock ───────────────────────────────────────────────── */
+body.auth-locked { overflow: hidden; }
+body.auth-locked .sidebar,
+body.auth-locked .main {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+.auth-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(10, 15, 30, .42);
+  backdrop-filter: blur(3px);
+}
+body.auth-locked .auth-modal { display: flex; }
+.auth-card {
+  width: min(380px, 100%);
+  background: var(--white);
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  box-shadow: 0 22px 60px rgba(10, 15, 30, .22);
+  padding: 28px;
+}
+.auth-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.auth-mark {
+  width: 38px; height: 38px;
+  border-radius: 11px;
+  background: var(--navy);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+}
+.auth-title { font-size: 18px; font-weight: 700; color: var(--navy); line-height: 1.2; }
+.auth-sub { font-size: 11px; color: var(--blue); margin-top: 3px; }
+.auth-field { margin-top: 14px; }
+.auth-field label { display: block; font-size: 9px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+.auth-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.auth-input:focus { border-color: var(--chart-blue-2); box-shadow: 0 0 0 3px rgba(0,107,214,.12); }
+.auth-error { display: none; margin-top: 12px; font-size: 11px; font-weight: 600; color: var(--red); }
+.auth-error.on { display: block; }
+.auth-submit {
+  width: 100%;
+  margin-top: 18px;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 14px;
+  background: var(--navy);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .15s;
+}
+.auth-submit:hover { background: #3a4f87; transform: translateY(-1px); }
 
 /* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
@@ -675,7 +804,29 @@ body {
 }
 </style>
 </head>
-<body>
+<body class="auth-locked">
+
+<div class="auth-modal" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  <form class="auth-card" onsubmit="return doLogin(event)">
+    <div class="auth-brand">
+      <div class="auth-mark">ALQ</div>
+      <div>
+        <div class="auth-title" id="auth-title">Acesso restrito</div>
+        <div class="auth-sub">Entre para visualizar o dashboard</div>
+      </div>
+    </div>
+    <div class="auth-field">
+      <label for="auth-user">Usuário</label>
+      <input class="auth-input" id="auth-user" type="text" autocomplete="username" autofocus>
+    </div>
+    <div class="auth-field">
+      <label for="auth-pass">Senha</label>
+      <input class="auth-input" id="auth-pass" type="password" autocomplete="current-password">
+    </div>
+    <div class="auth-error" id="auth-error">Usuário ou senha inválidos.</div>
+    <button class="auth-submit" type="submit">Entrar</button>
+  </form>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!--  SIDEBAR                                                   -->
@@ -683,8 +834,7 @@ body {
 <aside class="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-mark">
-      <div class="sb-icon">A</div>
-      <div class="sb-name">ALQ Farma</div>
+      <img class="sb-logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABMCAYAAADX/oqbAAACL0lEQVR42u3cy3GDQBBAQWIhGuWfi85SCCwwM/vrd5UFWLBdrqmVj0OSJEmSJEnapLNz7oCkIXGCmKQlkIKXBKslciclUIFLEqygJWl7rKAlwQpakoAFLEnbYwUtCVbQaugXVNR5R3see30+AhawgAUsAQtYwAIWrKAFLGAJWMACFrAELGABC1jAAlbewut1/NEW9mifj4AFLGABS7CaAS1grQnWNzgSJYF1d4bw5JgVMFXNQoAFLGABC1jAAhawgAUsYAELWMAC1tJgkWQQsN5i0vL+CrBaz9H64AMLWMACFrCABSwBC1jAAhawgAUsYBWAFT3Ev/r56OPfPR+wgAUsYAELWM8WTHbAAhawgAUsYAELWMAC1l4bR6uBywap7PXoDZZPNpICC1jAAhawgAUsYAELWMACFrCAZVuDbQ3B17/r0D1syF0EZhpYqw7drx5oYAELWMACFrCABSxgAQtYwAIWsIAFrAEWfDYYwJps6O4f+AELWMACFrBSrqf69wIWsIAFLGABC1jAAtZsYBm6TwRWxubUu+c0dAcWsIAFLGABC1jAAhawgAUsYG0CVq8vY0dd5yxA62Wnmr78vPrQHVgCFrCABSwBC1jAAha0YHUAC1gCFrCABSwBa3SwJAELWBKwgBXdR1tHF2hN9deVJQssAQtYAhawgCUJWrCSBC1YScACliRowUoStGAlQQtWksAFKknQgpWkCfFypyQNiZg7IEmSJEmSJEnq3R/DMvmHcZMotAAAAABJRU5ErkJggg==" alt="Logo ALQ Farma">
     </div>
     <div class="sb-sub">Analytics Platform</div>
   </div>
@@ -696,17 +846,19 @@ body {
     </button>
     <button class="sb-item" onclick="swTab('marketing',this)">
       <span class="sb-item-icon">📣</span> Marketing
-      <span class="sb-badge">Em breve</span>
     </button>
 
     <div class="sb-section-label" style="margin-top:8px">Análises</div>
-    <button class="sb-item" onclick="scrollTo('sec-rej')">
+    <button class="sb-item" onclick="goSection('sec-ativos',this)">
+      <span class="sb-item-icon">🧪</span> Ativos
+    </button>
+    <button class="sb-item" onclick="goSection('sec-rej',this)">
       <span class="sb-item-icon">📋</span> Rejeições
     </button>
-    <button class="sb-item" onclick="scrollTo('sec-tempo')">
+    <button class="sb-item" onclick="goSection('sec-tempo',this)">
       <span class="sb-item-icon">⏱</span> Tempos
     </button>
-    <button class="sb-item" onclick="scrollTo('sec-nps')">
+    <button class="sb-item" onclick="goSection('sec-nps',this)">
       <span class="sb-item-icon">⭐</span> NPS
     </button>
 
@@ -721,10 +873,10 @@ body {
 
   <div class="sb-footer">
     <div class="sb-user">
-      <div class="sb-avatar">G</div>
+      <div class="sb-avatar" id="sb-avatar">—</div>
       <div>
-        <div class="sb-user-name">Gestão</div>
-        <div class="sb-user-role">ALQ Farma · Admin</div>
+        <div class="sb-user-name" id="sb-user-name">Usuário</div>
+        <div class="sb-user-role">ALQ Farma</div>
       </div>
     </div>
   </div>
@@ -745,7 +897,7 @@ body {
     </button>
     <span class="topbar-title" id="tb-title">Dashboard Comercial</span>
     <div class="topbar-sep"></div>
-    <span class="topbar-path" id="tb-path">Performance · Abril/26</span>
+    <span class="topbar-path" id="tb-path">Performance</span>
     <div class="topbar-right">
       <div class="status-dot"></div>
       <span class="status-label">Dados atualizados</span>
@@ -768,28 +920,16 @@ body {
     <!-- Page header -->
     <div class="page-hd">
       <div class="page-hd-left">
-        <div class="page-hd-eyebrow">ALQ Farma · Análise Comercial</div>
-        <div class="page-hd-title">Performance Comercial</div>
-        <div class="page-hd-sub">Rejeições por médico · Tempos de atendimento · NPS e experiência do cliente</div>
-      </div>
-      <div class="page-hd-actions">
-        <span style="font-size:10px;color:var(--blue);font-weight:500">Período:</span>
-        <div class="mbtns">
-          <button class="mbtn" onclick="setM('Janeiro',this)">Janeiro</button>
-          <button class="mbtn" onclick="setM('Fevereiro',this)">Fevereiro</button>
-          <button class="mbtn" onclick="setM('Março',this)">Março</button>
-          <button class="mbtn on" onclick="setM('Abril',this)">Abril</button>
-        </div>
+        <div class="page-hd-title page-hd-title-lg">Performance Comercial</div>
       </div>
     </div>
 
     <!-- Filter strip -->
     <div class="filter-strip">
-      <span class="fl">Comparando com</span>
-      <div class="comp-tag"><span class="dot da"></span><span id="comp-a">Mar/26 (mês anterior)</span></div>
-      <div class="comp-tag"><span class="dot db"></span><span id="comp-b">Abr/25 (ano anterior)</span></div>
-      <div class="fdiv"></div>
-      <span id="fs-info" style="font-size:10px;color:var(--blue);font-weight:500"></span>
+      <span class="fl">Período:</span>
+      <div class="comp-tag"><span class="dot da"></span><select class="comp-select multi-select" id="period-main" onchange="setPeriodFromSelect(this)"></select></div>
+      <div class="comp-tag"><span class="dot db"></span><select class="comp-select multi-select" id="comp-a" onchange="setCompFromSelect('a',this)"></select></div>
+      <button class="last-month-btn" type="button" onclick="setLastMonth()">Último mês</button>
     </div>
 
     <!-- Insight strip -->
@@ -819,6 +959,37 @@ body {
       </div>
     </div>
 
+    <!-- ── SEÇÃO ATIVOS REJEITADOS ───────────────────────────── -->
+    <div class="sec" id="sec-ativos">
+      <div class="sec-hd">
+        <div class="sec-hd-left">
+          <div class="sec-tag">Análise Comercial</div>
+          <div class="sec-title">Rejeição por Ativo — <span id="s-ativos-mes">Abril/26</span></div>
+        </div>
+      </div>
+      <div class="sec-body">
+        <div class="g2">
+          <div>
+            <div class="leg">
+              <span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Rejeitados por mês</span>
+            </div>
+            <div class="cwrap" style="height:300px"><canvas id="chAQ"></canvas></div>
+          </div>
+          <div>
+            <div class="leg">
+              <span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Valor rejeitado por mês (R$)</span>
+            </div>
+            <div class="cwrap" style="height:300px"><canvas id="chAV"></canvas></div>
+          </div>
+        </div>
+
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:12px">Ranking detalhado por ativo</div>
+          <div id="tbl-ativos" style="overflow-x:auto"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── SEÇÃO REJEIÇÃO ────────────────────────────────── -->
     <div class="sec" id="sec-rej">
       <div class="sec-hd">
@@ -831,14 +1002,13 @@ body {
         <div class="g2">
           <div>
             <div class="leg">
-              <span class="li"><span class="lb" style="background:#4a5684"></span>Rejeitados</span>
-              <span class="li"><span class="lb" style="background:#d9e4f4"></span>Aprovados</span>
+              <span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Rejeitados por mês</span>
             </div>
             <div class="cwrap" style="height:300px"><canvas id="chQ"></canvas></div>
           </div>
           <div>
             <div class="leg">
-              <span class="li"><span class="lb" style="background:#2e3f6e"></span>Valor rejeitado (R$)</span>
+              <span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Valor rejeitado por mês (R$)</span>
             </div>
             <div class="cwrap" style="height:300px"><canvas id="chV"></canvas></div>
           </div>
@@ -849,14 +1019,14 @@ body {
             <div>
               <div class="sec-tag" style="margin-bottom:8px">Evolução Jan–Abr/26 — Rejeições vs Valor</div>
               <div class="leg">
-                <span class="li"><span class="lb" style="background:#4a5684"></span>Qtd. rejeitados</span>
-                <span class="li"><span class="lb" style="background:#85a0cc"></span>Valor rejeitado</span>
+                <span class="li"><span class="lb" style="background:var(--chart-blue-2)"></span>Qtd. rejeitados</span>
+                <span class="li"><span class="lb" style="background:var(--chart-blue-3)"></span>Valor rejeitado</span>
               </div>
               <div class="cwrap" style="height:220px"><canvas id="chE"></canvas></div>
             </div>
             <div>
-              <div class="sec-tag" style="margin-bottom:8px">Funil de atendimento</div>
-              <div id="funil" style="max-width:420px"></div>
+              <div class="sec-tag funnel-title" style="margin-bottom:8px">Funil de atendimento</div>
+              <div id="funil" class="funnel-panel"></div>
             </div>
           </div>
         </div>
@@ -878,10 +1048,10 @@ body {
       </div>
       <div class="sec-body">
         <div class="leg">
-          <span class="li"><span class="ld" style="background:#2e3f6e"></span>Atendimento</span>
-          <span class="li"><span class="ld" style="background:#4a5684"></span>Cálculos</span>
-          <span class="li"><span class="ld" style="background:#85a0cc"></span>Aprovações</span>
-          <span class="li"><span class="ld" style="background:#c8d5ee"></span>Inclusões</span>
+          <span class="li"><span class="ld" style="background:var(--chart-blue-1)"></span>Atendimento</span>
+          <span class="li"><span class="ld" style="background:var(--chart-blue-2)"></span>Cálculos</span>
+          <span class="li"><span class="ld" style="background:var(--chart-blue-3)"></span>Aprovações</span>
+          <span class="li"><span class="ld" style="background:var(--chart-blue-4)"></span>Inclusões</span>
         </div>
         <div class="cwrap" style="height:280px"><canvas id="chT"></canvas></div>
         <div class="g4" id="tcards" style="margin-top:20px"></div>
@@ -901,7 +1071,7 @@ body {
           <div>
             <div id="npsd"></div>
             <div class="leg" style="justify-content:center;margin-top:6px">
-              <span class="li"><span class="ld" style="background:#2e3f6e"></span>NPS mensal</span>
+              <span class="li"><span class="ld" style="background:var(--chart-blue-1)"></span>NPS mensal</span>
             </div>
             <div class="cwrap" style="height:180px"><canvas id="chN"></canvas></div>
           </div>
@@ -932,20 +1102,80 @@ body {
   <!-- ════════════════════════════════════════════════════════ -->
   <div class="tc" id="tab-marketing">
   <div class="content">
-    <div class="page-hd">
-      <div class="page-hd-left">
-        <div class="page-hd-eyebrow">ALQ Farma · Marketing</div>
-        <div class="page-hd-title">Performance de Marketing</div>
-        <div class="page-hd-sub">Campanhas · ROAS por canal · Novos clientes · CAC · Repescagem</div>
+    <div class="mk-hero">
+      <div class="mk-hero-ey">ALQ Farma — Relatório de Marketing</div>
+      <div class="mk-hero-title">Performance Consolidada</div>
+      <div class="mk-hero-sub">Análise de campanhas, novos clientes, solicitações pelo site e projeção.</div>
+      <div class="mk-hero-metrics">
+        <div><div class="mk-hero-k">Investimento total</div><div class="mk-hero-v" id="mk-hero-invest">—</div></div>
+        <div><div class="mk-hero-k">Retorno total</div><div class="mk-hero-v" id="mk-hero-rev">—</div></div>
+        <div><div class="mk-hero-k">ROAS geral</div><div class="mk-hero-v" id="mk-hero-roas">—</div></div>
+        <div><div class="mk-hero-k">Melhor mês</div><div class="mk-hero-v" id="mk-hero-best">—</div></div>
       </div>
     </div>
-    <div class="sec">
+
+    <div class="filter-strip">
+      <span class="fl">Período:</span>
+      <div class="comp-tag"><span class="dot da"></span><select class="comp-select multi-select" id="mk-period-main" onchange="setMkPeriodFromSelect(this)"></select></div>
+      <div class="comp-tag"><span class="dot db"></span><select class="comp-select multi-select" id="mk-comp-a" onchange="setMkCompFromSelect(this)"></select></div>
+      <button class="last-month-btn" type="button" onclick="setLastMkMonth()">Último mês</button>
+    </div>
+
+    <div class="sec" id="mk-sec-visao">
+      <div class="sec-hd"><div><div class="sec-tag">Visão geral</div><div class="sec-title">Performance de campanhas — nov/25 a abr/26</div></div></div>
       <div class="sec-body">
-        <div class="ph">
-          <div class="ph-icon">📣</div>
-          <div class="ph-title">Módulo em desenvolvimento</div>
-          <div class="ph-sub">Os dados de campanhas (Março e Abril/26), ROAS por canal, novos clientes e CAC serão exibidos aqui em breve.</div>
+        <div class="sec-tag" style="margin-bottom:8px">Investimento vs retorno por mês</div>
+        <div class="cwrap" style="height:340px"><canvas id="mkChMonthly"></canvas></div>
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:8px">ROAS médio por mês</div>
+          <div class="cwrap" style="height:245px"><canvas id="mkChRoasMonth"></canvas></div>
         </div>
+        <div class="sec-div">
+          <div class="g2">
+            <div class="mk-panel mk-panel-bordered"><div class="sec-tag" style="margin-bottom:10px">Destaques de <span id="mk-highlight-period">Abril/26</span></div><div id="mk-camp-tbl" style="overflow-x:auto"></div></div>
+            <div class="mk-panel mk-panel-bordered"><div class="sec-tag" style="margin-bottom:10px">ROAS por canal — <span id="mk-roas-period">Abril/26</span></div><div id="mkRoasChannelBars" class="mk-bar-list"></div></div>
+          </div>
+        </div>
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:8px">Evolução do ROAS por canal</div>
+          <div class="cwrap" style="height:300px"><canvas id="mkChRoasEvo"></canvas></div>
+        </div>
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:8px">Google Ads — ROAS isolado</div>
+          <div class="cwrap" style="height:220px"><canvas id="mkChGoogleRoas"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-clientes">
+      <div class="sec-hd"><div><div class="sec-tag">Novos clientes</div><div class="sec-title">Cadastros e conversões — jan a abr/26</div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-client-cards"></div>
+        <div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Cadastros novos</span><span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Com compras</span></div>
+        <div class="sec-tag" style="margin:10px 0 8px">Cadastros novos vs com compras</div>
+        <div class="cwrap" style="height:320px"><canvas id="mkChCadastros"></canvas></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Taxa de conversão por mês (%)</div><div class="cwrap" style="height:230px"><canvas id="mkChConv"></canvas></div></div>
+        <div class="sec-div"><div class="g2"><div class="mk-panel mk-panel-bordered" id="mk-cac-new"></div><div class="mk-panel mk-panel-bordered" id="mk-cac-buy"></div></div></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">CAC comparativo (R$)</div><div class="cwrap" style="height:260px"><canvas id="mkChCac"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-google">
+      <div class="sec-hd"><div><div class="sec-tag">Google Ads — solicitações pelo site</div><div class="sec-title">Resultados de <span id="mk-google-period">abril</span></div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-google-cards"></div>
+        <div class="sec-title" style="font-size:15px;margin:8px 0">Projeção — Maio</div>
+        <p class="mk-note">Projeção baseada na eficiência de abril com investimento previsto para maio. Se conversão e ticket médio voltarem ao patamar de março, o valor aprovado pode chegar ao cenário projetado.</p>
+        <div id="mk-proj-tbl" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-repescagem">
+      <div class="sec-hd"><div><div class="sec-tag">Pedido Pago — ação recorrente</div><div class="sec-title">Repescagem diária</div></div></div>
+      <div class="sec-body">
+        <p class="mk-note">Ação contínua do canal Pedido Pago com envios automáticos para a base de clientes.</p>
+        <div class="g2" id="mk-rep-cards"></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Evolução março → abril</div><div class="cwrap" style="height:280px"><canvas id="mkChRepescagem"></canvas></div></div>
       </div>
     </div>
   </div>
@@ -1043,6 +1273,158 @@ const DP_DET={
   'Fevereiro 2026':[['Tempo de Espera',40],['Preço Elevado',28],['Atendimento Confuso',12],['Outros',8]],
   'Janeiro 2026':[['Preço Elevado',40],['Atendimento Confuso',24],['Tempo de Espera',20],['Outros',12]],
 };
+
+const DA=parseAtivos(`ano;mes;st;ativo;ef;ap;rj;vl;ix
+2026;Janeiro;num;VITAMINA K2MK7;371;188;183;1772.98;49.33
+2026;Janeiro;num;VITAMINA C REVESTIDA PO;337;181;156;399.13;46.29
+2026;Janeiro;num;ZINCO QUELATO;302;149;153;359.95;50.66
+2026;Janeiro;num;METILFOLATO DILUÍDO;302;151;151;278.60;50.00
+2026;Janeiro;num;VITAMINA D3 DILUIDA;264;126;138;165.26;52.27
+2026;Janeiro;num;VITAMINA D3 DILUÍDA LÍQUIDA;283;151;132;86.50;46.64
+2026;Janeiro;num;PIRIDOXAL 5-FOSFATO;265;134;131;590.93;49.43
+2026;Janeiro;num;MAGNESIO QUELATO;194;75;119;1271.25;61.34
+2026;Janeiro;num;TEANINA;203;85;118;554.74;58.13
+2026;Janeiro;num;VITAMINA B2;204;94;110;229.98;53.92
+2026;Janeiro;val;MAGTEIN;176;70;106;19564.02;60.23
+2026;Janeiro;val;PEPTISTRONG;20;5;15;13887.72;75.00
+2026;Janeiro;val;MOROSIL;54;6;48;10321.55;88.89
+2026;Janeiro;val;DILUICAO MINOXIDIL ORAL;85;29;56;7507.50;65.88
+2026;Janeiro;val;EXSYNUTRIMENT;83;42;41;7033.76;49.40
+2026;Janeiro;val;KERANAT;12;1;11;5853.15;91.67
+2026;Janeiro;val;MAXSOLVE;22;9;13;4512.50;59.09
+2026;Janeiro;val;COENZIMA Q10;196;105;91;3866.65;46.43
+2026;Janeiro;val;PHELODENDRON AMURENSE;59;19;40;3859.04;67.80
+2026;Janeiro;val;SILICIUMAX;38;11;27;3851.33;71.05
+2026;Fevereiro;num;PEPTISTRONG;22;4;18;15436.08;81.82
+2026;Fevereiro;num;MAGTEIN;131;59;72;12026.70;54.96
+2026;Fevereiro;num;MOROSIL;43;6;37;9506.04;86.05
+2026;Fevereiro;num;DILUICAO MINOXIDIL ORAL;80;25;55;8363.65;68.75
+2026;Fevereiro;num;EXSYNUTRIMENT;63;30;33;7259.82;52.38
+2026;Fevereiro;num;MAXSOLVE;26;12;14;4868.75;53.85
+2026;Fevereiro;num;LIPOFER;17;7;10;4599.16;58.82
+2026;Fevereiro;num;CINDURA;10;2;8;3980.24;80.00
+2026;Fevereiro;num;PHELODENDRON AMURENSE;49;16;33;3966.48;67.35
+2026;Fevereiro;num;KERANAT;8;0;8;3947.01;100.00
+2026;Fevereiro;val;PEPTISTRONG;22;4;18;15436.08;81.82
+2026;Fevereiro;val;MAGTEIN;131;59;72;12026.70;54.96
+2026;Fevereiro;val;MOROSIL;43;6;37;9506.04;86.05
+2026;Fevereiro;val;DILUICAO MINOXIDIL ORAL;80;25;55;8363.65;68.75
+2026;Fevereiro;val;EXSYNUTRIMENT;63;30;33;7259.82;52.38
+2026;Fevereiro;val;MAXSOLVE;26;12;14;4868.75;53.85
+2026;Fevereiro;val;LIPOFER;17;7;10;4599.16;58.82
+2026;Fevereiro;val;CINDURA;10;2;8;3980.24;80.00
+2026;Fevereiro;val;PHELODENDRON AMURENSE;49;16;33;3966.48;61.35
+2026;Fevereiro;val;KERANAT;8;0;8;3947.01;100.00
+2026;Março;num;VITAMINA K2MK7;413;238;175;1987.56;42.37
+2026;Março;num;VITAMINA C REVESTIDA PO;350;185;165;274.79;47.14
+2026;Março;num;ZINCO QUELATO;341;177;164;432.77;48.09
+2026;Março;num;METILFOLATO DILUÍDO;314;172;142;278.49;45.22
+2026;Março;num;MAGNESIO QUELATO;235;99;136;1489.74;57.87
+2026;Março;num;VITAMINA D3 DILUIDA;275;150;125;159.76;45.45
+2026;Março;num;PIRIDOXAL 5-FOSFATO;258;140;118;699.83;45.74
+2026;Março;num;BIOTINA DILUIDA USO ORAL;201;85;116;414.47;57.71
+2026;Março;num;TEANINA;193;79;114;573.94;59.07
+2026;Março;num;XAROPE SUGAR FREE;387;281;106;1430.47;27.39
+2026;Março;val;PEPTISTRONG;26;4;22;19418.80;84.62
+2026;Março;val;MAGTEIN;198;92;106;18114.00;53.54
+2026;Março;val;EXSYNUTRIMENT;90;44;46;8814.97;51.11
+2026;Março;val;KERANAT;18;4;14;7019.98;77.78
+2026;Março;val;MOROSIL;30;3;27;6668.85;90.00
+2026;Março;val;RELORA;38;13;25;6213.35;65.79
+2026;Março;val;RESVITECH;38;13;25;5700.29;65.79
+2026;Março;val;METILCOBALAMINA;133;72;61;5289.33;45.86
+2026;Março;val;CUREIT;34;13;21;4946.66;61.76
+2026;Março;val;PHELODENDRON AMURENSE;61;26;35;4614.77;57.38
+2026;Abril;num;VITAMINA K2MK7;411;225;186;1675.87;42.26
+2026;Abril;num;VITAMINA C REVESTIDA PO;358;193;165;275.89;46.09
+2026;Abril;num;ZINCO QUELATO;320;160;160;446.22;50.00
+2026;Abril;num;METILFOLATO DILUÍDO;320;181;139;414.63;43.44
+2026;Abril;num;PIRIDOXAL 5-FOSFATO;279;157;122;536.85;43.73
+2026;Abril;num;MAGNESIO QUELATO;218;96;122;1585.41;55.96
+2026;Abril;num;VITAMINA D3 DILUÍDA LÍQUIDA;259;139;120;109.53;46.33
+2026;Abril;num;VITAMINA D3 DILUIDA;265;146;119;178.66;44.91
+2026;Abril;num;XAROPE SUGAR FREE;375;263;112;1286.37;29.87
+2026;Abril;num;VITAMINA B2;221;110;111;277.51;50.23
+2026;Abril;val;MAGTEIN;160;74;86;12872.29;53.75
+2026;Abril;val;PEPTISTRONG;16;1;15;12738.55;93.75
+2026;Abril;val;MOROSIL;50;8;42;12368.45;84.00
+2026;Abril;val;EXSYNUTRIMENT;78;42;36;7223.79;46.15
+2026;Abril;val;PHELODENDRON AMURENSE;77;23;54;6998.54;70.13
+2026;Abril;val;MAXSOLVE;28;13;15;5533.75;53.57
+2026;Abril;val;COENZIMA Q10;183;91;92;5231.33;50.27
+2026;Abril;val;ZEMBRIM;25;6;19;5037.23;76.00
+2026;Abril;val;COREBIOME;21;2;19;4794.84;90.48
+2026;Abril;val;RELORA;36;15;21;4423.46;58.33`);
+
+const MK=[
+  {ano:2025,mes:'Novembro',canal:'Meta Ads',invest:286.45,receita:0.00,leads:0,novos:0},
+  {ano:2025,mes:'Dezembro',canal:'Pedido Pago',invest:59.76,receita:5100.88,leads:0,novos:0},
+  {ano:2025,mes:'Dezembro',canal:'Google Ads',invest:473.01,receita:312.00,leads:0,novos:0},
+  {ano:2025,mes:'Dezembro',canal:'Meta Ads',invest:260.97,receita:320.67,leads:0,novos:0},
+  {ano:2026,mes:'Janeiro',canal:'Pedido Pago',invest:131.04,receita:6931.47,leads:49,novos:22},
+  {ano:2026,mes:'Janeiro',canal:'Google Ads',invest:1064.09,receita:1678.58,leads:399,novos:175},
+  {ano:2026,mes:'Fevereiro',canal:'Google Ads',invest:957.00,receita:1815.93,leads:80,novos:106},
+  {ano:2026,mes:'Fevereiro',canal:'Meta Ads',invest:423.03,receita:921.84,leads:35,novos:47},
+  {ano:2026,mes:'Fevereiro',canal:'Pedido Pago',invest:473.76,receita:665.80,leads:40,novos:53},
+  {ano:2026,mes:'Março',canal:'Google Ads',invest:563.67,receita:4429.64,leads:153,novos:62},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',invest:1012.80,receita:5799.95,leads:275,novos:111},
+  {ano:2026,mes:'Março',canal:'Meta Ads',invest:299.36,receita:27989.90,leads:81,novos:33},
+  {ano:2026,mes:'Abril',canal:'Google Ads',invest:1222.24,receita:2546.89,leads:302,novos:122},
+  {ano:2026,mes:'Abril',canal:'Pedido Pago',invest:668.16,receita:55926.79,leads:165,novos:67},
+];
+const MKC=[
+  {ano:2025,mes:'Novembro',canal:'Meta Ads',campanha:'ALQ Friday',invest:286.45,receita:0.00,roas:0},
+  {ano:2025,mes:'Dezembro',canal:'Pedido Pago',campanha:'retomada_nov._pepti',invest:22.68,receita:1316.82,roas:58.05},
+  {ano:2025,mes:'Dezembro',canal:'Pedido Pago',campanha:'ayuer_dez2025pr_natal',invest:9.72,receita:1454.71,roas:149.67},
+  {ano:2025,mes:'Dezembro',canal:'Pedido Pago',campanha:'KitsAyur _ Natal2025',invest:27.36,receita:2329.35,roas:85.14},
+  {ano:2025,mes:'Dezembro',canal:'Google Ads',campanha:'Orçamentos',invest:473.01,receita:312.00,roas:0.66},
+  {ano:2025,mes:'Dezembro',canal:'Meta Ads',campanha:'[COMPRA][E-COMMERCE] - Kits Ayur Natal 2025',invest:260.97,receita:320.67,roas:1.23},
+  {ano:2026,mes:'Janeiro',canal:'Pedido Pago',campanha:'venc_jan_curcumina',invest:49.68,receita:3848.06,roas:77.46},
+  {ano:2026,mes:'Janeiro',canal:'Pedido Pago',campanha:'retomada_jan_morosil',invest:81.36,receita:3083.41,roas:37.90},
+  {ano:2026,mes:'Janeiro',canal:'Google Ads',campanha:'Orçamentos',invest:1064.09,receita:1678.58,roas:1.58},
+  {ano:2026,mes:'Fevereiro',canal:'Google Ads',campanha:'Orçamentos',invest:957.00,receita:1815.93,roas:1.90},
+  {ano:2026,mes:'Fevereiro',canal:'Meta Ads',campanha:'Bote - Fevereiro [ORÇAMENTOS]',invest:292.50,receita:554.84,roas:1.90},
+  {ano:2026,mes:'Fevereiro',canal:'Meta Ads',campanha:'[COMPRA][E-COMMERCE] - venc_jan',invest:130.53,receita:367.00,roas:2.81},
+  {ano:2026,mes:'Fevereiro',canal:'Pedido Pago',campanha:'vencimentos2026',invest:473.76,receita:665.80,roas:1.40},
+  {ano:2026,mes:'Março',canal:'Google Ads',campanha:'Orçamentos',invest:563.67,receita:4429.64,roas:7.86},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',campanha:'vencimentos_mar2026',invest:193.68,receita:31.08,roas:0.16},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',campanha:'aviso_profresh',invest:68.40,receita:2572.75,roas:37.61},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',campanha:'lancamento_caramelo',invest:593.64,receita:944.30,roas:1.59},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',campanha:'repesc_15_dias_15/03',invest:110.52,receita:2116.92,roas:19.15},
+  {ano:2026,mes:'Março',canal:'Pedido Pago',campanha:'lanc_cara_omekids',invest:46.56,receita:134.90,roas:2.90},
+  {ano:2026,mes:'Março',canal:'Meta Ads',campanha:'Consumidor',invest:299.36,receita:27989.90,roas:93.50},
+  {ano:2026,mes:'Abril',canal:'Google Ads',campanha:'Orçamentos',invest:1222.24,receita:2546.89,roas:2.08},
+  {ano:2026,mes:'Abril',canal:'Pedido Pago',campanha:'repesc_15_dias_31/03',invest:242.28,receita:20899.57,roas:86.26},
+  {ano:2026,mes:'Abril',canal:'Pedido Pago',campanha:'leve3pague2_profresh_1',invest:59.04,receita:10482.72,roas:177.55},
+  {ano:2026,mes:'Abril',canal:'Pedido Pago',campanha:'repesc_15_dias_15/04',invest:180.00,receita:5014.68,roas:27.86},
+  {ano:2026,mes:'Abril',canal:'Pedido Pago',campanha:'caramelo_pub_persona',invest:186.84,receita:19529.82,roas:104.53},
+];
+const MKS=[
+  {ano:2026,mes:'Março',metrica:'Primeiras aprovações',valor:7},
+  {ano:2026,mes:'Março',metrica:'Não calculadas',valor:15},
+  {ano:2026,mes:'Março',metrica:'Pag. via Pix',valor:6},
+  {ano:2026,mes:'Março',metrica:'Pag. via Cartão',valor:4},
+  {ano:2026,mes:'Março',metrica:'Tempo médio atendimento',valor:'02h36m'},
+  {ano:2026,mes:'Março',metrica:'Tempo médio cálculo',valor:'03h33m'},
+  {ano:2026,mes:'Abril',metrica:'Primeiras aprovações',valor:6},
+  {ano:2026,mes:'Abril',metrica:'Não calculadas',valor:26},
+  {ano:2026,mes:'Abril',metrica:'Pag. via Pix',valor:6},
+  {ano:2026,mes:'Abril',metrica:'Pag. via Cartão',valor:4},
+  {ano:2026,mes:'Abril',metrica:'Tempo médio atendimento',valor:'02h45m'},
+  {ano:2026,mes:'Abril',metrica:'Tempo médio cálculo',valor:'03h30m'},
+];
+const MKR=[
+  {ano:2026,mes:'Março',metrica:'Envios totais',valor:190},
+  {ano:2026,mes:'Março',metrica:'Aprovações',valor:30},
+  {ano:2026,mes:'Março',metrica:'Taxa de conversão (%)',valor:15.79},
+  {ano:2026,mes:'Março',metrica:'Vendas geradas (R$)',valor:24643.72},
+  {ano:2026,mes:'Abril',metrica:'Envios totais',valor:242},
+  {ano:2026,mes:'Abril',metrica:'Aprovações',valor:39},
+  {ano:2026,mes:'Abril',metrica:'Taxa de conversão (%)',valor:16.10},
+  {ano:2026,mes:'Abril',metrica:'Vendas geradas (R$)',valor:32032.72},
+];
+
+
 const DP_NEU={
   'Abril 2026':[['Não especificado',69],['Preço Competitivo',15],['Atendimento',12],['Serviço',3]],
   'Março 2026':[['Não especificado',62],['Atendimento',25],['Preço Competitivo',7],['Serviço',3]],
@@ -1052,14 +1434,94 @@ const DP_NEU={
 
 /* ── State ────────────────────────────────────────────────── */
 let cM='Abril', cA=2026;
+let cPeriodId='custom:jan26,fev26,mar26,abr26', cCompAId='', cCompBId='', cPeriodIds=['jan26','fev26','mar26','abr26'], cCompAIds=[], cPeriodStartId='jan26', cPeriodEndId='abr26';
+let mkM='Abril', mkA=2026, mkPeriodId='mk-abr26', mkCompId='', mkPeriodIds=['mk-abr26'], mkCompIds=[], mkPeriodStartId='mk-abr26', mkPeriodEndId='mk-abr26';
 const CH={};
 
 /* ── Utils ────────────────────────────────────────────────── */
 function sl(m,a){return MS[MO.indexOf(m)]+'/'+String(a).slice(-2)}
+function parseAtivos(txt){return txt.trim().split('\n').slice(1).map(l=>{const [ano,mes,st,ativo,ef,ap,rj,vl,ix]=l.split(';');return {ano:+ano,mes,st,ativo,ef:+ef,ap:+ap,rj:+rj,vl:+vl,ix:+ix}})}
+const PERIODS=[
+  {id:'abr26',label:'Abr/26',months:[{m:'Abril',a:2026}]},
+  {id:'mar26',label:'Mar/26',months:[{m:'Março',a:2026}]},
+  {id:'fev26',label:'Fev/26',months:[{m:'Fevereiro',a:2026}]},
+  {id:'jan26',label:'Jan/26',months:[{m:'Janeiro',a:2026}]},
+  {id:'mar-abr26',label:'Mar–Abr/26',months:[{m:'Março',a:2026},{m:'Abril',a:2026}]},
+  {id:'jan-abr26',label:'Jan–Abr/26',months:[{m:'Janeiro',a:2026},{m:'Fevereiro',a:2026},{m:'Março',a:2026},{m:'Abril',a:2026}]},
+  {id:'abr25',label:'Abr/25',months:[{m:'Abril',a:2025}]},
+  {id:'q4-25',label:'Out–Dez/25',months:[{m:'Outubro',a:2025},{m:'Novembro',a:2025},{m:'Dezembro',a:2025}]},
+];
+const MONTH_PERIODS=PERIODS.filter(p=>p.months.length===1);
+const LATEST_MONTH_ID=MONTH_PERIODS[0].id;
+function monthKey(x){return x.a*12+MO.indexOf(x.m)}
+function periodFromIds(ids){
+  const periods=ids.flatMap(id=>id&&id.startsWith('custom:')?id.replace('custom:','').split(','):[id]).map(id=>MONTH_PERIODS.find(p=>p.id===id)).filter(Boolean).sort((a,b)=>monthKey(a.months[0])-monthKey(b.months[0]));
+  if(!periods.length)return MONTH_PERIODS[0];
+  if(periods.length===1)return periods[0];
+  return {id:'custom:'+periods.map(p=>p.id).join(','),label:`${periods[0].label}–${periods[periods.length-1].label}`,months:periods.flatMap(p=>p.months)};
+}
+function rangeIdsBetween(startId,endId,months){
+  const asc=months.slice().sort((a,b)=>monthKey(a.months[0])-monthKey(b.months[0]));
+  let i=asc.findIndex(p=>p.id===startId),j=asc.findIndex(p=>p.id===endId);
+  if(i<0)i=asc.length-1;
+  if(j<0)j=i;
+  const [a,b]=i<=j?[i,j]:[j,i];
+  return asc.slice(a,b+1).map(p=>p.id);
+}
+function idsFromPeriodValue(value,prefix='custom:'){
+  return value&&value.startsWith(prefix)?value.replace(prefix,'').split(','):(value?[value]:[]);
+}
+function customIdFromIds(ids,prefix='custom:'){
+  return ids.length===1?ids[0]:prefix+ids.join(',');
+}
+const MK_PERIODS=[
+  {id:'mk-abr26',label:'Abr/26',months:[{m:'Abril',a:2026}]},
+  {id:'mk-mar26',label:'Mar/26',months:[{m:'Março',a:2026}]},
+  {id:'mk-fev26',label:'Fev/26',months:[{m:'Fevereiro',a:2026}]},
+  {id:'mk-jan26',label:'Jan/26',months:[{m:'Janeiro',a:2026}]},
+  {id:'mk-dez25',label:'Dez/25',months:[{m:'Dezembro',a:2025}]},
+  {id:'mk-nov25',label:'Nov/25',months:[{m:'Novembro',a:2025}]},
+];
+const MK_MONTH_PERIODS=MK_PERIODS.filter(p=>p.months.length===1);
+function mkPeriodFromIds(ids){
+  const periods=ids.flatMap(id=>id&&id.startsWith('mk-custom:')?id.replace('mk-custom:','').split(','):[id]).map(id=>MK_MONTH_PERIODS.find(p=>p.id===id)).filter(Boolean).sort((a,b)=>monthKey(a.months[0])-monthKey(b.months[0]));
+  if(!periods.length)return MK_MONTH_PERIODS[0];
+  if(periods.length===1)return periods[0];
+  return {id:'mk-custom:'+periods.map(p=>p.id).join(','),label:`${periods[0].label}–${periods[periods.length-1].label}`,months:periods.flatMap(p=>p.months)};
+}
+function pById(id,marketing=false){if(marketing&&id&&id.startsWith('mk-custom:'))return mkPeriodFromIds(id.replace('mk-custom:','').split(','));if(!marketing&&id&&id.startsWith('custom:'))return periodFromIds(id.replace('custom:','').split(','));return (marketing?MK_PERIODS:PERIODS).find(p=>p.id===id)||null}
+function pLabel(p){return p?p.label:''}
+function pEnd(p){return p.months[p.months.length-1]}
+function inP(d,p){return p&&p.months.some(x=>x.m===d.mes&&x.a===d.ano)}
+function hasIx(d){return Number.isFinite(d.ix)}
+function ixDoctor(d){return hasIx(d)?d.ix:(d.ef?d.rj/d.ef*100:0)}
+function grP(p){const map={};DR.filter(d=>inP(d,p)).forEach(d=>{const r=map[d.med]||(map[d.med]={ano:pEnd(p).a,mes:pLabel(p),med:d.med,ef:0,ap:0,rj:0,vl:0,ixWeighted:0,ixWeight:0,ix:0});r.ef+=d.ef;r.ap+=d.ap;r.rj+=d.rj;r.vl+=d.vl;if(hasIx(d)){const w=d.ef||1;r.ixWeighted+=d.ix*w;r.ixWeight+=w}});return Object.values(map).map(r=>({...r,ix:r.ixWeight?r.ixWeighted/r.ixWeight:(r.ef?r.rj/r.ef*100:0)}))}
+function grAtP(p,st){const map={};DA.filter(d=>d.st===st&&inP(d,p)).forEach(d=>{const r=map[d.ativo]||(map[d.ativo]={ano:pEnd(p).a,mes:pLabel(p),ativo:d.ativo,ef:0,ap:0,rj:0,vl:0,ix:0});r.ef+=d.ef;r.ap+=d.ap;r.rj+=d.rj;r.vl+=d.vl});return Object.values(map).map(r=>({...r,ix:r.ef?r.rj/r.ef*100:0}))}
+function mkRowsP(p){const map={};MK.filter(d=>inP(d,p)).forEach(d=>{const r=map[d.canal]||(map[d.canal]={ano:pEnd(p).a,mes:pLabel(p),canal:d.canal,invest:0,receita:0,leads:0,novos:0,cac:0,roas:0});r.invest+=d.invest;r.receita+=d.receita;r.leads+=d.leads;r.novos+=d.novos});return Object.values(map).map(r=>({...r,cac:r.novos?r.invest/r.novos:0,roas:r.invest?r.receita/r.invest:0}))}
+function mkCampsP(p){return MKC.filter(d=>inP(d,p)).sort((x,y)=>y.receita-x.receita)}
+function mkRoasByChannelP(p){const map={};MKC.filter(d=>inP(d,p)).forEach(d=>{const r=map[d.canal]||(map[d.canal]={canal:d.canal,invest:0,receita:0,roas:0});r.invest+=d.invest;r.receita+=d.receita});return Object.values(map).map(r=>({...r,roas:r.invest?r.receita/r.invest:0})).sort((a,b)=>b.roas-a.roas)}
+function avg(nums){const v=nums.filter(n=>n!==null&&n!==undefined);return v.length?v.reduce((s,n)=>s+n,0)/v.length:null}
+function npsP(p){return avg(p.months.map(x=>gn(x.m,x.a)))}
+function timeP(p){const rows=p.months.map(x=>gt(x.m,x.a)).filter(Boolean);if(!rows.length)return null;return {at:Math.round(avg(rows.map(x=>x.at))),ca:Math.round(avg(rows.map(x=>x.ca))),ap:Math.round(avg(rows.map(x=>x.ap))),in:Math.round(avg(rows.map(x=>x.in)))}}
+function mkSumP(p){const rows=mkRowsP(p);const invest=rows.reduce((s,x)=>s+x.invest,0),receita=rows.reduce((s,x)=>s+x.receita,0),leads=rows.reduce((s,x)=>s+x.leads,0),novos=rows.reduce((s,x)=>s+x.novos,0);return {invest,receita,leads,novos,roas:invest?receita/invest:0,cac:novos?invest/novos:0}}
+function mkMetricP(src,p,name){return src.filter(d=>inP(d,p)&&d.metrica===name).reduce((s,d)=>s+d.valor,0)}
+function motiveP(src,p){
+  const map={},counts={};
+  p.months.forEach(x=>{
+    const rows=src[`${x.m} ${x.a}`]||[];
+    rows.forEach(([label,val])=>{map[label]=(map[label]||0)+val;counts[label]=(counts[label]||0)+1});
+  });
+  return Object.entries(map).map(([label,val])=>[label,Math.round(val/(counts[label]||1))]).sort((a,b)=>b[1]-a[1]).slice(0,4);
+}
 function pm(m,a){const i=MO.indexOf(m);return i===0?{m:'Dezembro',a:a-1}:{m:MO[i-1],a}}
 function gr(m,a){return DR.filter(d=>d.mes===m&&d.ano===a)}
 function gt(m,a){return DT.find(d=>d.mes===m&&d.ano===a)||null}
 function gn(m,a){const d=DN.find(d=>d.mes===m&&d.ano===a);return d?d.n:null}
+function mkRows(m,a){return MK.filter(d=>d.mes===m&&d.ano===a)}
+function mkCamps(m,a){return MKC.filter(d=>d.mes===m&&d.ano===a)}
+function mkSum(m,a){const rows=mkRows(m,a);const invest=rows.reduce((s,x)=>s+x.invest,0),receita=rows.reduce((s,x)=>s+x.receita,0),leads=rows.reduce((s,x)=>s+x.leads,0),novos=rows.reduce((s,x)=>s+x.novos,0);return {invest,receita,leads,novos,roas:invest?receita/invest:0,cac:novos?invest/novos:0}}
+function pct(c,p){return p?((c-p)/Math.abs(p))*100:null}
+function compactBrl(v){return v>=1000?'R$ '+(v/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mil':brl(v)}
 function ar(data){const e=data.reduce((s,x)=>s+x.ef,0),r=data.reduce((s,x)=>s+x.rj,0);return e>0?r/e*100:null}
 function brl(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function sn(n){const p=n.split(' ');return p.length<=2?n:p[0]+' '+p[p.length-1]}
@@ -1093,44 +1555,47 @@ const CDef={
 
 /* ── Render ────────────────────────────────────────────────── */
 function render(){
-  const m=cM,a=cA;
-  const pr=pm(m,a),py={m,a:a-1};
-  const slFull=`${MS[MO.indexOf(pr.m)]}/${String(pr.a).slice(-2)} (mês anterior)`;
-  const slAno=`${MS[MO.indexOf(m)]}/${String(py.a).slice(-2)} (ano anterior)`;
-  document.getElementById('comp-a').textContent=slFull;
-  document.getElementById('comp-b').textContent=slAno;
-  document.getElementById('s-mes').textContent=`${m}/${String(a).slice(-2)}`;
-  document.getElementById('tb-path').textContent=`Performance · ${m}/${String(a).slice(-2)}`;
-  document.getElementById('fs-info').textContent=`Exibindo ${m} de ${a} com comparativo vs dois períodos`;
+  const cp=periodFromIds(cPeriodIds), pr=null, py=null;
+  const end=pEnd(cp); cM=end.m; cA=end.a;
+  renderCompSelects();
+  document.getElementById('s-mes').textContent=pLabel(cp);
+  document.getElementById('s-ativos-mes').textContent=pLabel(cp);
+  if(document.getElementById('tab-comercial').classList.contains('on')){
+    document.getElementById('tb-path').textContent='Performance';
+  }
 
-  renderInsight(m,a,pr,py);
-  renderKPIs(m,a,pr,py);
-  renderBarQty(m,a);
-  renderBarVal(m,a);
+  renderInsight(cp,pr);
+  renderKPIs(cp,pr,py);
+  renderAtivos(cp);
+  renderBarQty();
+  renderBarVal();
   renderEvo();
-  renderFunil(m,a);
-  renderTbl(m,a);
+  renderFunil();
+  renderTbl();
   renderTempos();
-  renderTCards(m,a,pr,py);
-  renderNPS(m,a);
-  renderNPSLine();
-  renderDonut('chP','lgP',DP_PROM[`${m} ${a}`]||[],['#2e3f6e','#4a5684','#85a0cc','#c8d5ee']);
-  renderDonut('chD','lgD',DP_DET[`${m} ${a}`]||[],['#a02020','#c44040','#e07070','#f5a0a0']);
-  renderDonut('chNeu','lgNeu',DP_NEU[`${m} ${a}`]||[],['#4a5684','#85a0cc','#2e3f6e','#c8d5ee']);
+  renderTCards(cp,pr,py);
+  renderNPS(cp);
+  renderNPSLine(cp);
+  renderDonut('chP','lgP',motiveP(DP_PROM,cp),['#123b7a','#006bd6','#00a6c8','#8ed8f8']);
+  renderDonut('chD','lgD',motiveP(DP_DET,cp),['#a02020','#c44040','#e07070','#f5a0a0']);
+  renderDonut('chNeu','lgNeu',motiveP(DP_NEU,cp),['#006bd6','#00a6c8','#123b7a','#8ed8f8']);
+  renderMarketing();
+  if(document.getElementById('tab-comercial').classList.contains('on')){
+    document.getElementById('tb-path').textContent='Performance';
+  }
 }
-
-function renderInsight(m,a,pr,py){
-  const rej=gr(m,a),rejPr=gr(pr.m,pr.a);
-  const avg=ar(rej),avgPr=ar(rejPr);
-  const delta=avg!==null&&avgPr!==null?avg-avgPr:null;
-  const nps=gn(m,a),npsP=gn(pr.m,pr.a);
-  const dnps=nps&&npsP?nps-npsP:null;
+function renderInsight(cp,cmp){
+  const rej=grP(cp), rejPr=cmp?grP(cmp):[];
+  const avgCur=ar(rej), avgPr=cmp?ar(rejPr):null;
+  const delta=avgCur!==null&&avgPr!==null?avgCur-avgPr:null;
+  const nps=npsP(cp), npsCmp=cmp?npsP(cmp):null;
+  const dnps=nps!==null&&npsCmp!==null?nps-npsCmp:null;
 
   const items=[
-    {icon:'📊',label:'Maior rejeitador do período',val:()=>{const d=gr(m,a).sort((x,y)=>y.rj-x.rj)[0];return d?`${sn(d.med)} — ${d.rj} rejeições (${d.ix.toFixed(1)}%)`:'—'},delta:null},
-    {icon:'💰',label:'Maior valor rejeitado',val:()=>{const d=gr(m,a).sort((x,y)=>y.vl-x.vl)[0];return d?`${sn(d.med)} — ${brl(d.vl)}`:'—'},delta:null},
-    {icon:'📉',label:'Taxa média de rejeição',val:()=>avg!==null?avg.toFixed(1)+'%':'—',delta:delta,gp:false},
-    {icon:'⭐',label:'NPS do período',val:()=>nps!==null?String(nps):'—',delta:dnps,gp:true},
+    {icon:'📊',label:'Maior rejeitador do período',val:()=>{const d=rej.sort((x,y)=>y.rj-x.rj)[0];return d?`${sn(d.med)} — ${d.rj} rejeições (${d.ix.toFixed(1)}%)`:'—'},delta:null},
+    {icon:'💰',label:'Maior valor rejeitado',val:()=>{const d=rej.sort((x,y)=>y.vl-x.vl)[0];return d?`${sn(d.med)} — ${brl(d.vl)}`:'—'},delta:null},
+    {icon:'📉',label:'Taxa média de rejeição',val:()=>avgCur!==null?avgCur.toFixed(1)+'%':'—',delta:delta,gp:false},
+    {icon:'⭐',label:'NPS do período',val:()=>nps!==null?nps.toFixed(0):'—',delta:dnps,gp:true},
   ];
 
   document.getElementById('insight-strip').innerHTML=items.map(it=>`
@@ -1144,47 +1609,96 @@ function renderInsight(m,a,pr,py){
     </div>
   `).join('<div style="width:1px;background:rgba(255,255,255,.12);align-self:stretch"></div>');
 }
+function renderKPIs(cp,pr,py){
+  const nps=npsP(cp),npsPr=pr?npsP(pr):null,npsAn=py?npsP(py):null;
+  const rj=grP(cp),rjPr=pr?grP(pr):[],rjAn=py?grP(py):[];
+  const avgCur=ar(rj),avgPr=pr?ar(rjPr):null,avgAn=py?ar(rjAn):null;
+  const t=timeP(cp),tPr=pr?timeP(pr):null,tAn=py?timeP(py):null;
+  const drA=avgCur!==null&&avgPr!==null?((avgCur-avgPr)/Math.abs(avgPr)*100):null;
+  const drB=avgCur!==null&&avgAn!==null?((avgCur-avgAn)/Math.abs(avgAn)*100):null;
 
-function renderKPIs(m,a,pr,py){
-  const nps=gn(m,a),npsPr=gn(pr.m,pr.a),npsAn=gn(py.m,py.a);
-  const rj=gr(m,a),rjPr=gr(pr.m,pr.a);
-  const avg=ar(rj),avgPr=ar(rjPr);
-  const t=gt(m,a),tPr=gt(pr.m,pr.a),tAn=gt(py.m,py.a);
-
-  document.getElementById('kv-nps').textContent=nps!==null?nps:'—';
-  document.getElementById('kc-nps').innerHTML=kc(sl(pr.m,pr.a),dtag(nps&&npsPr!==null?nps-npsPr:null,true,'pt'),sl(py.m,py.a),dtag(nps&&npsAn!==null?nps-npsAn:null,true,'pt'));
-  document.getElementById('kv-rej').textContent=avg!==null?avg.toFixed(1)+'%':'—';
-  const dr=avg!==null&&avgPr!==null?((avg-avgPr)/Math.abs(avgPr)*100):null;
-  document.getElementById('kc-rej').innerHTML=kc(sl(pr.m,pr.a),dtag(dr,false,'%'),sl(py.m,py.a),'<span class="dl d0">n/d</span>');
+  document.getElementById('kv-nps').textContent=nps!==null?nps.toFixed(0):'—';
+  document.getElementById('kc-nps').innerHTML=kc(pr&&pLabel(pr),dtag(nps!==null&&npsPr!==null?nps-npsPr:null,true,'pt'),py&&pLabel(py),dtag(nps!==null&&npsAn!==null?nps-npsAn:null,true,'pt'));
+  document.getElementById('kv-rej').textContent=avgCur!==null?avgCur.toFixed(1)+'%':'—';
+  document.getElementById('kc-rej').innerHTML=kc(pr&&pLabel(pr),dtag(drA,false,'%'),py&&pLabel(py),dtag(drB,false,'%'));
   document.getElementById('kv-at').textContent=t?ft(t.at):'—';
-  document.getElementById('kc-at').innerHTML=kc(sl(pr.m,pr.a),t&&tPr?dtime(t.at,tPr.at):'<span class="dl d0">—</span>',sl(py.m,py.a),t&&tAn?dtime(t.at,tAn.at):'<span class="dl d0">—</span>');
+  document.getElementById('kc-at').innerHTML=kc(pr&&pLabel(pr),t&&tPr?dtime(t.at,tPr.at):'<span class="dl d0">—</span>',py&&pLabel(py),t&&tAn?dtime(t.at,tAn.at):'<span class="dl d0">—</span>');
   document.getElementById('kv-ca').textContent=t?ft(t.ca):'—';
-  document.getElementById('kc-ca').innerHTML=kc(sl(pr.m,pr.a),t&&tPr?dtime(t.ca,tPr.ca):'<span class="dl d0">—</span>',sl(py.m,py.a),t&&tAn?dtime(t.ca,tAn.ca):'<span class="dl d0">—</span>');
+  document.getElementById('kc-ca').innerHTML=kc(pr&&pLabel(pr),t&&tPr?dtime(t.ca,tPr.ca):'<span class="dl d0">—</span>',py&&pLabel(py),t&&tAn?dtime(t.ca,tAn.ca):'<span class="dl d0">—</span>');
 }
-function kc(la,da,lb,db){return`<div class="kc"><span class="kc-per">vs ${la}</span>${da}</div><div class="kc"><span class="kc-per">vs ${lb}</span>${db}</div>`}
+function kc(la,da,lb,db){return`${la?`<div class="kc"><span class="kc-per">vs ${la}</span>${da}</div>`:''}${lb?`<div class="kc"><span class="kc-per">vs ${lb}</span>${db}</div>`:''}`}
 
-function renderBarQty(m,a){
-  const d=[...gr(m,a)].sort((x,y)=>y.rj-x.rj).slice(0,8);
-  if(CH.q)CH.q.destroy();
-  CH.q=new Chart(document.getElementById('chQ'),{type:'bar',
-    data:{labels:d.map(x=>sn(x.med)),datasets:[
-      {label:'Rejeitados',data:d.map(x=>x.rj),backgroundColor:'#4a5684',borderRadius:4,barPercentage:.55,order:2},
-      {label:'Aprovados',data:d.map(x=>x.ap),backgroundColor:'#d9e4f4',borderRadius:4,barPercentage:.55,order:1}
-    ]},
+
+const MONTH_STACK_COLORS=['#8ed8f8','#00a6c8','#006bd6','#123b7a','#4a5684','#85a0cc'];
+function monthDatasets(p,rows,keys,keyField,valueField){
+  return p.months.map((m,i)=>({
+    label:sl(m.m,m.a),
+    data:keys.map(key=>rows.filter(r=>r[keyField]===key&&r.mes===m.m&&r.ano===m.a).reduce((s,r)=>s+r[valueField],0)),
+    backgroundColor:MONTH_STACK_COLORS[i%MONTH_STACK_COLORS.length],
+    borderRadius:3,
+    barPercentage:.62
+  }));
+}
+function stackedScales(valueTicks={}){return {x:{...CDef.scales.x,stacked:true,ticks:{...CDef.scales.x.ticks,...valueTicks}},y:{...CDef.scales.y,stacked:true,grid:{display:false},ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e'}}}}
+function topKeysByMonth(rows,p,keyField,valueField,limit=8){
+  const keys=[];
+  const add=key=>{if(key&&!keys.includes(key))keys.push(key)};
+  p.months.forEach(m=>rows.filter(r=>r.mes===m.m&&r.ano===m.a).sort((a,b)=>b[valueField]-a[valueField]).slice(0,2).forEach(r=>add(r[keyField])));
+  const totals={};
+  rows.forEach(r=>{totals[r[keyField]]=(totals[r[keyField]]||0)+r[valueField]});
+  Object.entries(totals).sort((a,b)=>b[1]-a[1]).forEach(([key])=>add(key));
+  return keys.slice(0,limit);
+}
+function renderAtivos(cp){
+  renderAtivoQty(cp);
+  renderAtivoVal(cp);
+  renderAtivoTbl(cp);
+}
+function renderAtivoQty(cp){
+  const rows=DA.filter(x=>x.st==='num'&&inP(x,cp)),keys=topKeysByMonth(rows,cp,'ativo','rj');
+  if(CH.aq)CH.aq.destroy();
+  CH.aq=new Chart(document.getElementById('chAQ'),{type:'bar',
+    data:{labels:keys.map(tc),datasets:monthDatasets(cp,rows,keys,'ativo','rj')},
     options:{...CDef,indexAxis:'y',
-      plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.x.toLocaleString('pt-BR')}`}}},
-      scales:{x:{...CDef.scales.x},y:{...CDef.scales.y,grid:{display:false},ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e'}}}}
+      plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:10,font:{family:'Poppins',size:10,weight:'600'}}},tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.x.toLocaleString('pt-BR')} rejeitados`}}},
+      scales:stackedScales()}
   });
 }
-function renderBarVal(m,a){
-  const d=[...gr(m,a)].sort((x,y)=>y.vl-x.vl).slice(0,8);
+function renderAtivoVal(cp){
+  const rows=DA.filter(x=>x.st==='val'&&inP(x,cp)),keys=topKeysByMonth(rows,cp,'ativo','vl');
+  if(CH.av)CH.av.destroy();
+  CH.av=new Chart(document.getElementById('chAV'),{type:'bar',
+    data:{labels:keys.map(tc),datasets:monthDatasets(cp,rows,keys,'ativo','vl')},
+    options:{...CDef,indexAxis:'y',
+      plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:10,font:{family:'Poppins',size:10,weight:'600'}}},tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.x)}`}}},
+      scales:stackedScales({callback:v=>'R$'+(v/1000).toFixed(0)+'k'})}
+  });
+}
+function renderAtivoTbl(cp){
+  const qty=grAtP(cp,'num').sort((x,y)=>y.rj-x.rj).slice(0,10);
+  const val=grAtP(cp,'val').sort((x,y)=>y.vl-x.vl).slice(0,10);
+  const rows=[...qty.map(x=>({...x,tipo:'Qtd.'})),...val.map(x=>({...x,tipo:'Valor'}))];
+  document.getElementById('tbl-ativos').innerHTML=`<table class="dt"><thead><tr><th>Tipo</th><th>Ativo</th><th class="tr">Efetuados</th><th class="tr">Aprovados</th><th class="tr">Rejeitados</th><th class="tr">Valor</th><th class="tr">Índice</th></tr></thead><tbody>${rows.map(x=>`<tr><td><span class="badge bb">${x.tipo}</span></td><td>${tc(x.ativo)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tr"><span class="badge ${x.ix>=60?'br':x.ix>=40?'bb':'bg'}">${x.ix.toFixed(1)}%</span></td></tr>`).join('')}</tbody></table>`;
+}
+
+function renderBarQty(){
+  const cp=periodFromIds(cPeriodIds),rows=DR.filter(x=>inP(x,cp)),keys=topKeysByMonth(rows,cp,'med','rj');
+  if(CH.q)CH.q.destroy();
+  CH.q=new Chart(document.getElementById('chQ'),{type:'bar',
+    data:{labels:keys.map(sn),datasets:monthDatasets(cp,rows,keys,'med','rj')},
+    options:{...CDef,indexAxis:'y',
+      plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:10,font:{family:'Poppins',size:10,weight:'600'}}},tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.x.toLocaleString('pt-BR')} rejeitados`}}},
+      scales:stackedScales()}
+  });
+}
+function renderBarVal(){
+  const cp=periodFromIds(cPeriodIds),rows=DR.filter(x=>inP(x,cp)),keys=topKeysByMonth(rows,cp,'med','vl');
   if(CH.v)CH.v.destroy();
   CH.v=new Chart(document.getElementById('chV'),{type:'bar',
-    data:{labels:d.map(x=>sn(x.med)),datasets:[{label:'Valor',data:d.map(x=>x.vl),backgroundColor:'#2e3f6e',borderRadius:4,barPercentage:.5}]},
+    data:{labels:keys.map(sn),datasets:monthDatasets(cp,rows,keys,'med','vl')},
     options:{...CDef,indexAxis:'y',
-      plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${brl(c.parsed.x)}`}}},
-      scales:{x:{...CDef.scales.x,ticks:{...CDef.scales.x.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}},
-              y:{...CDef.scales.y,grid:{display:false},ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e'}}}}
+      plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:10,font:{family:'Poppins',size:10,weight:'600'}}},tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.x)}`}}},
+      scales:stackedScales({callback:v=>'R$'+(v/1000).toFixed(0)+'k'})}
   });
 }
 function renderEvo(){
@@ -1195,8 +1709,8 @@ function renderEvo(){
   if(CH.e)CH.e.destroy();
   CH.e=new Chart(document.getElementById('chE'),{type:'bar',
     data:{labels:lbs,datasets:[
-      {type:'bar',label:'Rejeitados',data:qd,backgroundColor:'#4a5684',borderRadius:4,barPercentage:.5,yAxisID:'y',order:2},
-      {type:'line',label:'Valor',data:vd,borderColor:'#85a0cc',backgroundColor:'rgba(133,160,204,.08)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#85a0cc',fill:true,tension:.3,yAxisID:'y2',order:1}
+      {type:'bar',label:'Rejeitados',data:qd,backgroundColor:'#006bd6',borderRadius:4,barPercentage:.5,yAxisID:'y',order:2},
+      {type:'line',label:'Valor',data:vd,borderColor:'#00a6c8',backgroundColor:'rgba(0,166,200,.12)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#00a6c8',fill:true,tension:.3,yAxisID:'y2',order:1}
     ]},
     options:{...CDef,
       plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>c.datasetIndex===0?` Rej.: ${c.parsed.y.toLocaleString('pt-BR')}`:` Valor: ${brl(c.parsed.y)}`}}},
@@ -1204,18 +1718,18 @@ function renderEvo(){
               y2:{...CDef.scales.y,position:'right',grid:{display:false},ticks:{...CDef.scales.y.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}}}}
   });
 }
-function renderFunil(m,a){
-  const d=gr(m,a);
+function renderFunil(){
+  const d=grP(periodFromIds(cPeriodIds));
   const ef=d.reduce((s,x)=>s+x.ef,0),ap=d.reduce((s,x)=>s+x.ap,0),rj=d.reduce((s,x)=>s+x.rj,0);
   const pA=ef>0?(ap/ef*100).toFixed(1):'—',pR=ef>0?(rj/ef*100).toFixed(1):'—';
   document.getElementById('funil').innerHTML=`
     <div class="funnel">
-      <div class="f-step" style="width:100%;background:#2e3f6e">
+      <div class="f-step" style="width:100%;background:#123b7a">
         <div><div class="f-label">Efetuados</div><div class="f-pct">100% — base</div></div>
         <div class="f-val">${ef.toLocaleString('pt-BR')}</div>
       </div>
       <div class="f-conn"><div class="f-clbl">taxa de aprovação</div><div class="f-conv">${pA}%</div></div>
-      <div class="f-step" style="width:78%;background:#4a5684">
+      <div class="f-step" style="width:78%;background:#006bd6">
         <div><div class="f-label">Aprovados</div><div class="f-pct">${pA}% dos efetuados</div></div>
         <div class="f-val">${ap.toLocaleString('pt-BR')}</div>
       </div>
@@ -1226,54 +1740,53 @@ function renderFunil(m,a){
       </div>
     </div>`;
 }
-function renderTbl(m,a){
-  const d=[...gr(m,a)].sort((x,y)=>y.rj-x.rj);
+function renderTbl(){
+  const d=[...grP(periodFromIds(cPeriodIds))].sort((x,y)=>y.rj-x.rj);
   const ef=d.reduce((s,x)=>s+x.ef,0),ap=d.reduce((s,x)=>s+x.ap,0),rj=d.reduce((s,x)=>s+x.rj,0),vt=d.reduce((s,x)=>s+x.vl,0);
   const ai=ef>0?rj/ef*100:0;
   const rows=d.map(x=>{
-    const bc=x.ix>50?'br':x.ix>25?'bb':'bg';
-    return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tc"><span class="badge ${bc}">${x.ix.toFixed(1)}%</span></td></tr>`;
+    const ix=ixDoctor(x);
+    const bc=ix>50?'br':ix>25?'bb':'bg';
+    return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tr" style="white-space:nowrap"><span class="badge ${bc}">${ix.toFixed(1)}%</span></td></tr>`;
   }).join('');
-  document.getElementById('tbl').innerHTML=`<table class="dt"><thead><tr><th>Médico</th><th style="text-align:right">Efetuados</th><th style="text-align:right">Aprovados</th><th style="text-align:right">Rejeitados</th><th style="text-align:right">Valor Rejeitado</th><th style="text-align:center">Índice Rej.</th></tr></thead><tbody>${rows}<tr class="tot"><td><strong>Total (top 10)</strong></td><td class="tr"><strong>${ef.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${ap.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${rj.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${brl(vt)}</strong></td><td class="tc"><span class="badge ${ai>50?'br':ai>25?'bb':'bg'}">${ai.toFixed(1)}%</span></td></tr></tbody></table>`;
+  document.getElementById('tbl').innerHTML=`<table class="dt dt-medicos"><thead><tr><th>Médico</th><th style="text-align:right">Efetuados</th><th style="text-align:right">Aprovados</th><th style="text-align:right">Rejeitados</th><th style="text-align:right">Valor Rejeitado</th><th class="tr">Índice Rej.</th></tr></thead><tbody>${rows}<tr class="tot"><td><strong>Total (top 10)</strong></td><td class="tr"><strong>${ef.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${ap.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${rj.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${brl(vt)}</strong></td><td class="tr" style="white-space:nowrap"><span class="badge ${ai>50?'br':ai>25?'bb':'bg'}">${ai.toFixed(1)}%</span></td></tr></tbody></table>`;
 }
 function renderTempos(){
   const lbs=DT.map(d=>sl(d.mes,d.ano));
   if(CH.t)CH.t.destroy();
   CH.t=new Chart(document.getElementById('chT'),{type:'line',
     data:{labels:lbs,datasets:[
-      {label:'Atendimento',data:DT.map(d=>d.at),borderColor:'#2e3f6e',backgroundColor:'rgba(46,63,110,.07)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#2e3f6e',fill:false,tension:.3},
-      {label:'Cálculos',data:DT.map(d=>d.ca),borderColor:'#4a5684',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#4a5684',fill:false,tension:.3},
-      {label:'Aprovações',data:DT.map(d=>d.ap),borderColor:'#85a0cc',backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#85a0cc',fill:false,tension:.3,borderDash:[4,3]},
-      {label:'Inclusões',data:DT.map(d=>d.in),borderColor:'#c8d5ee',backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#c8d5ee',fill:false,tension:.3,borderDash:[2,4]},
+      {label:'Atendimento',data:DT.map(d=>d.at),borderColor:'#123b7a',backgroundColor:'rgba(18,59,122,.10)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#123b7a',fill:false,tension:.3},
+      {label:'Cálculos',data:DT.map(d=>d.ca),borderColor:'#006bd6',backgroundColor:'transparent',borderWidth:2,pointRadius:3,pointBackgroundColor:'#006bd6',fill:false,tension:.3},
+      {label:'Aprovações',data:DT.map(d=>d.ap),borderColor:'#00a6c8',backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#00a6c8',fill:false,tension:.3,borderDash:[4,3]},
+      {label:'Inclusões',data:DT.map(d=>d.in),borderColor:'#8ed8f8',backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#8ed8f8',fill:false,tension:.3,borderDash:[2,4]},
     ]},
     options:{...CDef,
       plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${ft(c.parsed.y)}`}}},
       scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>ft(v)}}}}
   });
 }
-function renderTCards(m,a,pr,py){
-  const t=gt(m,a);if(!t){document.getElementById('tcards').innerHTML='';return}
-  const tPr=gt(pr.m,pr.a);
+function renderTCards(cp,pr,py){
+  const t=timeP(cp);if(!t){document.getElementById('tcards').innerHTML='';return}
+  const tPr=pr?timeP(pr):null,tAn=py?timeP(py):null;
   const fs=[{k:'at',l:'Atendimento'},{k:'ca',l:'Cálculos'},{k:'ap',l:'Aprovações'},{k:'in',l:'Inclusões'}];
   document.getElementById('tcards').innerHTML=fs.map(f=>{
-    const d=tPr?t[f.k]-tPr[f.k]:null;
-    const cls=d===null?'d0':d<0?'dp':d>0?'dn':'d0';
-    const ar=d===null?'':d>0?'▲':d<0?'▼':'–';
-    return`<div class="tc-card"><div class="tc-lbl">${f.l}</div><div class="tc-val">${ft(t[f.k])}</div><div class="tc-delta ${cls}">${ar} ${d!==null?ft(Math.abs(d))+' vs mês ant.':''}</div></div>`;
+    const comps=[pr&&tPr?`${pLabel(pr)} ${dtime(t[f.k],tPr[f.k])}`:'',py&&tAn?`${pLabel(py)} ${dtime(t[f.k],tAn[f.k])}`:''].filter(Boolean).join('<br>');
+    return`<div class="tc-card"><div class="tc-lbl">${f.l}</div><div class="tc-val">${ft(t[f.k])}</div><div class="tc-delta d0">${comps}</div></div>`;
   }).join('');
 }
-function renderNPS(m,a){
-  const nps=gn(m,a);
+function renderNPS(cp){
+  const nps=npsP(cp);
   const z=nps>=75?['Excelente','nz-g']:nps>=50?['Bom','nz-b']:['Neutro','nz-n'];
   document.getElementById('npsd').innerHTML=`<div class="nps-big"><div class="nps-num">${nps!==null?nps:'—'}</div><div class="nps-lbl">Net Promoter Score</div><div class="nps-zone ${z[1]}">${z[0]}</div></div>`;
 }
-function renderNPSLine(){
+function renderNPSLine(cp){
   const lbs=DN.map(d=>sl(d.mes,d.ano));
-  const pr=DN.map(d=>d.mes===cM&&d.ano===cA?'#2e3f6e':'rgba(46,63,110,.35)');
-  const ps=DN.map(d=>d.mes===cM&&d.ano===cA?7:3);
+  const pr=DN.map(d=>cp.months.some(x=>x.m===d.mes&&x.a===d.ano)?'#123b7a':'rgba(18,59,122,.35)');
+  const ps=DN.map(d=>cp.months.some(x=>x.m===d.mes&&x.a===d.ano)?7:3);
   if(CH.n)CH.n.destroy();
   CH.n=new Chart(document.getElementById('chN'),{type:'line',
-    data:{labels:lbs,datasets:[{label:'NPS',data:DN.map(d=>d.n),borderColor:'#2e3f6e',backgroundColor:'rgba(46,63,110,.07)',borderWidth:2.5,pointRadius:ps,pointBackgroundColor:pr,fill:true,tension:.3}]},
+    data:{labels:lbs,datasets:[{label:'NPS',data:DN.map(d=>d.n),borderColor:'#123b7a',backgroundColor:'rgba(18,59,122,.10)',borderWidth:2.5,pointRadius:ps,pointBackgroundColor:pr,fill:true,tension:.3}]},
     options:{...CDef,scales:{...CDef.scales,y:{...CDef.scales.y,min:0,max:100}}}
   });
 }
@@ -1285,35 +1798,206 @@ function renderDonut(id,lgId,data,colors){
     options:{...CDef,cutout:'60%',plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.label}: ${c.parsed}%`}}},scales:{x:{display:false},y:{display:false}}}
   });
   const el=document.getElementById(lgId);
-  if(el)el.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:4px 10px">${data.map((d,i)=>`<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#4a5684;font-weight:500"><span style="width:7px;height:7px;border-radius:50%;background:${colors[i]};display:inline-block"></span>${d[0]} (${d[1]}%)</div>`).join('')}</div>`;
+  if(el)el.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:4px 10px">${data.map((d,i)=>`<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#006bd6;font-weight:500"><span style="width:7px;height:7px;border-radius:50%;background:${colors[i]};display:inline-block"></span>${d[0]} (${d[1]}%)</div>`).join('')}</div>`;
 }
+
+
+function mkReportPeriods(){return MK_PERIODS.filter(p=>p.months.length===1).slice().reverse()}
+function mkMonthName(p){return pEnd(p).m.toLowerCase()}
+function mkGoogleMetrics(p){const rows=MKS.filter(d=>inP(d,p));const val=name=>rows.find(d=>d.metrica===name)?.valor||'—';return {
+  solicitacoes:70,aprovacoes:10,ticket:233.75,valor:2337.50,at:val('Tempo médio atendimento'),calc:val('Tempo médio cálculo'),pix:val('Pag. via Pix'),cartao:val('Pag. via Cartão'),naoCalc:val('Não calculadas'),primeiras:61,primeirasAp:val('Primeiras aprovações'),bairro:'Tijuca · Recreio'
+}}
+function renderMarketing(){
+  const mp=mkPeriodFromIds(mkPeriodIds), cmp=null;
+  const end=pEnd(mp); mkM=end.m; mkA=end.a;
+  const cur=mkSumP(mp),prev=cmp?mkSumP(cmp):null;
+  renderMkSelects();
+  if(document.getElementById('tab-marketing').classList.contains('on'))document.getElementById('tb-path').textContent='Marketing';
+  const periods=mkReportPeriods(), monthly=periods.map(p=>({p,sum:mkSumP(p)}));
+  const best=monthly.slice().sort((a,b)=>b.sum.roas-a.sum.roas)[0];
+  document.getElementById('mk-hero-invest').textContent=brl(cur.invest).replace(',00','');
+  document.getElementById('mk-hero-rev').textContent=brl(cur.receita).replace(',00','');
+  document.getElementById('mk-hero-roas').textContent=cur.roas.toFixed(1)+'×';
+  document.getElementById('mk-hero-best').textContent=best?pLabel(best.p).replace('/','/'):'—';
+  document.getElementById('mk-highlight-period').textContent=pLabel(mp);
+  document.getElementById('mk-roas-period').textContent=pLabel(mp);
+  document.getElementById('mk-google-period').textContent=mkMonthName(mp);
+  renderMkCharts(mp,periods,monthly);
+  renderMkTables(mp);
+  renderMkClientes();
+  renderMkGoogle(mp);
+  renderMkRepescagem();
+}
+function renderMkCharts(mp,periods,monthed){
+  const labels=periods.map(p=>p.label);
+  if(CH.mkMonthly)CH.mkMonthly.destroy();
+  CH.mkMonthly=new Chart(document.getElementById('mkChMonthly'),{type:'bar',data:{labels,datasets:[
+    {label:'Investimento',data:monthed.map(x=>x.sum.invest),backgroundColor:'#2f4174',borderRadius:0,barPercentage:.35},
+    {label:'Retorno',data:monthed.map(x=>x.sum.receita),backgroundColor:'#86a1cf',borderRadius:0,barPercentage:.35}
+  ]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}}}}});
+  if(CH.mkRoasMonth)CH.mkRoasMonth.destroy();
+  CH.mkRoasMonth=new Chart(document.getElementById('mkChRoasMonth'),{type:'line',data:{labels,datasets:[{label:'ROAS',data:monthed.map(x=>x.sum.roas),borderColor:'#2f4174',backgroundColor:'rgba(47,65,116,.10)',fill:true,tension:.25,pointRadius:5,pointBackgroundColor:'#2f4174'}]},options:{...CDef,scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v.toFixed(1)+'×'}}}}});
+  renderMkRoasChannel(mkRoasByChannelP(mp));
+  const channels=[...new Set(MK.map(r=>r.canal))];
+  if(CH.mkRoasEvo)CH.mkRoasEvo.destroy();
+  CH.mkRoasEvo=new Chart(document.getElementById('mkChRoasEvo'),{type:'line',data:{labels,datasets:channels.map((ch,i)=>({label:ch,data:periods.map(p=>mkRowsP(p).find(r=>r.canal===ch)?.roas||null),borderColor:['#2f4174','#86a1cf','#182a5c'][i%3],backgroundColor:'transparent',tension:.2,pointRadius:3,borderDash:i===1?[6,4]:[]}))},options:{...CDef,plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:8,font:{family:'Poppins',size:10}}}},scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v+'×'}}}}});
+  if(CH.mkGoogleRoas)CH.mkGoogleRoas.destroy();
+  const googlePeriods=periods.filter(p=>mkRowsP(p).some(r=>r.canal==='Google Ads'));
+  CH.mkGoogleRoas=new Chart(document.getElementById('mkChGoogleRoas'),{type:'line',data:{labels:googlePeriods.map(p=>p.label),datasets:[{label:'Google Ads',data:googlePeriods.map(p=>mkRowsP(p).find(r=>r.canal==='Google Ads').roas),borderColor:'#46598f',backgroundColor:'rgba(70,89,143,.10)',fill:true,tension:.25,pointRadius:4,pointBackgroundColor:'#46598f'}]},options:{...CDef,scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v.toFixed(1)+'×'}}}}});
+}
+function renderMkRoasChannel(rows){
+  const el=document.getElementById('mkRoasChannelBars');
+  if(!el)return;
+  const max=Math.max(...rows.map(r=>r.roas),1);
+  el.innerHTML=rows.length?rows.map(r=>`<div class="mk-bar-row"><div>${r.canal}</div><div class="mk-bar-track"><div class="mk-bar-fill" style="width:${Math.max(3,r.roas/max*100).toFixed(1)}%"></div></div><div class="mk-bar-value">${r.roas.toFixed(1)}×</div></div>`).join(''):'<div class="mk-note">Sem dados de ROAS para o período selecionado.</div>';
+}
+function renderMkTables(mp){
+  const camps=mkCampsP(mp).slice().sort((a,b)=>b.roas-a.roas).slice(0,5);
+  document.getElementById('mk-camp-tbl').innerHTML=`<table class="dt"><thead><tr><th>Campanha</th><th>Canal</th><th class="tr">ROAS</th></tr></thead><tbody>${camps.map(c=>`<tr><td>${c.campanha}</td><td><span class="badge bg">${c.canal}</span></td><td class="tr"><strong>${c.roas>=10?c.roas.toFixed(0):c.roas.toFixed(1)}×</strong></td></tr>`).join('')}</tbody></table>`;
+}
+function renderMkClientes(){
+  const ps=MONTH_PERIODS.filter(p=>p.months[0].a===2026).slice().reverse();
+  const sums=ps.map(p=>mkSumP(p));
+  const janAbr=sums.reduce((a,s)=>({invest:a.invest+s.invest,leads:a.leads+s.leads,novos:a.novos+s.novos}),{invest:0,leads:0,novos:0});
+  const best=ps.map((p,i)=>({p,cac:sums[i].novos?sums[i].invest/sums[i].novos:Infinity})).sort((a,b)=>a.cac-b.cac)[0];
+  document.getElementById('mk-client-cards').innerHTML=`
+    <div class="mk-small-card"><div class="mk-small-k">Total cadastros</div><div class="mk-small-v">${janAbr.leads.toLocaleString('pt-BR')}</div><div class="mk-small-s">jan – abr/26</div></div>
+    <div class="mk-small-card"><div class="mk-small-k">Com compras</div><div class="mk-small-v">${janAbr.novos.toLocaleString('pt-BR')}</div><div class="mk-small-s">jan – abr/26</div></div>
+    <div class="mk-small-card"><div class="mk-small-k">Conversão média</div><div class="mk-small-v">${(janAbr.novos/janAbr.leads*100).toFixed(1)}%</div><div class="mk-small-s">cadastros → compra</div></div>
+    <div class="mk-small-card"><div class="mk-small-k">Melhor CAC/compra</div><div class="mk-small-v">${brl(best.cac)}</div><div class="mk-small-s">${pEnd(best.p).m}/26</div></div>`;
+  if(CH.mkCadastros)CH.mkCadastros.destroy();
+  CH.mkCadastros=new Chart(document.getElementById('mkChCadastros'),{type:'bar',data:{labels:ps.map(p=>pEnd(p).m),datasets:[{label:'Cadastros novos',data:sums.map(s=>s.leads),backgroundColor:'#46598f'},{label:'Com compras',data:sums.map(s=>s.novos),backgroundColor:'#86a1cf'}]},options:CDef});
+  if(CH.mkConv)CH.mkConv.destroy();
+  CH.mkConv=new Chart(document.getElementById('mkChConv'),{type:'line',data:{labels:ps.map(p=>pEnd(p).m),datasets:[{label:'Conversão',data:sums.map(s=>s.leads?s.novos/s.leads*100:0),borderColor:'#2f4174',backgroundColor:'rgba(47,65,116,.10)',fill:true,tension:.2,pointRadius:5,pointBackgroundColor:'#2f4174'}]},options:{...CDef,scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v+'%'}}}}});
+  const table=(title,mode)=>`<div class="sec-tag" style="margin-bottom:8px">${title}</div><table class="dt"><thead><tr><th>Mês</th><th class="tr">Invest.</th><th class="tr">${mode==='leads'?'Cadastros':'Compraram'}</th><th class="tr">CAC</th></tr></thead><tbody>${ps.map((p,i)=>{const base=mode==='leads'?sums[i].leads:sums[i].novos;return`<tr><td>${pEnd(p).m}</td><td class="tr">${brl(sums[i].invest).replace(',00','')}</td><td class="tr">${base}</td><td class="tr">${base?brl(sums[i].invest/base):'—'}</td></tr>`}).join('')}</tbody></table>`;
+  document.getElementById('mk-cac-new').innerHTML=table('CAC por cadastro novo','leads');
+  document.getElementById('mk-cac-buy').innerHTML=table('CAC por cadastro com compra','novos');
+  if(CH.mkCac)CH.mkCac.destroy();
+  CH.mkCac=new Chart(document.getElementById('mkChCac'),{type:'bar',data:{labels:ps.map(p=>pEnd(p).m),datasets:[{label:'CAC cadastro',data:sums.map(s=>s.leads?s.invest/s.leads:0),backgroundColor:'#46598f'},{label:'CAC compra',data:sums.map(s=>s.novos?s.invest/s.novos:0),backgroundColor:'#86a1cf'}]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>'R$ '+Number(v).toFixed(2)}}}}});
+}
+function renderMkGoogle(mp){
+  const g=mkGoogleMetrics(mp);
+  document.getElementById('mk-google-cards').innerHTML=`
+    ${[['Solicitações',g.solicitacoes,'vs 45 em março (+55,6%)'],['Aprovações',g.aprovacoes,'conversão 14,3%'],['Ticket médio',brl(g.ticket),'vs R$ 402,69 em março'],['Valor aprovado',brl(g.valor),'vs R$ 9.072,42 em março'],['Tempo atendimento',g.at,''],['Tempo cálculo',g.calc,''],['Pagamentos',`${g.pix} Pix · ${g.cartao} Cartão`,''],['Não calculadas',g.naoCalc,''],['Primeiras solicitações',g.primeiras,''],['Primeiras aprovações',g.primeirasAp,''],['Bairros (maioria)',g.bairro,'']].map(c=>`<div class="mk-small-card"><div class="mk-small-k">${c[0]}</div><div class="mk-small-v">${c[1]}</div><div class="mk-small-s">${c[2]}</div></div>`).join('')}`;
+  document.getElementById('mk-proj-tbl').innerHTML=`<table class="dt"><thead><tr><th>Métrica</th><th class="tr">Março (real)</th><th class="tr">Abril (real)</th><th class="tr">Maio (projeção)</th></tr></thead><tbody>
+    <tr><td>Investimento Google Ads</td><td class="tr">R$ 563,67</td><td class="tr">R$ 1.222,24</td><td class="tr">R$ 1.500,00</td></tr>
+    <tr><td>Solicitações</td><td class="tr">45</td><td class="tr">70</td><td class="tr">~86</td></tr>
+    <tr><td>Custo por solicitação</td><td class="tr">R$ 12,57</td><td class="tr">R$ 17,46</td><td class="tr">R$ 17,46 mantido</td></tr>
+    <tr><td>Aprovações</td><td class="tr">11</td><td class="tr">10</td><td class="tr">~12</td></tr>
+    <tr><td>Taxa de conversão</td><td class="tr">24,4%</td><td class="tr">14,3%</td><td class="tr">14,3% mantida</td></tr>
+    <tr><td>Ticket médio</td><td class="tr">R$ 402,69</td><td class="tr">R$ 233,75</td><td class="tr">R$ 233,75 mantido</td></tr>
+    <tr><td>Valor total aprovado</td><td class="tr">R$ 9.072,42</td><td class="tr">R$ 2.337,50</td><td class="tr">~R$ 2.805,00</td></tr>
+  </tbody></table>`;
+}
+function renderMkRepescagem(){
+  const mar=pById('mk-mar26',true),abr=pById('mk-abr26',true);
+  const card=p=>{const env=mkMetricP(MKR,p,'Envios totais'),ap=mkMetricP(MKR,p,'Aprovações'),ven=mkMetricP(MKR,p,'Vendas geradas (R$)'),tx=env?ap/env*100:0;return`<div class="mk-panel mk-panel-bordered"><span class="badge bg">${pEnd(p).m}</span><div class="mk-small-cards" style="grid-template-columns:1fr 1fr"><div><div class="mk-small-k">Envios</div><div class="mk-small-v">${env}</div></div><div><div class="mk-small-k">Aprovações</div><div class="mk-small-v">${ap}</div></div><div><div class="mk-small-k">Taxa de conversão</div><div class="mk-small-v">${tx.toFixed(1)}%</div></div><div><div class="mk-small-k">Vendas geradas</div><div class="mk-small-v">${brl(ven)}</div></div></div></div>`};
+  document.getElementById('mk-rep-cards').innerHTML=card(mar)+card(abr);
+  const labels=['Março','Abril'], env=[mkMetricP(MKR,mar,'Envios totais'),mkMetricP(MKR,abr,'Envios totais')], ap=[mkMetricP(MKR,mar,'Aprovações'),mkMetricP(MKR,abr,'Aprovações')], ven=[mkMetricP(MKR,mar,'Vendas geradas (R$)'),mkMetricP(MKR,abr,'Vendas geradas (R$)')];
+  if(CH.mkRep)CH.mkRep.destroy();
+  CH.mkRep=new Chart(document.getElementById('mkChRepescagem'),{type:'bar',data:{labels,datasets:[{label:'Envios',data:env,backgroundColor:'#86a1cf',yAxisID:'y'},{label:'Aprovações',data:ap,backgroundColor:'#46598f',yAxisID:'y'},{label:'Vendas',data:ven,backgroundColor:'#2f4174',yAxisID:'y2'}]},options:{...CDef,plugins:{...CDef.plugins,legend:{display:true,position:'top'}},scales:{x:CDef.scales.x,y:{...CDef.scales.y,position:'left'},y2:{...CDef.scales.y,position:'right',grid:{display:false},ticks:{...CDef.scales.y.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}}}}});
+}
+
 
 /* ── Interactions ──────────────────────────────────────────── */
 function swTab(tab,btn){
+  showTab(tab);
+  const label=tab.substring(0,3).toLowerCase();
+  const nav=btn?.classList.contains('sb-item')
+    ? btn
+    : [...document.querySelectorAll('.sb-item')].find(b=>b.textContent.trim().toLowerCase().startsWith(label));
+  setSidebarActive(nav);
+  if(window.innerWidth <= 768) closeSidebar();
+}
+
+
+function renderCompSelects(){
+  const period=document.getElementById('period-main'),a=document.getElementById('comp-a');
+  const opts=selected=>MONTH_PERIODS.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.label}</option>`).join('');
+  if(period)period.innerHTML=opts(cPeriodStartId);
+  if(a)a.innerHTML=opts(cPeriodEndId);
+}
+function updateCommercialPeriod(){
+  cPeriodIds=rangeIdsBetween(cPeriodStartId,cPeriodEndId,MONTH_PERIODS);
+  cPeriodId=customIdFromIds(cPeriodIds,'custom:');
+  cCompAIds=[];cCompAId='';cCompBId='';
+}
+function setPeriodFromSelect(sel){cPeriodStartId=sel.value||LATEST_MONTH_ID;updateCommercialPeriod();render()}
+function setCompFromSelect(which,sel){if(which==='a')cPeriodEndId=sel.value||cPeriodStartId;updateCommercialPeriod();render()}
+function setPeriod(value){cPeriodStartId=value;cPeriodEndId=value;updateCommercialPeriod();render()}
+function setComp(which,value){if(which==='a')cPeriodEndId=value||cPeriodStartId;updateCommercialPeriod();render()}
+function setLastMonth(){
+  cPeriodStartId=LATEST_MONTH_ID;
+  cPeriodEndId=LATEST_MONTH_ID;
+  updateCommercialPeriod();
+  render();
+}
+
+function renderMkSelects(){
+  const period=document.getElementById('mk-period-main'),comp=document.getElementById('mk-comp-a');
+  const opts=selected=>MK_MONTH_PERIODS.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.label}</option>`).join('');
+  if(period)period.innerHTML=opts(mkPeriodStartId);
+  if(comp)comp.innerHTML=opts(mkPeriodEndId);
+}
+function selectedValues(sel){return sel.multiple?[...sel.selectedOptions].map(o=>o.value):(sel.value?[sel.value]:[])}
+function updateMarketingPeriod(){
+  mkPeriodIds=rangeIdsBetween(mkPeriodStartId,mkPeriodEndId,MK_MONTH_PERIODS);
+  mkPeriodId=customIdFromIds(mkPeriodIds,'mk-custom:');
+  mkCompIds=[];mkCompId='';
+}
+function setMkPeriodFromSelect(sel){mkPeriodStartId=sel.value||'mk-abr26';updateMarketingPeriod();renderMarketing()}
+function setMkCompFromSelect(sel){mkPeriodEndId=sel.value||mkPeriodStartId;updateMarketingPeriod();renderMarketing()}
+function setMkPeriod(value){mkPeriodStartId=value;mkPeriodEndId=value;updateMarketingPeriod();renderMarketing()}
+function setMkComp(value){mkPeriodEndId=value||mkPeriodStartId;updateMarketingPeriod();renderMarketing()}
+function setLastMkMonth(){mkPeriodStartId='mk-abr26';mkPeriodEndId='mk-abr26';updateMarketingPeriod();renderMarketing()}
+
+function setM(m,btn){
+  const map={Janeiro:'jan26',Fevereiro:'fev26',Março:'mar26',Abril:'abr26'};
+  cPeriodId=map[m]||'abr26';
+  cPeriodStartId=cPeriodId;
+  cPeriodEndId=cPeriodId;
+  cPeriodIds=[cPeriodId];
+  render();
+}
+function setMkM(m,btn){
+  mkPeriodId=m==='Março'?'mk-mar26':'mk-abr26';
+  mkPeriodStartId=mkPeriodId;
+  mkPeriodEndId=mkPeriodId;
+  mkPeriodIds=[mkPeriodId];
+  renderMarketing();
+  if(document.getElementById('tab-marketing').classList.contains('on')){
+    document.getElementById('tb-path').textContent='Marketing';
+  }
+}
+function setSidebarActive(btn){
   document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.tab-switch-btn').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('active');
+}
+function setTopbarTab(tab){
+  document.querySelectorAll('.tab-switch-btn').forEach(b=>{
+    const isTab=b.textContent.toLowerCase().includes(tab.substring(0,3).toLowerCase());
+    b.classList.toggle('on',isTab);
+  });
+}
+function showTab(tab){
   document.querySelectorAll('.tc').forEach(c=>c.classList.remove('on'));
   document.getElementById('tab-'+tab).classList.add('on');
   if(tab==='comercial'){
     document.getElementById('tb-title').textContent='Dashboard Comercial';
+    document.getElementById('tb-path').textContent='Performance';
   } else {
     document.getElementById('tb-title').textContent='Dashboard de Marketing';
+    document.getElementById('tb-path').textContent='Marketing';
+    renderMarketing();
   }
-  document.querySelectorAll('.tab-switch-btn').forEach(b=>{if(b.textContent.toLowerCase().includes(tab.substring(0,3).toLowerCase()))b.classList.add('on')});
-  document.querySelectorAll('.sb-item').forEach(b=>{if(b.textContent.trim().toLowerCase().startsWith(tab.substring(0,3).toLowerCase()))b.classList.add('active')});
-  if(window.innerWidth <= 768) closeSidebar();
+  setTopbarTab(tab);
 }
-
-function setM(m,btn){
-  cM=m;
-  document.querySelectorAll('.mbtn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  render();
-}
-
-function scrollTo(id){
-  document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
-  // close sidebar on mobile after nav click
+function goSection(id,btn){
+  const target=document.getElementById(id);
+  if(!target)return;
+  if(!document.getElementById('tab-comercial').classList.contains('on'))showTab('comercial');
+  setSidebarActive(btn);
+  requestAnimationFrame(()=>target.scrollIntoView({behavior:'smooth',block:'start'}));
   if(window.innerWidth <= 768) closeSidebar();
 }
 
@@ -1344,16 +2028,29 @@ function closeSidebar(){
 }
 
 function expCSV(){
-  const d=gr(cM,cA);
-  const t=gt(cM,cA),nps=gn(cM,cA);
-  const csv=[
-    ['Médico','Efetuados','Aprovados','Rejeitados','Valor Rejeitado (R$)','Índice (%)'],
-    ...d.map(x=>[x.med,x.ef,x.ap,x.rj,x.vl.toFixed(2).replace('.',','),x.ix.toFixed(2).replace('.',',')]),
-    [],['NPS',nps||''],['T. Atendimento',t?ft(t.at):''],['T. Cálculo',t?ft(t.ca):'']
-  ].map(r=>r.join(';')).join('\n');
+  const isMarketing=document.getElementById('tab-marketing').classList.contains('on');
+  let csv,file;
+  if(isMarketing){
+    const mp=mkPeriodFromIds(mkPeriodIds),rows=mkRowsP(mp),tot=mkSumP(mp);
+    csv=[
+      ['Canal','Investimento (R$)','Receita atribuída (R$)','Leads','Novos clientes','CAC (R$)','ROAS'],
+      ...rows.map(x=>[x.canal,x.invest.toFixed(2).replace('.',','),x.receita.toFixed(2).replace('.',','),x.leads,x.novos,x.cac.toFixed(2).replace('.',','),x.roas.toFixed(2).replace('.',',')]),
+      [],['Total Investimento',tot.invest.toFixed(2).replace('.',',')],['Total Receita',tot.receita.toFixed(2).replace('.',',')],['ROAS Médio',tot.roas.toFixed(2).replace('.',',')]
+    ].map(r=>r.join(';')).join('\n');
+    file=`ALQ_Farma_Marketing_${pLabel(mp).replace(/[^A-Za-z0-9]+/g,'_')}.csv`;
+  } else {
+    const cp=periodFromIds(cPeriodIds),d=grP(cp);
+    const t=timeP(cp),nps=npsP(cp);
+    csv=[
+      ['Médico','Efetuados','Aprovados','Rejeitados','Valor Rejeitado (R$)','Índice (%)'],
+      ...d.map(x=>[x.med,x.ef,x.ap,x.rj,x.vl.toFixed(2).replace('.',','),x.ix.toFixed(2).replace('.',',')]),
+      [],['NPS',nps||''],['T. Atendimento',t?ft(t.at):''],['T. Cálculo',t?ft(t.ca):'']
+    ].map(r=>r.join(';')).join('\n');
+    file=`ALQ_Farma_${pLabel(cp).replace(/[^A-Za-z0-9]+/g,'_')}.csv`;
+  }
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-  a.download=`ALQ_Farma_${cM}_${cA}.csv`;a.click();
+  a.download=file;a.click();
 }
 
 function refData(){
@@ -1362,8 +2059,50 @@ function refData(){
   setTimeout(()=>{b.textContent='↻ Atualizar';b.disabled=false;render();},1000);
 }
 
+/* ── Auth ──────────────────────────────────────────────────── */
+const AUTH_DB={
+  users:[
+    {username:'admin',password:'alq2026',name:'Gestão'},
+    {username:'gestao',password:'alqfarma2026',name:'Gestão ALQ'},
+    {username:'Mainni',password:'Mainni',name:'Mainni'},
+    {username:'Teodoro',password:'Teodoro',name:'Teodoro'},
+  ]
+};
+function renderLoggedUser(){
+  const name=sessionStorage.getItem('alq-user')||'Usuário';
+  const avatar=document.getElementById('sb-avatar');
+  const label=document.getElementById('sb-user-name');
+  if(avatar)avatar.textContent=name.trim().charAt(0).toUpperCase()||'U';
+  if(label)label.textContent=name;
+}
+function unlockDashboard(){
+  renderLoggedUser();
+  document.body.classList.remove('auth-locked');
+  document.getElementById('auth-error')?.classList.remove('on');
+}
+function doLogin(ev){
+  ev.preventDefault();
+  const user=document.getElementById('auth-user').value.trim();
+  const pass=document.getElementById('auth-pass').value;
+  const account=AUTH_DB.users.find(u=>u.username===user&&u.password===pass);
+  if(account){
+    sessionStorage.setItem('alq-auth','ok');
+    sessionStorage.setItem('alq-user',account.name);
+    unlockDashboard();
+  } else {
+    document.getElementById('auth-error').classList.add('on');
+    document.getElementById('auth-pass').value='';
+    document.getElementById('auth-pass').focus();
+  }
+  return false;
+}
+function initAuth(){
+  if(sessionStorage.getItem('alq-auth')==='ok')unlockDashboard();
+  else setTimeout(()=>document.getElementById('auth-user')?.focus(),50);
+}
+
 /* ── Init ──────────────────────────────────────────────────── */
-document.fonts.load('500 11px Poppins').then(()=>render());
+document.fonts.load('500 11px Poppins').then(()=>{render();initAuth();});
 </script>
 </body>
 </html>
