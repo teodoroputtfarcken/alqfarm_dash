@@ -834,7 +834,7 @@ body.auth-locked .auth-modal { display: flex; }
 <aside class="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-mark">
-      <img class="sb-logo-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABMCAYAAADX/oqbAAACL0lEQVR42u3cy3GDQBBAQWIhGuWfi85SCCwwM/vrd5UFWLBdrqmVj0OSJEmSJEnapLNz7oCkIXGCmKQlkIKXBKslciclUIFLEqygJWl7rKAlwQpakoAFLEnbYwUtCVbQaugXVNR5R3see30+AhawgAUsAQtYwAIWrKAFLGAJWMACFrAELGABC1jAAlbewut1/NEW9mifj4AFLGABS7CaAS1grQnWNzgSJYF1d4bw5JgVMFXNQoAFLGABC1jAAhawgAUsYAELWMAC1tJgkWQQsN5i0vL+CrBaz9H64AMLWMACFrCABSwBC1jAAhawgAUsYBWAFT3Ev/r56OPfPR+wgAUsYAELWM8WTHbAAhawgAUsYAELWMAC1l4bR6uBywap7PXoDZZPNpICC1jAAhawgAUsYAELWMACFrCAZVuDbQ3B17/r0D1syF0EZhpYqw7drx5oYAELWMACFrCABSxgAQtYwAIWsIAFrAEWfDYYwJps6O4f+AELWMACFrBSrqf69wIWsIAFLGABC1jAAtZsYBm6TwRWxubUu+c0dAcWsIAFLGABC1jAAhawgAUsYG0CVq8vY0dd5yxA62Wnmr78vPrQHVgCFrCABSwBC1jAAha0YHUAC1gCFrCABSwBa3SwJAELWBKwgBXdR1tHF2hN9deVJQssAQtYAhawgCUJWrCSBC1YScACliRowUoStGAlQQtWksAFKknQgpWkCfFypyQNiZg7IEmSJEmSJEnq3R/DMvmHcZMotAAAAABJRU5ErkJggg==" alt="Logo ALQ Farma">
+      <img class="sb-logo-img" src="logo.png" alt="Logo ALQ Farma">
     </div>
     <div class="sb-sub">Analytics Platform</div>
   </div>
@@ -1146,6 +1146,70 @@ body.auth-locked .auth-modal { display: flex; }
           <div class="sec-tag" style="margin-bottom:8px">Google Ads — ROAS isolado</div>
           <div class="cwrap" style="height:220px"><canvas id="mkChGoogleRoas"></canvas></div>
         </div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-clientes">
+      <div class="sec-hd"><div><div class="sec-tag">Novos clientes</div><div class="sec-title">Cadastros e conversões — jan a abr/26</div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-client-cards"></div>
+        <div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Cadastros novos</span><span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Com compras</span></div>
+        <div class="sec-tag" style="margin:10px 0 8px">Cadastros novos vs com compras</div>
+        <div class="cwrap" style="height:320px"><canvas id="mkChCadastros"></canvas></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Taxa de conversão por mês (%)</div><div class="cwrap" style="height:230px"><canvas id="mkChConv"></canvas></div></div>
+        <div class="sec-div"><div class="g2"><div class="mk-panel mk-panel-bordered" id="mk-cac-new"></div><div class="mk-panel mk-panel-bordered" id="mk-cac-buy"></div></div></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">CAC comparativo (R$)</div><div class="cwrap" style="height:260px"><canvas id="mkChCac"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-google">
+      <div class="sec-hd"><div><div class="sec-tag">Google Ads — solicitações pelo site</div><div class="sec-title">Resultados de <span id="mk-google-period">abril</span></div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-google-cards"></div>
+        <div class="sec-title" style="font-size:15px;margin:8px 0">Projeção — Maio</div>
+        <p class="mk-note">Projeção baseada na eficiência de abril com investimento previsto para maio. Se conversão e ticket médio voltarem ao patamar de março, o valor aprovado pode chegar ao cenário projetado.</p>
+        <div id="mk-proj-tbl" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-repescagem">
+      <div class="sec-hd"><div><div class="sec-tag">Pedido Pago — ação recorrente</div><div class="sec-title">Repescagem diária</div></div></div>
+      <div class="sec-body">
+        <p class="mk-note">Ação contínua do canal Pedido Pago com envios automáticos para a base de clientes.</p>
+        <div class="g2" id="mk-rep-cards"></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Evolução março → abril</div><div class="cwrap" style="height:280px"><canvas id="mkChRepescagem"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-clientes">
+      <div class="sec-hd"><div><div class="sec-tag">Novos clientes</div><div class="sec-title">Cadastros e conversões — jan a abr/26</div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-client-cards"></div>
+        <div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Cadastros novos</span><span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Com compras</span></div>
+        <div class="sec-tag" style="margin:10px 0 8px">Cadastros novos vs com compras</div>
+        <div class="cwrap" style="height:320px"><canvas id="mkChCadastros"></canvas></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Taxa de conversão por mês (%)</div><div class="cwrap" style="height:230px"><canvas id="mkChConv"></canvas></div></div>
+        <div class="sec-div"><div class="g2"><div class="mk-panel mk-panel-bordered" id="mk-cac-new"></div><div class="mk-panel mk-panel-bordered" id="mk-cac-buy"></div></div></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">CAC comparativo (R$)</div><div class="cwrap" style="height:260px"><canvas id="mkChCac"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-google">
+      <div class="sec-hd"><div><div class="sec-tag">Google Ads — solicitações pelo site</div><div class="sec-title">Resultados de <span id="mk-google-period">abril</span></div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-google-cards"></div>
+        <div class="sec-title" style="font-size:15px;margin:8px 0">Projeção — Maio</div>
+        <p class="mk-note">Projeção baseada na eficiência de abril com investimento previsto para maio. Se conversão e ticket médio voltarem ao patamar de março, o valor aprovado pode chegar ao cenário projetado.</p>
+        <div id="mk-proj-tbl" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-repescagem">
+      <div class="sec-hd"><div><div class="sec-tag">Pedido Pago — ação recorrente</div><div class="sec-title">Repescagem diária</div></div></div>
+      <div class="sec-body">
+        <p class="mk-note">Ação contínua do canal Pedido Pago com envios automáticos para a base de clientes.</p>
+        <div class="g2" id="mk-rep-cards"></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Evolução março → abril</div><div class="cwrap" style="height:280px"><canvas id="mkChRepescagem"></canvas></div></div>
       </div>
     </div>
 
