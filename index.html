@@ -927,8 +927,8 @@ body.auth-locked .auth-modal { display: flex; }
     <!-- Filter strip -->
     <div class="filter-strip">
       <span class="fl">Período:</span>
-      <div class="comp-tag"><span class="filter-caption">Mês</span><span class="dot da"></span><select class="comp-select" id="period-main" onchange="setPeriod(this.value)"></select></div>
-      <div class="comp-tag"><span class="filter-caption">Comparar com</span><span class="dot db"></span><select class="comp-select" id="comp-a" onchange="setComp('a',this.value)"></select></div>
+      <div class="comp-tag"><span class="dot da"></span><select class="comp-select multi-select" id="period-main" onchange="setPeriodFromSelect(this)"></select></div>
+      <div class="comp-tag"><span class="dot db"></span><select class="comp-select multi-select" id="comp-a" onchange="setCompFromSelect('a',this)"></select></div>
       <button class="last-month-btn" type="button" onclick="setLastMonth()">Último mês</button>
     </div>
 
@@ -1146,6 +1146,38 @@ body.auth-locked .auth-modal { display: flex; }
           <div class="sec-tag" style="margin-bottom:8px">Google Ads — ROAS isolado</div>
           <div class="cwrap" style="height:220px"><canvas id="mkChGoogleRoas"></canvas></div>
         </div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-clientes">
+      <div class="sec-hd"><div><div class="sec-tag">Novos clientes</div><div class="sec-title">Cadastros e conversões — jan a abr/26</div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-client-cards"></div>
+        <div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Cadastros novos</span><span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Com compras</span></div>
+        <div class="sec-tag" style="margin:10px 0 8px">Cadastros novos vs com compras</div>
+        <div class="cwrap" style="height:320px"><canvas id="mkChCadastros"></canvas></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Taxa de conversão por mês (%)</div><div class="cwrap" style="height:230px"><canvas id="mkChConv"></canvas></div></div>
+        <div class="sec-div"><div class="g2"><div class="mk-panel mk-panel-bordered" id="mk-cac-new"></div><div class="mk-panel mk-panel-bordered" id="mk-cac-buy"></div></div></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">CAC comparativo (R$)</div><div class="cwrap" style="height:260px"><canvas id="mkChCac"></canvas></div></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-google">
+      <div class="sec-hd"><div><div class="sec-tag">Google Ads — solicitações pelo site</div><div class="sec-title">Resultados de <span id="mk-google-period">abril</span></div></div></div>
+      <div class="sec-body">
+        <div class="mk-small-cards" id="mk-google-cards"></div>
+        <div class="sec-title" style="font-size:15px;margin:8px 0">Projeção — Maio</div>
+        <p class="mk-note">Projeção baseada na eficiência de abril com investimento previsto para maio. Se conversão e ticket médio voltarem ao patamar de março, o valor aprovado pode chegar ao cenário projetado.</p>
+        <div id="mk-proj-tbl" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+    <div class="sec" id="mk-sec-repescagem">
+      <div class="sec-hd"><div><div class="sec-tag">Pedido Pago — ação recorrente</div><div class="sec-title">Repescagem diária</div></div></div>
+      <div class="sec-body">
+        <p class="mk-note">Ação contínua do canal Pedido Pago com envios automáticos para a base de clientes.</p>
+        <div class="g2" id="mk-rep-cards"></div>
+        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Evolução março → abril</div><div class="cwrap" style="height:280px"><canvas id="mkChRepescagem"></canvas></div></div>
       </div>
     </div>
 
@@ -1436,7 +1468,7 @@ const DP_NEU={
 
 /* ── State ────────────────────────────────────────────────── */
 let cM='Abril', cA=2026;
-let cPeriodId='abr26', cCompAId='', cCompBId='';
+let cPeriodId='abr26', cCompAId='', cCompBId='', cPeriodIds=['abr26'], cCompAIds=[];
 let mkM='Abril', mkA=2026, mkPeriodId='mk-abr26', mkCompId='', mkPeriodIds=['mk-abr26'], mkCompIds=[];
 const CH={};
 
@@ -1455,6 +1487,12 @@ const PERIODS=[
 ];
 const MONTH_PERIODS=PERIODS.filter(p=>p.months.length===1);
 const LATEST_MONTH_ID=MONTH_PERIODS[0].id;
+function periodFromIds(ids){
+  const periods=ids.map(id=>MONTH_PERIODS.find(p=>p.id===id)).filter(Boolean).sort((a,b)=>monthKey(a.months[0])-monthKey(b.months[0]));
+  if(!periods.length)return MONTH_PERIODS[0];
+  if(periods.length===1)return periods[0];
+  return {id:'custom:'+periods.map(p=>p.id).join(','),label:`${periods[0].label}–${periods[periods.length-1].label}`,months:periods.flatMap(p=>p.months)};
+}
 const MK_PERIODS=[
   {id:'mk-abr26',label:'Abr/26',months:[{m:'Abril',a:2026}]},
   {id:'mk-mar26',label:'Mar/26',months:[{m:'Março',a:2026}]},
@@ -1471,7 +1509,7 @@ function mkPeriodFromIds(ids){
   if(periods.length===1)return periods[0];
   return {id:'mk-custom:'+periods.map(p=>p.id).join(','),label:`${periods[0].label}–${periods[periods.length-1].label}`,months:periods.flatMap(p=>p.months)};
 }
-function pById(id,marketing=false){if(marketing&&id&&id.startsWith('mk-custom:'))return mkPeriodFromIds(id.replace('mk-custom:','').split(','));return (marketing?MK_PERIODS:PERIODS).find(p=>p.id===id)||null}
+function pById(id,marketing=false){if(marketing&&id&&id.startsWith('mk-custom:'))return mkPeriodFromIds(id.replace('mk-custom:','').split(','));if(!marketing&&id&&id.startsWith('custom:'))return periodFromIds(id.replace('custom:','').split(','));return (marketing?MK_PERIODS:PERIODS).find(p=>p.id===id)||null}
 function pLabel(p){return p?p.label:''}
 function pEnd(p){return p.months[p.months.length-1]}
 function inP(d,p){return p&&p.months.some(x=>x.m===d.mes&&x.a===d.ano)}
@@ -1529,7 +1567,7 @@ const CDef={
 
 /* ── Render ────────────────────────────────────────────────── */
 function render(){
-  const cp=pById(cPeriodId), pr=pById(cCompAId), py=pById(cCompBId);
+  const cp=periodFromIds(cPeriodIds), pr=cCompAIds.length?periodFromIds(cCompAIds):null, py=pById(cCompBId);
   const end=pEnd(cp); cM=end.m; cA=end.a;
   renderCompSelects();
   document.getElementById('s-mes').textContent=pLabel(cp);
@@ -1874,19 +1912,31 @@ function swTab(tab,btn){
 
 function renderCompSelects(){
   const period=document.getElementById('period-main'),a=document.getElementById('comp-a');
-  const monthOpts=id=>MONTH_PERIODS.map(p=>`<option value="${p.id}" ${p.id===id?'selected':''}>${p.label}</option>`).join('');
-  if(period)period.innerHTML=monthOpts(cPeriodId);
-  if(a)a.innerHTML='<option value="">Sem comparativo</option>'+monthOpts(cCompAId);
+  const opts=ids=>MONTH_PERIODS.map(p=>`<option value="${p.id}" ${ids.includes(p.id)?'selected':''}>${p.label}</option>`).join('');
+  if(period)period.innerHTML=opts(cPeriodIds);
+  if(a)a.innerHTML=opts(cCompAIds);
 }
 
-function setPeriod(value){cPeriodId=value;cCompBId='';render()}
+function setPeriodFromSelect(sel){cPeriodIds=selectedValues(sel);if(!cPeriodIds.length)cPeriodIds=[LATEST_MONTH_ID];cPeriodId=cPeriodIds.length===1?cPeriodIds[0]:'custom:'+cPeriodIds.join(',');cCompBId='';render()}
+function setCompFromSelect(which,sel){
+  if(which==='a'){
+    cCompAIds=selectedValues(sel);
+    cCompAId=cCompAIds.length===1?cCompAIds[0]:cCompAIds.length?'custom:'+cCompAIds.join(','):'';
+  }
+  if(which==='b')cCompBId='';
+  render();
+}
+function setPeriod(value){cPeriodIds=[value];cPeriodId=value;cCompBId='';render()}
 function setComp(which,value){
-  if(which==='a')cCompAId=value;
+  if(which==='a'){cCompAIds=value?[value]:[];cCompAId=value;}
   if(which==='b')cCompBId='';
   render();
 }
 function setLastMonth(){
+  cPeriodIds=[LATEST_MONTH_ID];
+  cCompAIds=[];
   cPeriodId=LATEST_MONTH_ID;
+  cCompAId='';
   cCompBId='';
   render();
 }
@@ -1907,6 +1957,7 @@ function setLastMkMonth(){mkPeriodIds=['mk-abr26'];mkCompIds=[];mkPeriodId='mk-a
 function setM(m,btn){
   const map={Janeiro:'jan26',Fevereiro:'fev26',Março:'mar26',Abril:'abr26'};
   cPeriodId=map[m]||'abr26';
+  cPeriodIds=[cPeriodId];
   render();
 }
 function setMkM(m,btn){
@@ -1987,7 +2038,7 @@ function expCSV(){
     ].map(r=>r.join(';')).join('\n');
     file=`ALQ_Farma_Marketing_${pLabel(mp).replace(/[^A-Za-z0-9]+/g,'_')}.csv`;
   } else {
-    const cp=pById(cPeriodId),d=grP(cp);
+    const cp=periodFromIds(cPeriodIds),d=grP(cp);
     const t=timeP(cp),nps=npsP(cp);
     csv=[
       ['Médico','Efetuados','Aprovados','Rejeitados','Valor Rejeitado (R$)','Índice (%)'],
