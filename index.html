@@ -990,7 +990,7 @@ body.auth-locked .auth-modal { display: flex; }
       <div class="sec-hd">
         <div class="sec-hd-left">
           <div class="sec-tag">Eficiência Operacional</div>
-          <div class="sec-title">Tempos de Atendimento — Abr/25 → Abr/26</div>
+          <div class="sec-title">Tempos de Atendimento — Jan–Abr/26</div>
         </div>
       </div>
       <div class="sec-body">
@@ -1009,7 +1009,7 @@ body.auth-locked .auth-modal { display: flex; }
       <div class="sec-hd">
         <div class="sec-hd-left">
           <div class="sec-tag">Experiência do Cliente</div>
-          <div class="sec-title">NPS — Net Promoter Score · Evolução e Motivos</div>
+          <div class="sec-title">NPS — Net Promoter Score · Jan–Abr/26</div>
         </div>
       </div>
       <div class="sec-body">
@@ -1177,15 +1177,6 @@ function pt(s){const m=s.match(/(\d+)h(\d+)m/);return m?+m[1]*60+ +m[2]:0}
 function ft(n){const h=Math.floor(n/60),m=n%60;return`${h}h${String(m).padStart(2,'0')}m`}
 
 const DT=[
-  {ano:2025,mes:'Abril',at:pt('1h34m'),ca:pt('2h30m'),ap:pt('6h33m'),in:pt('6h42m')},
-  {ano:2025,mes:'Maio',at:pt('1h40m'),ca:pt('2h31m'),ap:pt('6h45m'),in:pt('2h29m')},
-  {ano:2025,mes:'Junho',at:pt('1h50m'),ca:pt('2h38m'),ap:pt('7h02m'),in:pt('2h09m')},
-  {ano:2025,mes:'Julho',at:pt('1h38m'),ca:pt('2h23m'),ap:pt('7h26m'),in:pt('1h38m')},
-  {ano:2025,mes:'Agosto',at:pt('1h05m'),ca:pt('2h01m'),ap:pt('6h49m'),in:pt('1h48m')},
-  {ano:2025,mes:'Setembro',at:pt('1h43m'),ca:pt('2h54m'),ap:pt('7h50m'),in:pt('2h21m')},
-  {ano:2025,mes:'Outubro',at:pt('2h12m'),ca:pt('3h12m'),ap:pt('7h29m'),in:pt('1h47m')},
-  {ano:2025,mes:'Novembro',at:pt('2h26m'),ca:pt('3h27m'),ap:pt('8h11m'),in:pt('2h11m')},
-  {ano:2025,mes:'Dezembro',at:pt('3h12m'),ca:pt('4h13m'),ap:pt('8h31m'),in:pt('2h22m')},
   {ano:2026,mes:'Janeiro',at:pt('2h43m'),ca:pt('3h56m'),ap:pt('8h05m'),in:pt('2h18m')},
   {ano:2026,mes:'Fevereiro',at:pt('2h43m'),ca:pt('3h50m'),ap:pt('8h15m'),in:pt('2h42m')},
   {ano:2026,mes:'Março',at:pt('2h08m'),ca:pt('3h10m'),ap:pt('6h43m'),in:pt('2h29m')},
@@ -1193,9 +1184,6 @@ const DT=[
 ];
 
 const DN=[
-  {ano:2025,mes:'Abril',n:85},{ano:2025,mes:'Maio',n:68},{ano:2025,mes:'Junho',n:73},
-  {ano:2025,mes:'Julho',n:81},{ano:2025,mes:'Agosto',n:75},{ano:2025,mes:'Setembro',n:77},
-  {ano:2025,mes:'Outubro',n:73},{ano:2025,mes:'Novembro',n:69},{ano:2025,mes:'Dezembro',n:72},
   {ano:2026,mes:'Janeiro',n:77},{ano:2026,mes:'Fevereiro',n:74},{ano:2026,mes:'Março',n:81},
   {ano:2026,mes:'Abril',n:80},
 ];
@@ -1384,10 +1372,6 @@ const PERIODS=[
   {id:'mar26',label:'Mar/26',months:[{m:'Março',a:2026}]},
   {id:'fev26',label:'Fev/26',months:[{m:'Fevereiro',a:2026}]},
   {id:'jan26',label:'Jan/26',months:[{m:'Janeiro',a:2026}]},
-  {id:'mar-abr26',label:'Mar–Abr/26',months:[{m:'Março',a:2026},{m:'Abril',a:2026}]},
-  {id:'jan-abr26',label:'Jan–Abr/26',months:[{m:'Janeiro',a:2026},{m:'Fevereiro',a:2026},{m:'Março',a:2026},{m:'Abril',a:2026}]},
-  {id:'abr25',label:'Abr/25',months:[{m:'Abril',a:2025}]},
-  {id:'q4-25',label:'Out–Dez/25',months:[{m:'Outubro',a:2025},{m:'Novembro',a:2025},{m:'Dezembro',a:2025}]},
 ];
 const MONTH_PERIODS=PERIODS.filter(p=>p.months.length===1);
 const LATEST_MONTH_ID=MONTH_PERIODS[0].id;
@@ -1492,35 +1476,34 @@ const CDef={
 };
 
 /* ── Render ────────────────────────────────────────────────── */
+let _rendering=false;
 function render(){
-  const cp=periodFromIds(cPeriodIds), pr=null, py=null;
-  const end=pEnd(cp); cM=end.m; cA=end.a;
-  renderCompSelects();
-  document.getElementById('s-mes').textContent=pLabel(cp);
-  document.getElementById('s-ativos-mes').textContent=pLabel(cp);
-  if(document.getElementById('tab-comercial').classList.contains('on')){
+  if(_rendering)return;
+  _rendering=true;
+  try{
+    const cp=periodFromIds(cPeriodIds), pr=null, py=null;
+    const end=pEnd(cp); cM=end.m; cA=end.a;
+    renderCompSelects();
+    document.getElementById('s-mes').textContent=pLabel(cp);
+    document.getElementById('s-ativos-mes').textContent=pLabel(cp);
     document.getElementById('tb-path').textContent='Performance';
-  }
 
-  renderInsight(cp,pr);
-  renderKPIs(cp,pr,py);
-  renderAtivos(cp);
-  renderBarQty(cp);
-  renderBarVal(cp);
-  renderEvo();
-  renderFunil();
-  renderTbl();
-  renderTempos();
-  renderTCards(cp,pr,py);
-  renderNPS(cp);
-  renderNPSLine(cp);
-  renderDonut('chP','lgP',motiveP(DP_PROM,cp),['#123b7a','#006bd6','#00a6c8','#8ed8f8']);
-  renderDonut('chD','lgD',motiveP(DP_DET,cp),['#a02020','#c44040','#e07070','#f5a0a0']);
-  renderDonut('chNeu','lgNeu',motiveP(DP_NEU,cp),['#006bd6','#00a6c8','#123b7a','#8ed8f8']);
-  renderMarketing();
-  if(document.getElementById('tab-comercial').classList.contains('on')){
-    document.getElementById('tb-path').textContent='Performance';
-  }
+    renderInsight(cp,pr);
+    renderKPIs(cp,pr,py);
+    renderAtivos(cp);
+    renderBarQty(cp);
+    renderBarVal(cp);
+    renderEvo();
+    renderFunil();
+    renderTbl();
+    renderTempos();
+    renderTCards(cp,pr,py);
+    renderNPS(cp);
+    renderNPSLine(cp);
+    renderDonut('chP','lgP',motiveP(DP_PROM,cp),['#123b7a','#006bd6','#00a6c8','#8ed8f8']);
+    renderDonut('chD','lgD',motiveP(DP_DET,cp),['#a02020','#c44040','#e07070','#f5a0a0']);
+    renderDonut('chNeu','lgNeu',motiveP(DP_NEU,cp),['#006bd6','#00a6c8','#123b7a','#8ed8f8']);
+  }finally{_rendering=false;}
 }
 function renderInsight(cp,cmp){
   const rej=grP(cp), rejPr=cmp?grP(cmp):[];
@@ -1864,11 +1847,17 @@ function renderAfterCommercialFilter(){
   render();
 }
 
+function initCompSelects(){
+  const opts=MONTH_PERIODS.map(p=>`<option value="${p.id}">${p.label}</option>`).join('');
+  const period=document.getElementById('period-main');
+  const a=document.getElementById('comp-a');
+  if(period)period.innerHTML=opts;
+  if(a)a.innerHTML=opts;
+}
 function renderCompSelects(){
   const period=document.getElementById('period-main'),a=document.getElementById('comp-a');
-  const opts=selected=>MONTH_PERIODS.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.label}</option>`).join('');
-  if(period)period.innerHTML=opts(cPeriodStartId);
-  if(a)a.innerHTML=opts(cPeriodEndId);
+  if(period&&period.value!==cPeriodStartId)period.value=cPeriodStartId;
+  if(a&&a.value!==cPeriodEndId)a.value=cPeriodEndId;
 }
 function updateCommercialPeriod(){
   cPeriodIds=rangeIdsBetween(cPeriodStartId,cPeriodEndId,MONTH_PERIODS);
@@ -1886,11 +1875,17 @@ function setLastMonth(){
   renderAfterCommercialFilter();
 }
 
+function initMkSelects(){
+  const opts=MK_MONTH_PERIODS.map(p=>`<option value="${p.id}">${p.label}</option>`).join('');
+  const period=document.getElementById('mk-period-main');
+  const comp=document.getElementById('mk-comp-a');
+  if(period)period.innerHTML=opts;
+  if(comp)comp.innerHTML=opts;
+}
 function renderMkSelects(){
   const period=document.getElementById('mk-period-main'),comp=document.getElementById('mk-comp-a');
-  const opts=selected=>MK_MONTH_PERIODS.map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.label}</option>`).join('');
-  if(period)period.innerHTML=opts(mkPeriodStartId);
-  if(comp)comp.innerHTML=opts(mkPeriodEndId);
+  if(period&&period.value!==mkPeriodStartId)period.value=mkPeriodStartId;
+  if(comp&&comp.value!==mkPeriodEndId)comp.value=mkPeriodEndId;
 }
 function selectedValues(sel){return sel.multiple?[...sel.selectedOptions].map(o=>o.value):(sel.value?[sel.value]:[])}
 function updateMarketingPeriod(){
@@ -2055,7 +2050,7 @@ function initAuth(){
 }
 
 /* ── Init ──────────────────────────────────────────────────── */
-document.fonts.load('500 11px Poppins').then(()=>{render();initAuth();});
+document.fonts.load('500 11px Poppins').then(()=>{initCompSelects();initMkSelects();render();initAuth();});
 </script>
 </body>
 </html>
