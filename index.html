@@ -504,6 +504,31 @@ body {
   margin-bottom: 12px;
   flex-wrap: wrap;
 }
+.tipo-toggle {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.tipo-toggle .sort-btn {
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+}
+.tipo-toggle .sort-btn.active {
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(46,63,110,.18);
+}
+.sort-bar-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  align-self: center;
+  margin: 0 4px;
+}
 .tbl-sort-lbl {
   font-size: 9px;
   font-weight: 700;
@@ -974,6 +999,12 @@ body.auth-locked .auth-modal { display: flex; }
 
         <div class="sec-div">
           <div class="tbl-sort-bar">
+            <span class="tbl-sort-lbl">Tipo:</span>
+            <div class="tipo-toggle">
+              <button class="sort-btn" id="atb-num" onclick="setAtivoTipo('num')">Qtd. Rejeitada</button>
+              <button class="sort-btn active" id="atb-val" onclick="setAtivoTipo('val')">Valor Rejeitado</button>
+            </div>
+            <div class="sort-bar-sep"></div>
             <span class="tbl-sort-lbl">Ordenar por:</span>
             <button class="sort-btn" id="asb-ef" onclick="setAtivoSort('ef')">Efetuados <span class="sort-arrow" id="asa-ef"></span></button>
             <button class="sort-btn" id="asb-ap" onclick="setAtivoSort('ap')">Aprovados <span class="sort-arrow" id="asa-ap"></span></button>
@@ -1414,6 +1445,7 @@ const DP_NEU={
 let cM='Abril', cA=2026;
 let tblSortKey='vl', tblSortDir='desc';
 let ativoSortKey='vl', ativoSortDir='desc';
+let ativoTipo='val';
 let cPeriodId='custom:jan26,fev26,mar26,abr26', cCompAId='', cCompBId='', cPeriodIds=['jan26','fev26','mar26','abr26'], cCompAIds=[], cPeriodStartId='jan26', cPeriodEndId='abr26';
 let mkM='Abril', mkA=2026, mkPeriodId='mk-abr26', mkCompId='', mkPeriodIds=['mk-abr26'], mkCompIds=[], mkPeriodStartId='mk-abr26', mkPeriodEndId='mk-abr26';
 const CH={};
@@ -1656,6 +1688,13 @@ function renderAtivoVal(cp){
       scales:stackedScales({callback:v=>'R$'+(v/1000).toFixed(0)+'k'})}
   });
 }
+function setAtivoTipo(tipo){
+  ativoTipo=tipo;
+  document.getElementById('atb-num').classList.toggle('active',tipo==='num');
+  document.getElementById('atb-val').classList.toggle('active',tipo==='val');
+  const cp=periodFromIds(cPeriodIds);
+  renderAtivoTbl(cp);
+}
 function setAtivoSort(key){
   if(ativoSortKey===key){
     ativoSortDir=ativoSortDir==='desc'?'asc':'desc';
@@ -1678,6 +1717,7 @@ function updateAtivoSortBtns(){
   });
 }
 function renderAtivoTbl(cp){
+  const isSingleMonth=cp.months.length===1;
   const getSortVal=(x)=>{
     if(ativoSortKey==='ix')return x.ix;
     if(ativoSortKey==='vl')return x.vl;
@@ -1685,12 +1725,18 @@ function renderAtivoTbl(cp){
     return x.ef;
   };
   const sortFn=(a,b)=>ativoSortDir==='desc'?getSortVal(b)-getSortVal(a):getSortVal(a)-getSortVal(b);
-  const qty=grAtP(cp,'num').sort(sortFn).slice(0,10).map(x=>({...x,tipo:'Qtd.'}));
-  const val=grAtP(cp,'val').sort(sortFn).slice(0,10).map(x=>({...x,tipo:'Valor'}));
-  const rows=[...qty,...val];
+  // Get all ativos for current tipo, consolidated across period months
+  const all=grAtP(cp,ativoTipo).sort(sortFn);
+  // If single month: limit to top 10; if multiple months: show all
+  const rows=isSingleMonth?all.slice(0,10):all;
+  const tipoLabel=ativoTipo==='val'?'Valor':'Qtd.';
   const hk=ativoSortKey;
-  document.getElementById('tbl-ativos').innerHTML=`<table class="dt"><thead><tr>
-    <th>Tipo</th>
+  const countInfo=isSingleMonth
+    ?`<span style="font-size:10px;color:var(--blue);font-weight:500;margin-left:8px">Top 10 de ${all.length} ativos</span>`
+    :`<span style="font-size:10px;color:var(--blue);font-weight:500;margin-left:8px">${rows.length} ativos — dados consolidados do período</span>`;
+  document.getElementById('tbl-ativos').innerHTML=`<div style="display:flex;align-items:center;margin-bottom:10px">
+    <span class="badge bb">${tipoLabel}</span>${countInfo}
+  </div><table class="dt"><thead><tr>
     <th>Ativo</th>
     <th class="tr${hk==='ef'?' th-active':''}">Efetuados</th>
     <th class="tr${hk==='ap'?' th-active':''}">Aprovados</th>
@@ -1698,7 +1744,6 @@ function renderAtivoTbl(cp){
     <th class="tr${hk==='vl'?' th-active':''}">Valor</th>
     <th class="tr${hk==='ix'?' th-active':''}">Índice</th>
   </tr></thead><tbody>${rows.map(x=>`<tr>
-    <td><span class="badge bb">${x.tipo}</span></td>
     <td>${tc(x.ativo)}</td>
     <td class="tr${hk==='ef'?' tbl-hl':''}">${x.ef.toLocaleString('pt-BR')}</td>
     <td class="tr${hk==='ap'?' tbl-hl':''}">${x.ap.toLocaleString('pt-BR')}</td>
