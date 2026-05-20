@@ -973,7 +973,13 @@ body.auth-locked .auth-modal { display: flex; }
         </div>
 
         <div class="sec-div">
-          <div class="sec-tag" style="margin-bottom:12px">Ranking detalhado por ativo</div>
+          <div class="tbl-sort-bar">
+            <span class="tbl-sort-lbl">Ordenar por:</span>
+            <button class="sort-btn" id="asb-ef" onclick="setAtivoSort('ef')">Efetuados <span class="sort-arrow" id="asa-ef"></span></button>
+            <button class="sort-btn" id="asb-ap" onclick="setAtivoSort('ap')">Aprovados <span class="sort-arrow" id="asa-ap"></span></button>
+            <button class="sort-btn active" id="asb-vl" onclick="setAtivoSort('vl')">Valor <span class="sort-arrow" id="asa-vl">▼</span></button>
+            <button class="sort-btn" id="asb-ix" onclick="setAtivoSort('ix')">Índice <span class="sort-arrow" id="asa-ix"></span></button>
+          </div>
           <div id="tbl-ativos" style="overflow-x:auto"></div>
         </div>
       </div>
@@ -1407,6 +1413,7 @@ const DP_NEU={
 /* ── State ────────────────────────────────────────────────── */
 let cM='Abril', cA=2026;
 let tblSortKey='vl', tblSortDir='desc';
+let ativoSortKey='vl', ativoSortDir='desc';
 let cPeriodId='custom:jan26,fev26,mar26,abr26', cCompAId='', cCompBId='', cPeriodIds=['jan26','fev26','mar26','abr26'], cCompAIds=[], cPeriodStartId='jan26', cPeriodEndId='abr26';
 let mkM='Abril', mkA=2026, mkPeriodId='mk-abr26', mkCompId='', mkPeriodIds=['mk-abr26'], mkCompIds=[], mkPeriodStartId='mk-abr26', mkPeriodEndId='mk-abr26';
 const CH={};
@@ -1649,11 +1656,57 @@ function renderAtivoVal(cp){
       scales:stackedScales({callback:v=>'R$'+(v/1000).toFixed(0)+'k'})}
   });
 }
+function setAtivoSort(key){
+  if(ativoSortKey===key){
+    ativoSortDir=ativoSortDir==='desc'?'asc':'desc';
+  } else {
+    ativoSortKey=key;
+    ativoSortDir='desc';
+  }
+  updateAtivoSortBtns();
+  const cp=periodFromIds(cPeriodIds);
+  renderAtivoTbl(cp);
+}
+function updateAtivoSortBtns(){
+  ['ef','ap','vl','ix'].forEach(k=>{
+    const btn=document.getElementById('asb-'+k);
+    const arr=document.getElementById('asa-'+k);
+    if(!btn||!arr)return;
+    const active=k===ativoSortKey;
+    btn.classList.toggle('active',active);
+    arr.textContent=active?(ativoSortDir==='desc'?'▼':'▲'):'';
+  });
+}
 function renderAtivoTbl(cp){
-  const qty=grAtP(cp,'num').sort((x,y)=>y.rj-x.rj).slice(0,10);
-  const val=grAtP(cp,'val').sort((x,y)=>y.vl-x.vl).slice(0,10);
-  const rows=[...qty.map(x=>({...x,tipo:'Qtd.'})),...val.map(x=>({...x,tipo:'Valor'}))];
-  document.getElementById('tbl-ativos').innerHTML=`<table class="dt"><thead><tr><th>Tipo</th><th>Ativo</th><th class="tr">Efetuados</th><th class="tr">Aprovados</th><th class="tr">Rejeitados</th><th class="tr">Valor</th><th class="tr">Índice</th></tr></thead><tbody>${rows.map(x=>`<tr><td><span class="badge bb">${x.tipo}</span></td><td>${tc(x.ativo)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tr"><span class="badge ${x.ix>=60?'br':x.ix>=40?'bb':'bg'}">${x.ix.toFixed(1)}%</span></td></tr>`).join('')}</tbody></table>`;
+  const getSortVal=(x)=>{
+    if(ativoSortKey==='ix')return x.ix;
+    if(ativoSortKey==='vl')return x.vl;
+    if(ativoSortKey==='ap')return x.ap;
+    return x.ef;
+  };
+  const sortFn=(a,b)=>ativoSortDir==='desc'?getSortVal(b)-getSortVal(a):getSortVal(a)-getSortVal(b);
+  const qty=grAtP(cp,'num').sort(sortFn).slice(0,10).map(x=>({...x,tipo:'Qtd.'}));
+  const val=grAtP(cp,'val').sort(sortFn).slice(0,10).map(x=>({...x,tipo:'Valor'}));
+  const rows=[...qty,...val];
+  const hk=ativoSortKey;
+  document.getElementById('tbl-ativos').innerHTML=`<table class="dt"><thead><tr>
+    <th>Tipo</th>
+    <th>Ativo</th>
+    <th class="tr${hk==='ef'?' th-active':''}">Efetuados</th>
+    <th class="tr${hk==='ap'?' th-active':''}">Aprovados</th>
+    <th class="tr">Rejeitados</th>
+    <th class="tr${hk==='vl'?' th-active':''}">Valor</th>
+    <th class="tr${hk==='ix'?' th-active':''}">Índice</th>
+  </tr></thead><tbody>${rows.map(x=>`<tr>
+    <td><span class="badge bb">${x.tipo}</span></td>
+    <td>${tc(x.ativo)}</td>
+    <td class="tr${hk==='ef'?' tbl-hl':''}">${x.ef.toLocaleString('pt-BR')}</td>
+    <td class="tr${hk==='ap'?' tbl-hl':''}">${x.ap.toLocaleString('pt-BR')}</td>
+    <td class="tr">${x.rj.toLocaleString('pt-BR')}</td>
+    <td class="tr${hk==='vl'?' tbl-hl':''}">${brl(x.vl)}</td>
+    <td class="tr${hk==='ix'?' tbl-hl':''}" style="white-space:nowrap"><span class="badge ${x.ix>=60?'br':x.ix>=40?'bb':'bg'}">${x.ix.toFixed(1)}%</span></td>
+  </tr>`).join('')}</tbody></table>`;
+  updateAtivoSortBtns();
 }
 
 function renderBarQty(cp=periodFromIds(cPeriodIds)){
