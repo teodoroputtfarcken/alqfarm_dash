@@ -497,6 +497,46 @@ body {
 .dt-medicos th:nth-child(4), .dt-medicos td:nth-child(4) { width: 11%; }
 .dt-medicos th:nth-child(5), .dt-medicos td:nth-child(5) { width: 16%; }
 .dt-medicos th:nth-child(6), .dt-medicos td:nth-child(6) { width: 9%; min-width: 88px; }
+.tbl-sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.tbl-sort-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.sort-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 13px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--blue);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.sort-btn:hover { background: var(--bg); }
+.sort-btn.active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+  font-weight: 600;
+}
+.sort-arrow { font-size: 9px; opacity: .75; }
+.tbl-hl { background: #f0f5ff !important; font-weight: 600; color: var(--navy); }
+.th-active { background: #3a4f87 !important; }
 .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 9px; font-weight: 600; }
 .br { background: #fde8e8; color: var(--red); }
 .bg { background: #e8f5ee; color: var(--green); }
@@ -980,7 +1020,13 @@ body.auth-locked .auth-modal { display: flex; }
         </div>
 
         <div class="sec-div">
-          <div class="sec-tag" style="margin-bottom:12px">Ranking detalhado por médico</div>
+          <div class="tbl-sort-bar">
+            <span class="tbl-sort-lbl">Ordenar por:</span>
+            <button class="sort-btn" id="sb-ef" onclick="setTblSort('ef')">Efetuados <span class="sort-arrow" id="sa-ef"></span></button>
+            <button class="sort-btn" id="sb-ap" onclick="setTblSort('ap')">Aprovados <span class="sort-arrow" id="sa-ap"></span></button>
+            <button class="sort-btn active" id="sb-vl" onclick="setTblSort('vl')">Valor <span class="sort-arrow" id="sa-vl">▼</span></button>
+            <button class="sort-btn" id="sb-ix" onclick="setTblSort('ix')">Índice <span class="sort-arrow" id="sa-ix"></span></button>
+          </div>
           <div id="tbl" style="overflow-x:auto"></div>
         </div>
       </div>
@@ -1360,6 +1406,7 @@ const DP_NEU={
 
 /* ── State ────────────────────────────────────────────────── */
 let cM='Abril', cA=2026;
+let tblSortKey='vl', tblSortDir='desc';
 let cPeriodId='custom:jan26,fev26,mar26,abr26', cCompAId='', cCompBId='', cPeriodIds=['jan26','fev26','mar26','abr26'], cCompAIds=[], cPeriodStartId='jan26', cPeriodEndId='abr26';
 let mkM='Abril', mkA=2026, mkPeriodId='mk-abr26', mkCompId='', mkPeriodIds=['mk-abr26'], mkCompIds=[], mkPeriodStartId='mk-abr26', mkPeriodEndId='mk-abr26';
 const CH={};
@@ -1668,16 +1715,57 @@ function renderFunil(){
       </div>
     </div>`;
 }
+function setTblSort(key){
+  if(tblSortKey===key){
+    tblSortDir=tblSortDir==='desc'?'asc':'desc';
+  } else {
+    tblSortKey=key;
+    tblSortDir='desc';
+  }
+  updateSortBtns();
+  renderTbl();
+}
+function updateSortBtns(){
+  const keys=['ef','ap','vl','ix'];
+  keys.forEach(k=>{
+    const btn=document.getElementById('sb-'+k);
+    const arr=document.getElementById('sa-'+k);
+    if(!btn||!arr)return;
+    const active=k===tblSortKey;
+    btn.classList.toggle('active',active);
+    arr.textContent=active?(tblSortDir==='desc'?'▼':'▲'):'';
+  });
+}
 function renderTbl(){
-  const d=[...grP(periodFromIds(cPeriodIds))].sort((x,y)=>y.rj-x.rj);
+  const raw=grP(periodFromIds(cPeriodIds)).map(x=>({...x,ix:ixDoctor(x)}));
+  const getSortVal=(x)=>{
+    if(tblSortKey==='ix')return x.ix;
+    if(tblSortKey==='vl')return x.vl;
+    if(tblSortKey==='ap')return x.ap;
+    return x.ef;
+  };
+  const d=raw.sort((x,y)=>tblSortDir==='desc'?getSortVal(y)-getSortVal(x):getSortVal(x)-getSortVal(y));
   const ef=d.reduce((s,x)=>s+x.ef,0),ap=d.reduce((s,x)=>s+x.ap,0),rj=d.reduce((s,x)=>s+x.rj,0),vt=d.reduce((s,x)=>s+x.vl,0);
   const ai=ef>0?rj/ef*100:0;
   const rows=d.map(x=>{
-    const ix=ixDoctor(x);
+    const ix=x.ix;
     const bc=ix>50?'br':ix>25?'bb':'bg';
-    return`<tr><td>${tc(x.med)}</td><td class="tr">${x.ef.toLocaleString('pt-BR')}</td><td class="tr">${x.ap.toLocaleString('pt-BR')}</td><td class="tr">${x.rj.toLocaleString('pt-BR')}</td><td class="tr">${brl(x.vl)}</td><td class="tr" style="white-space:nowrap"><span class="badge ${bc}">${ix.toFixed(1)}%</span></td></tr>`;
+    const hk=tblSortKey;
+    const efCell=`<td class="tr${hk==='ef'?' tbl-hl':''}">${x.ef.toLocaleString('pt-BR')}</td>`;
+    const apCell=`<td class="tr${hk==='ap'?' tbl-hl':''}">${x.ap.toLocaleString('pt-BR')}</td>`;
+    const vlCell=`<td class="tr${hk==='vl'?' tbl-hl':''}">${brl(x.vl)}</td>`;
+    const ixCell=`<td class="tr${hk==='ix'?' tbl-hl':''}" style="white-space:nowrap"><span class="badge ${bc}">${ix.toFixed(1)}%</span></td>`;
+    return`<tr><td>${tc(x.med)}</td>${efCell}${apCell}<td class="tr">${x.rj.toLocaleString('pt-BR')}</td>${vlCell}${ixCell}</tr>`;
   }).join('');
-  document.getElementById('tbl').innerHTML=`<table class="dt dt-medicos"><thead><tr><th>Médico</th><th style="text-align:right">Efetuados</th><th style="text-align:right">Aprovados</th><th style="text-align:right">Rejeitados</th><th style="text-align:right">Valor Rejeitado</th><th class="tr">Índice Rej.</th></tr></thead><tbody>${rows}<tr class="tot"><td><strong>Total (top 10)</strong></td><td class="tr"><strong>${ef.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${ap.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${rj.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${brl(vt)}</strong></td><td class="tr" style="white-space:nowrap"><span class="badge ${ai>50?'br':ai>25?'bb':'bg'}">${ai.toFixed(1)}%</span></td></tr></tbody></table>`;
+  document.getElementById('tbl').innerHTML=`<table class="dt dt-medicos"><thead><tr>
+    <th>Médico</th>
+    <th style="text-align:right" class="${tblSortKey==='ef'?'th-active':''}">Efetuados</th>
+    <th style="text-align:right" class="${tblSortKey==='ap'?'th-active':''}">Aprovados</th>
+    <th style="text-align:right">Rejeitados</th>
+    <th style="text-align:right" class="${tblSortKey==='vl'?'th-active':''}">Valor Rejeitado</th>
+    <th class="tr${tblSortKey==='ix'?' th-active':''}">Índice Rej.</th>
+  </tr></thead><tbody>${rows}<tr class="tot"><td><strong>Total</strong></td><td class="tr"><strong>${ef.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${ap.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${rj.toLocaleString('pt-BR')}</strong></td><td class="tr"><strong>${brl(vt)}</strong></td><td class="tr" style="white-space:nowrap"><span class="badge ${ai>50?'br':ai>25?'bb':'bg'}">${ai.toFixed(1)}%</span></td></tr></tbody></table>`;
+  updateSortBtns();
 }
 function renderTempos(){
   const lbs=DT.map(d=>sl(d.mes,d.ano));
