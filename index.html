@@ -242,6 +242,7 @@ body.auth-locked .auth-modal{display:flex}
     <button class="sb-item" onclick="swTab('marketing',this)"><span class="sb-item-icon">📣</span> Marketing</button>
     <div class="sb-section-label" style="margin-top:8px">Análises</div>
     <button class="sb-item" onclick="goSection('sec-fat',this)"><span class="sb-item-icon">💰</span> Faturamento</button>
+    <button class="sb-item" onclick="goSection('sec-orc',this)"><span class="sb-item-icon">📈</span> Orçamentos</button>
     <button class="sb-item" onclick="goSection('sec-ativos',this)"><span class="sb-item-icon">🧪</span> Ativos</button>
     <button class="sb-item" onclick="goSection('sec-rej',this)"><span class="sb-item-icon">📋</span> Rejeições</button>
     <button class="sb-item" onclick="goSection('sec-tempo',this)"><span class="sb-item-icon">⏱</span> Tempos</button>
@@ -336,6 +337,58 @@ body.auth-locked .auth-modal{display:flex}
             <span class="li"><span class="lb" style="background:var(--chart-blue-3)"></span>Varejo</span>
           </div>
           <div class="cwrap" style="height:280px"><canvas id="chFatCat"></canvas></div>
+        </div>
+        <div class="sec-div">
+          <div class="g2">
+            <div>
+              <div class="sec-tag" style="margin-bottom:8px">Ticket médio — aprovado vs rejeitado (Jan/25–Mai/26)</div>
+              <div class="leg">
+                <span class="li"><span class="ld" style="background:var(--chart-blue-2)"></span>Aprovado</span>
+                <span class="li"><span class="ld" style="background:var(--red)"></span>Rejeitado</span>
+              </div>
+              <div class="cwrap" style="height:240px"><canvas id="chTicketMedio"></canvas></div>
+            </div>
+            <div>
+              <div class="sec-tag" style="margin-bottom:8px">Ticket médio por categoria — Jan/26 a Mai/26</div>
+              <div class="leg">
+                <span class="li"><span class="ld" style="background:var(--chart-blue-1)"></span>Manipulação</span>
+                <span class="li"><span class="ld" style="background:var(--chart-blue-2)"></span>BioFAO</span>
+                <span class="li"><span class="ld" style="background:var(--chart-blue-4)"></span>Varejo</span>
+              </div>
+              <div class="cwrap" style="height:240px"><canvas id="chTicketCat"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ORÇAMENTOS -->
+    <div class="sec" id="sec-orc">
+      <div class="sec-hd"><div class="sec-hd-left"><div class="sec-tag">Análise Comercial</div><div class="sec-title">Orçamentos — Volume e Aprovações · Jan/25 a Mai/26</div></div></div>
+      <div class="sec-body">
+        <div class="g4" id="orc-kpis" style="margin-bottom:22px"></div>
+        <div class="sec-tag" style="margin-bottom:8px">Quantidade de orçamentos — aprovados vs rejeitados</div>
+        <div class="leg">
+          <span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Aprovados</span>
+          <span class="li"><span class="lb" style="background:#a02020"></span>Rejeitados</span>
+        </div>
+        <div class="cwrap" style="height:300px"><canvas id="chOrcQtd"></canvas></div>
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:8px">Valor de orçamentos — aprovados vs rejeitados (R$)</div>
+          <div class="leg">
+            <span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Aprovado</span>
+            <span class="li"><span class="lb" style="background:#a02020"></span>Rejeitado</span>
+          </div>
+          <div class="cwrap" style="height:300px"><canvas id="chOrcVal"></canvas></div>
+        </div>
+        <div class="sec-div">
+          <div class="sec-tag" style="margin-bottom:8px">Taxa de aprovação por quantidade e valor (%)</div>
+          <div class="leg">
+            <span class="li"><span class="ld" style="background:var(--chart-blue-1)"></span>% Aprovação (qtd.)</span>
+            <span class="li"><span class="ld" style="background:var(--chart-blue-3)"></span>% Aprovação (valor)</span>
+          </div>
+          <div class="cwrap" style="height:240px"><canvas id="chOrcTaxa"></canvas></div>
         </div>
       </div>
     </div>
@@ -562,6 +615,73 @@ const DFC=[
   {ano:2026,mes:'Abril',cat:'Manipulação',fat:411203.17},{ano:2026,mes:'Abril',cat:'Varejo',fat:29739.20},{ano:2026,mes:'Abril',cat:'BioFAO',fat:375565.43},
   {ano:2026,mes:'Maio',cat:'Manipulação',fat:404315.85},{ano:2026,mes:'Maio',cat:'Varejo',fat:24365.43},{ano:2026,mes:'Maio',cat:'BioFAO',fat:329065.95},
 ];
+
+/* ── ORÇAMENTOS ──────────────────────────────────────────── */
+const DOQ=[
+  {ano:2025,mes:'Janeiro',ap:4308,rj:1979,tot:6287,pctAp:68.5,pctRj:31.5},
+  {ano:2025,mes:'Fevereiro',ap:3931,rj:1987,tot:5918,pctAp:66.4,pctRj:33.6},
+  {ano:2025,mes:'Março',ap:3805,rj:2328,tot:6133,pctAp:62.0,pctRj:38.0},
+  {ano:2025,mes:'Abril',ap:3401,rj:2510,tot:5911,pctAp:57.5,pctRj:42.5},
+  {ano:2025,mes:'Maio',ap:3765,rj:3082,tot:6847,pctAp:55.0,pctRj:45.0},
+  {ano:2025,mes:'Junho',ap:3546,rj:2561,tot:6107,pctAp:58.1,pctRj:41.9},
+  {ano:2025,mes:'Julho',ap:3544,rj:2799,tot:6343,pctAp:55.9,pctRj:44.1},
+  {ano:2025,mes:'Agosto',ap:3372,rj:2646,tot:6018,pctAp:56.0,pctRj:44.0},
+  {ano:2025,mes:'Setembro',ap:3542,rj:2734,tot:6276,pctAp:56.4,pctRj:43.6},
+  {ano:2025,mes:'Outubro',ap:3435,rj:2824,tot:6259,pctAp:54.9,pctRj:45.1},
+  {ano:2025,mes:'Novembro',ap:2832,rj:2364,tot:5196,pctAp:54.5,pctRj:45.5},
+  {ano:2025,mes:'Dezembro',ap:2047,rj:2250,tot:5297,pctAp:57.2,pctRj:42.8},
+  {ano:2026,mes:'Janeiro',ap:2962,rj:2781,tot:5473,pctAp:51.6,pctRj:48.4},
+  {ano:2026,mes:'Fevereiro',ap:2617,rj:2134,tot:4751,pctAp:55.1,pctRj:44.9},
+  {ano:2026,mes:'Março',ap:3535,rj:2618,tot:6153,pctAp:57.5,pctRj:42.5},
+  {ano:2026,mes:'Abril',ap:3259,rj:2475,tot:5734,pctAp:56.8,pctRj:43.2},
+  {ano:2026,mes:'Maio',ap:3295,rj:2535,tot:5830,pctAp:56.5,pctRj:43.5},
+];
+const DOV=[
+  {ano:2025,mes:'Janeiro',ap:540253,rj:305193,tot:845446,pctAp:63.9,pctRj:36.1},
+  {ano:2025,mes:'Fevereiro',ap:486971,rj:313728,tot:800699,pctAp:60.8,pctRj:39.2},
+  {ano:2025,mes:'Março',ap:481296,rj:425748,tot:907044,pctAp:53.1,pctRj:46.9},
+  {ano:2025,mes:'Abril',ap:464669,rj:514373,tot:979042,pctAp:47.5,pctRj:52.5},
+  {ano:2025,mes:'Maio',ap:492007,rj:604608,tot:1096615,pctAp:44.9,pctRj:55.1},
+  {ano:2025,mes:'Junho',ap:484824,rj:514069,tot:998893,pctAp:48.5,pctRj:51.5},
+  {ano:2025,mes:'Julho',ap:477726,rj:594025,tot:1071751,pctAp:44.6,pctRj:55.4},
+  {ano:2025,mes:'Agosto',ap:460266,rj:544353,tot:1004619,pctAp:54.2,pctRj:45.8},
+  {ano:2025,mes:'Setembro',ap:501103,rj:567868,tot:1068971,pctAp:53.1,pctRj:46.9},
+  {ano:2025,mes:'Outubro',ap:484004,rj:580134,tot:1064138,pctAp:45.5,pctRj:54.5},
+  {ano:2025,mes:'Novembro',ap:412029,rj:494954,tot:906983,pctAp:45.4,pctRj:54.6},
+  {ano:2025,mes:'Dezembro',ap:423920,rj:454747,tot:878667,pctAp:48.2,pctRj:51.8},
+  {ano:2026,mes:'Janeiro',ap:425156,rj:538360,tot:963516,pctAp:51.6,pctRj:48.4},
+  {ano:2026,mes:'Fevereiro',ap:360992,rj:429100,tot:790092,pctAp:45.7,pctRj:54.3},
+  {ano:2026,mes:'Março',ap:468838,rj:499174,tot:968012,pctAp:48.4,pctRj:51.6},
+  {ano:2026,mes:'Abril',ap:440911,rj:502744,tot:943655,pctAp:46.7,pctRj:53.3},
+  {ano:2026,mes:'Maio',ap:420277,rj:483646,tot:903873,pctAp:46.5,pctRj:53.5},
+];
+const DTM=[
+  {ano:2025,mes:'Janeiro',ap:125.41,rj:154.22},
+  {ano:2025,mes:'Fevereiro',ap:123.88,rj:157.89},
+  {ano:2025,mes:'Março',ap:147.90,rj:182.88},
+  {ano:2025,mes:'Abril',ap:136.63,rj:204.93},
+  {ano:2025,mes:'Maio',ap:130.68,rj:196.17},
+  {ano:2025,mes:'Junho',ap:136.72,rj:200.73},
+  {ano:2025,mes:'Julho',ap:134.80,rj:212.23},
+  {ano:2025,mes:'Agosto',ap:136.50,rj:205.73},
+  {ano:2025,mes:'Setembro',ap:141.47,rj:207.71},
+  {ano:2025,mes:'Outubro',ap:140.90,rj:205.43},
+  {ano:2025,mes:'Novembro',ap:145.49,rj:209.37},
+  {ano:2025,mes:'Dezembro',ap:139.13,rj:202.11},
+  {ano:2026,mes:'Janeiro',ap:143.54,rj:193.59},
+  {ano:2026,mes:'Fevereiro',ap:137.94,rj:201.08},
+  {ano:2026,mes:'Março',ap:132.63,rj:190.67},
+  {ano:2026,mes:'Abril',ap:135.29,rj:203.13},
+  {ano:2026,mes:'Maio',ap:127.53,rj:190.79},
+];
+const DTMC=[
+  {ano:2026,mes:'Janeiro',manip:123.87,fao:214.53,varejo:30.55},
+  {ano:2026,mes:'Fevereiro',manip:120.09,fao:213.15,varejo:59.70},
+  {ano:2026,mes:'Março',manip:116.86,fao:217.24,varejo:29.03},
+  {ano:2026,mes:'Abril',manip:116.24,fao:212.77,varejo:26.67},
+  {ano:2026,mes:'Maio',manip:114.22,fao:208.24,varejo:32.71},
+];
+
 
 /* ── DR (médicos) incl. Maio/26 ─────────────────────────── */
 const DR=[
@@ -1064,6 +1184,114 @@ function renderFatCat(cp){
   });
 }
 
+
+/* ── TICKET MÉDIO ────────────────────────────────────────── */
+function renderTicketMedio(){
+  const labels=DTM.map(d=>sl(d.mes,d.ano));
+  if(CH.tickMedio)CH.tickMedio.destroy();
+  CH.tickMedio=new Chart(document.getElementById('chTicketMedio'),{type:'line',
+    data:{labels,datasets:[
+      {label:'Aprovado',data:DTM.map(d=>d.ap),borderColor:'#006bd6',backgroundColor:'rgba(0,107,214,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#006bd6',borderWidth:2.5},
+      {label:'Rejeitado',data:DTM.map(d=>d.rj),borderColor:'#a02020',backgroundColor:'rgba(160,32,32,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#a02020',borderWidth:2.5},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a2340',titleFont:{family:'Poppins',size:11,weight:'600'},bodyFont:{family:'Poppins',size:11},padding:10,cornerRadius:7,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},
+      scales:{
+        x:{ticks:freshTicks(),grid:{display:false},border:{display:false}},
+        y:{ticks:freshTicks({callback:v=>'R$'+v.toFixed(0)}),grid:{color:'rgba(74,86,132,0.1)'},border:{display:false}}
+      }}
+  });
+}
+function renderTicketCat(){
+  const labels=DTMC.map(d=>MS[MO.indexOf(d.mes)]+'/26');
+  if(CH.tickCat)CH.tickCat.destroy();
+  CH.tickCat=new Chart(document.getElementById('chTicketCat'),{type:'line',
+    data:{labels,datasets:[
+      {label:'Manipulação',data:DTMC.map(d=>d.manip),borderColor:'#123b7a',backgroundColor:'transparent',tension:.3,pointRadius:4,pointBackgroundColor:'#123b7a',borderWidth:2.5},
+      {label:'BioFAO',data:DTMC.map(d=>d.fao),borderColor:'#006bd6',backgroundColor:'transparent',tension:.3,pointRadius:4,pointBackgroundColor:'#006bd6',borderWidth:2.5},
+      {label:'Varejo',data:DTMC.map(d=>d.varejo),borderColor:'#8ed8f8',backgroundColor:'transparent',tension:.3,pointRadius:4,pointBackgroundColor:'#8ed8f8',borderWidth:2,borderDash:[4,3]},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a2340',titleFont:{family:'Poppins',size:11,weight:'600'},bodyFont:{family:'Poppins',size:11},padding:10,cornerRadius:7,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},
+      scales:{
+        x:{ticks:freshTicks(),grid:{display:false},border:{display:false}},
+        y:{ticks:freshTicks({callback:v=>'R$'+v.toFixed(0)}),grid:{color:'rgba(74,86,132,0.1)'},border:{display:false}}
+      }}
+  });
+}
+
+/* ── ORÇAMENTOS ──────────────────────────────────────────── */
+function renderOrcamentos(){
+  const allLabels=[...DOQ.filter(d=>d.ano===2025),...DOQ.filter(d=>d.ano===2026)].map(d=>sl(d.mes,d.ano));
+  const apQ=DOQ.map(d=>d.ap),rjQ=DOQ.map(d=>d.rj);
+  const apV=DOV.map(d=>d.ap),rjV=DOV.map(d=>d.rj);
+  const taxaQ=DOQ.map(d=>d.pctAp),taxaV=DOV.map(d=>d.pctAp);
+
+  // KPIs — últimos dados (Mai/26)
+  const last=DOQ[DOQ.length-1],lastV=DOV[DOV.length-1];
+  const prev=DOQ.find(d=>d.mes===last.mes&&d.ano===last.ano-1);
+  const prevV=DOV.find(d=>d.mes===lastV.mes&&d.ano===lastV.ano-1);
+  const el=document.getElementById('orc-kpis');
+  if(el)el.innerHTML=`
+    <div class="kpi-card"><div class="kpi-tag">Taxa aprovação — ${sl(last.mes,last.ano)}</div><div class="kpi-val" style="font-size:26px">${last.pctAp.toFixed(1)}%</div>
+      <div class="kpi-comps">${prev?`<div class="kc"><span class="kc-per">vs ${sl(prev.mes,prev.ano)}</span><span class="dl ${last.pctAp>=prev.pctAp?'dp':'dn'}">${last.pctAp>=prev.pctAp?'▲':'▼'} ${Math.abs(last.pctAp-prev.pctAp).toFixed(1)} pp</span></div>`:''}</div>
+    </div>
+    <div class="kpi-card"><div class="kpi-tag">Total de orçamentos — ${sl(last.mes,last.ano)}</div><div class="kpi-val" style="font-size:26px">${last.tot.toLocaleString('pt-BR')}</div>
+      <div class="kpi-comps"></div>
+    </div>
+    <div class="kpi-card"><div class="kpi-tag">Valor aprovado — ${sl(lastV.mes,lastV.ano)}</div><div class="kpi-val" style="font-size:22px">${brlK(lastV.ap)}</div>
+      <div class="kpi-comps">${prevV?`<div class="kc"><span class="kc-per">vs ${sl(prevV.mes,prevV.ano)}</span><span class="dl ${lastV.pctAp>=prevV.pctAp?'dp':'dn'}">${lastV.pctAp>=prevV.pctAp?'▲':'▼'} ${Math.abs(lastV.pctAp-prevV.pctAp).toFixed(1)} pp</span></div>`:''}</div>
+    </div>
+    <div class="kpi-card"><div class="kpi-tag">Valor rejeitado — ${sl(lastV.mes,lastV.ano)}</div><div class="kpi-val" style="font-size:22px;color:var(--red)">${brlK(lastV.rj)}</div>
+      <div class="kpi-comps"><div class="kc"><span class="kc-per">${lastV.pctRj.toFixed(1)}% do total</span></div></div>
+    </div>`;
+
+  // Chart Quantidade
+  if(CH.orcQtd)CH.orcQtd.destroy();
+  CH.orcQtd=new Chart(document.getElementById('chOrcQtd'),{type:'bar',
+    data:{labels:allLabels,datasets:[
+      {label:'Aprovados',data:apQ,backgroundColor:'#123b7a',borderRadius:3,barPercentage:.7},
+      {label:'Rejeitados',data:rjQ,backgroundColor:'rgba(160,32,32,0.75)',borderRadius:3,barPercentage:.7},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a2340',titleFont:{family:'Poppins',size:11,weight:'600'},bodyFont:{family:'Poppins',size:11},padding:10,cornerRadius:7,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toLocaleString('pt-BR')}`}}},
+      scales:{
+        x:{ticks:freshTicks(),grid:{display:false},border:{display:false}},
+        y:{ticks:freshTicks(),grid:{color:'rgba(74,86,132,0.1)'},border:{display:false}}
+      }}
+  });
+
+  // Chart Valor
+  if(CH.orcVal)CH.orcVal.destroy();
+  CH.orcVal=new Chart(document.getElementById('chOrcVal'),{type:'bar',
+    data:{labels:allLabels,datasets:[
+      {label:'Aprovado',data:apV,backgroundColor:'#123b7a',borderRadius:3,barPercentage:.7},
+      {label:'Rejeitado',data:rjV,backgroundColor:'rgba(160,32,32,0.75)',borderRadius:3,barPercentage:.7},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a2340',titleFont:{family:'Poppins',size:11,weight:'600'},bodyFont:{family:'Poppins',size:11},padding:10,cornerRadius:7,callbacks:{label:c=>` ${c.dataset.label}: ${brlK(c.parsed.y)}`}}},
+      scales:{
+        x:{ticks:freshTicks(),grid:{display:false},border:{display:false}},
+        y:{ticks:freshTicks({callback:v=>brlK(v)}),grid:{color:'rgba(74,86,132,0.1)'},border:{display:false}}
+      }}
+  });
+
+  // Chart Taxa
+  if(CH.orcTaxa)CH.orcTaxa.destroy();
+  CH.orcTaxa=new Chart(document.getElementById('chOrcTaxa'),{type:'line',
+    data:{labels:allLabels,datasets:[
+      {label:'% Aprovação (qtd.)',data:taxaQ,borderColor:'#123b7a',backgroundColor:'rgba(18,59,122,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#123b7a',borderWidth:2.5},
+      {label:'% Aprovação (valor)',data:taxaV,borderColor:'#00a6c8',backgroundColor:'rgba(0,166,200,.06)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#00a6c8',borderWidth:2,borderDash:[4,3]},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a2340',titleFont:{family:'Poppins',size:11,weight:'600'},bodyFont:{family:'Poppins',size:11},padding:10,cornerRadius:7,callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`}}},
+      scales:{
+        x:{ticks:freshTicks(),grid:{display:false},border:{display:false}},
+        y:{min:40,max:75,ticks:freshTicks({callback:v=>v+'%'}),grid:{color:'rgba(74,86,132,0.1)'},border:{display:false}}
+      }}
+  });
+}
+
 /* ── COMERCIAL RENDER ─────────────────────────────────────── */
 let _rendering=false;
 function render(){
@@ -1079,6 +1307,9 @@ function render(){
     renderInsight(cp,pr);
     renderKPIs(cp,pr,py);
     renderFat(cp);
+    renderTicketMedio();
+    renderTicketCat();
+    renderOrcamentos();
     renderAtivos(cp);
     renderBarQty(cp);
     renderBarVal(cp);
