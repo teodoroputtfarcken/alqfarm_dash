@@ -244,6 +244,7 @@ body.auth-locked .auth-modal{display:flex}
     <div class="sb-section-label" style="margin-top:8px">Análises</div>
     <button class="sb-item" onclick="goSection('sec-fat',this)"><span class="sb-item-icon">💰</span> Faturamento</button>
     <button class="sb-item" onclick="goSection('sec-orc',this)"><span class="sb-item-icon">📈</span> Orçamentos</button>
+    <button class="sb-item" onclick="goSection('sec-ticket',this)"><span class="sb-item-icon">🎫</span> Ticket Médio</button>
     <button class="sb-item" onclick="goSection('sec-ativos',this)"><span class="sb-item-icon">🧪</span> Ativos</button>
     <button class="sb-item" onclick="goSection('sec-rej',this)"><span class="sb-item-icon">📋</span> Rejeições</button>
     <button class="sb-item" onclick="goSection('sec-tempo',this)"><span class="sb-item-icon">⏱</span> Tempos</button>
@@ -339,27 +340,6 @@ body.auth-locked .auth-modal{display:flex}
           </div>
           <div class="cwrap" style="height:280px"><canvas id="chFatCat"></canvas></div>
         </div>
-        <div class="sec-div">
-          <div class="g2">
-            <div>
-              <div class="sec-tag" style="margin-bottom:8px">Ticket médio — aprovado vs rejeitado (Jan/25–Mai/26)</div>
-              <div class="leg">
-                <span class="li"><span class="ld" style="background:var(--chart-blue-2)"></span>Aprovado</span>
-                <span class="li"><span class="ld" style="background:var(--red)"></span>Rejeitado</span>
-              </div>
-              <div class="cwrap" style="height:240px"><canvas id="chTicketMedio"></canvas></div>
-            </div>
-            <div>
-              <div class="sec-tag" style="margin-bottom:8px">Ticket médio por categoria — Jan/26 a Mai/26</div>
-              <div class="leg">
-                <span class="li"><span class="ld" style="background:var(--chart-blue-1)"></span>Manipulação</span>
-                <span class="li"><span class="ld" style="background:var(--chart-blue-2)"></span>BioFAO</span>
-                <span class="li"><span class="ld" style="background:var(--chart-blue-4)"></span>Varejo</span>
-              </div>
-              <div class="cwrap" style="height:240px"><canvas id="chTicketCat"></canvas></div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -390,6 +370,33 @@ body.auth-locked .auth-modal{display:flex}
             <span class="li"><span class="ld" style="background:var(--chart-blue-3)"></span>% Aprovação (valor)</span>
           </div>
           <div class="cwrap" style="height:240px"><canvas id="chOrcTaxa"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- TICKET MÉDIO -->
+    <div class="sec" id="sec-ticket">
+      <div class="sec-hd"><div class="sec-hd-left"><div class="sec-tag">Análise Comercial</div><div class="sec-title">Ticket Médio · Jan/25 a Mai/26</div></div></div>
+      <div class="sec-body">
+        <div class="g2">
+          <div>
+            <div class="sec-tag" style="margin-bottom:8px">Ticket médio — aprovado vs rejeitado (Jan/25–Mai/26)</div>
+            <div class="leg">
+              <span class="li"><span class="ld" style="background:var(--chart-blue-2)"></span>Aprovado</span>
+              <span class="li"><span class="ld" style="background:var(--red)"></span>Rejeitado</span>
+            </div>
+            <div class="cwrap" style="height:260px"><canvas id="chTicketMedio"></canvas></div>
+          </div>
+          <div>
+            <div class="sec-tag" style="margin-bottom:8px">Ticket médio por categoria — Jan/26 a Mai/26</div>
+            <div class="leg">
+              <span class="li"><span class="ld" style="background:var(--chart-blue-1)"></span>Manipulação</span>
+              <span class="li"><span class="ld" style="background:var(--chart-blue-2)"></span>BioFAO</span>
+              <span class="li"><span class="ld" style="background:var(--chart-blue-4)"></span>Varejo</span>
+            </div>
+            <div class="cwrap" style="height:260px"><canvas id="chTicketCat"></canvas></div>
+          </div>
         </div>
       </div>
     </div>
