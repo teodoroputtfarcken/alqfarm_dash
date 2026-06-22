@@ -1691,6 +1691,7 @@ const AUTH_DB={users:[
   {username:'gestao',password:'alqfarma2026',name:'Gestão ALQ'},
   {username:'Mainni',password:'Mainni',name:'Mainni'},
   {username:'Teodoro',password:'Teodoro',name:'Teodoro'},
+  {username:'Natalia',password:'Natalia',name:'Natalia'},
 ]};
 function renderLoggedUser(){const name=sessionStorage.getItem('alq-user')||'Usuário';const avatar=document.getElementById('sb-avatar'),label=document.getElementById('sb-user-name');if(avatar)avatar.textContent=name.trim().charAt(0).toUpperCase()||'U';if(label)label.textContent=name}
 function unlockDashboard(){renderLoggedUser();document.body.classList.remove('auth-locked');document.getElementById('auth-error')?.classList.remove('on')}
