@@ -593,6 +593,7 @@ const DF=[
   {ano:2026,mes:'Março',   fat:948586, fatTrim:null},
   {ano:2026,mes:'Abril',   fat:818081, fatTrim:1576293},
   {ano:2026,mes:'Maio',    fat:758212, fatTrim:null},
+  {ano:2026,mes:'Junho',   fat:801341, fatTrim:null},
 ];
 /* trimestral 2026 parcial: Q2/26 incompleto */
 const DF_TRIM=[
@@ -601,7 +602,7 @@ const DF_TRIM=[
   {ano:2025,trim:'Q3',label:'Q3/25',fat:3070003},
   {ano:2025,trim:'Q4',label:'Q4/25',fat:2878620},
   {ano:2026,trim:'Q1',label:'Q1/26',fat:2483548},
-  {ano:2026,trim:'Q2',label:'Q2/26',fat:1576293,parcial:true},
+  {ano:2026,trim:'Q2',label:'Q2/26',fat:2377634},
 ];
 /* categorias */
 const DFC=[
@@ -622,6 +623,9 @@ const DFC=[
   {ano:2026,mes:'Março',cat:'Manipulação',fat:456933.24},{ano:2026,mes:'Março',cat:'Varejo',fat:39413.76},{ano:2026,mes:'Março',cat:'BioFAO',fat:451364.25},
   {ano:2026,mes:'Abril',cat:'Manipulação',fat:411203.17},{ano:2026,mes:'Abril',cat:'Varejo',fat:29739.20},{ano:2026,mes:'Abril',cat:'BioFAO',fat:375565.43},
   {ano:2026,mes:'Maio',cat:'Manipulação',fat:404315.85},{ano:2026,mes:'Maio',cat:'Varejo',fat:24365.43},{ano:2026,mes:'Maio',cat:'BioFAO',fat:329065.95},
+  {ano:2026,mes:'Junho',cat:'Manipulação',fat:410965.38},
+  {ano:2026,mes:'Junho',cat:'Varejo',fat:25032.80},
+  {ano:2026,mes:'Junho',cat:'BioFAO',fat:365196.46},
 ];
 
 /* ── ORÇAMENTOS ──────────────────────────────────────────── */
@@ -643,6 +647,7 @@ const DOQ=[
   {ano:2026,mes:'Março',ap:3535,rj:2618,tot:6153,pctAp:57.5,pctRj:42.5},
   {ano:2026,mes:'Abril',ap:3259,rj:2475,tot:5734,pctAp:56.8,pctRj:43.2},
   {ano:2026,mes:'Maio',ap:3295,rj:2535,tot:5830,pctAp:56.5,pctRj:43.5},
+  {ano:2026,mes:'Junho',ap:3295,rj:2371,tot:5666,pctAp:58.0,pctRj:42.0},
 ];
 const DOV=[
   {ano:2025,mes:'Janeiro',ap:540253,rj:305193,tot:845446,pctAp:63.9,pctRj:36.1},
@@ -662,6 +667,7 @@ const DOV=[
   {ano:2026,mes:'Março',ap:468838,rj:499174,tot:968012,pctAp:48.4,pctRj:51.6},
   {ano:2026,mes:'Abril',ap:440911,rj:502744,tot:943655,pctAp:46.7,pctRj:53.3},
   {ano:2026,mes:'Maio',ap:420277,rj:483646,tot:903873,pctAp:46.5,pctRj:53.5},
+  {ano:2026,mes:'Junho',ap:432364,rj:459364,tot:891728,pctAp:49.0,pctRj:51.0},
 ];
 const DTM=[
   {ano:2025,mes:'Janeiro',ap:125.41,rj:154.22},
@@ -681,6 +687,7 @@ const DTM=[
   {ano:2026,mes:'Março',ap:132.63,rj:190.67},
   {ano:2026,mes:'Abril',ap:135.29,rj:203.13},
   {ano:2026,mes:'Maio',ap:127.53,rj:190.79},
+  {ano:2026,mes:'Junho',ap:130.75,rj:194.35},
 ];
 const DTMC=[
   {ano:2026,mes:'Janeiro',manip:123.87,fao:214.53,varejo:30.55},
@@ -688,6 +695,7 @@ const DTMC=[
   {ano:2026,mes:'Março',manip:116.86,fao:217.24,varejo:29.03},
   {ano:2026,mes:'Abril',manip:116.24,fao:212.77,varejo:26.67},
   {ano:2026,mes:'Maio',manip:114.22,fao:208.24,varejo:32.71},
+  {ano:2026,mes:'Junho',manip:114.62,fao:267.06,varejo:30.57},
 ];
 
 
@@ -743,6 +751,16 @@ const DR=[
   {ano:2026,mes:'Maio',med:'GABRIELLA LUCAS DOLAVALE ASSED',ef:147,ap:111,rj:36,vl:3876.79,ix:24.59},
   {ano:2026,mes:'Maio',med:'FERNANDO BIZARRIA APARECIDO',ef:57,ap:23,rj:34,vl:7040.94,ix:59.65},
   {ano:2026,mes:'Maio',med:'MONICA FERREIRA CHOR',ef:42,ap:11,rj:31,vl:998.90,ix:73.81},
+  {ano:2026,mes:'Junho',med:'CAMILA C. DO VALLE SERRA D´ÁVILA',ef:327,ap:222,rj:105,vl:17605.39,ix:32.11},
+  {ano:2026,mes:'Junho',med:'MIRIA DE AMORIM',ef:640,ap:579,rj:61,vl:9291.22,ix:9.53},
+  {ano:2026,mes:'Junho',med:'JULIANA ABIGAIL LEITE',ef:133,ap:76,rj:57,vl:6952.80,ix:42.86},
+  {ano:2026,mes:'Junho',med:'FERNANDO BIZARRIA APARECIDO',ef:79,ap:36,rj:43,vl:4029.45,ix:54.43},
+  {ano:2026,mes:'Junho',med:'MONICA FERREIRA CHOR',ef:41,ap:1,rj:40,vl:1689.75,ix:97.56},
+  {ano:2026,mes:'Junho',med:'BRENDA MACIEL CASTELLAR LIMA',ef:141,ap:102,rj:39,vl:5669.42,ix:27.66},
+  {ano:2026,mes:'Junho',med:'ELIZABETH DO NASCIMENTO RODRIGUES DE LIRA',ef:143,ap:106,rj:37,vl:3246.40,ix:25.87},
+  {ano:2026,mes:'Junho',med:'ISIS CARLA QUEIROZ DE SOUZA',ef:112,ap:78,rj:34,vl:6898.96,ix:30.36},
+  {ano:2026,mes:'Junho',med:'JULIANA BREITINGER AMIM',ef:51,ap:17,rj:34,vl:5663.67,ix:66.67},
+  {ano:2026,mes:'Junho',med:'ANDREA SOUZA DE PAIVA',ef:218,ap:188,rj:30,vl:4729.57,ix:13.76},
 ];
 
 function pt(s){const m=s.match(/(\d+)h(\d+)m/);return m?+m[1]*60+ +m[2]:0}
@@ -763,6 +781,7 @@ const DT=[
   {ano:2026,mes:'Março',    at:pt('2h08m'),ca:pt('3h10m'),ap:pt('6h43m'),in:pt('2h29m')},
   {ano:2026,mes:'Abril',    at:pt('2h16m'),ca:pt('3h13m'),ap:pt('7h36m'),in:pt('2h24m')},
   {ano:2026,mes:'Maio',     at:pt('1h55m'),ca:pt('2h47m'),ap:pt('7h21m'),in:pt('2h05m')},
+  {ano:2026,mes:'Junho',    at:pt('2h00m'),ca:pt('2h54m'),ap:pt('7h05m'),in:pt('2h25m')},
 ];
 
 const DN=[
@@ -771,6 +790,7 @@ const DN=[
   {ano:2025,mes:'Outubro',nota:73},{ano:2025,mes:'Novembro',nota:69},{ano:2025,mes:'Dezembro',nota:72},
   {ano:2026,mes:'Janeiro',nota:77},{ano:2026,mes:'Fevereiro',nota:74},{ano:2026,mes:'Março',nota:81},
   {ano:2026,mes:'Abril',nota:80},{ano:2026,mes:'Maio',nota:80},
+  {ano:2026,mes:'Junho',nota:82},
 ];
 
 const DP_PROM={
@@ -778,6 +798,7 @@ const DP_PROM={
   'Março 2026':[['N\u00e3o Especificado',47],['Ótimo Atendimento',32],['Servi\u00e7o de Qualidade',16],['Pre\u00e7o Justo',3]],
   'Fevereiro 2026':[['N\u00e3o Especificado',50],['Ótimo Atendimento',33],['Servi\u00e7o de Qualidade',14],['Pre\u00e7o Justo',1]],
   'Janeiro 2026':[['N\u00e3o Especificado',46],['Ótimo Atendimento',30],['Servi\u00e7o de Qualidade',18],['Pre\u00e7o Justo',4]],
+  'Junho 2026':[['N\u00e3o especificado',51],['Ótimo Atendimento',29],['Servi\u00e7o de Qualidade',15],['Pre\u00e7o Justo',3]],
   'Maio 2026':[['N\u00e3o especificado',46],['Ótimo Atendimento',29],['Servi\u00e7o de Qualidade',18],['Pre\u00e7o Justo',5]],
 };
 const DP_DET={
@@ -785,6 +806,7 @@ const DP_DET={
   'Março 2026':[['Pre\u00e7o Elevado',35],['N\u00e3o especificado',25],['Tempo de Espera',20],['Dif\u00edcil Solicita\u00e7\u00e3o',10]],
   'Fevereiro 2026':[['Tempo de Espera',40],['Pre\u00e7o Elevado',28],['Atendimento Confuso',12],['Outros',8]],
   'Janeiro 2026':[['Pre\u00e7o Elevado',40],['Atendimento Confuso',24],['Tempo de Espera',20],['Outros',12]],
+  'Junho 2026':[['Pre\u00e7o Elevado',45],['N\u00e3o especificado',27],['Atendimento Confuso',9],['Dif\u00edcil Solicita\u00e7\u00e3o',18]],
   'Maio 2026':[['Pre\u00e7o Elevado',47],['N\u00e3o especificado',23],['Tempo de Espera',17],['Dif\u00edcil Solicita\u00e7\u00e3o',5]],
 };
 const DP_NEU={
@@ -792,6 +814,7 @@ const DP_NEU={
   'Março 2026':[['N\u00e3o especificado',62],['Atendimento',25],['Pre\u00e7o Competitivo',7],['Servi\u00e7o',3]],
   'Fevereiro 2026':[['N\u00e3o especificado',77],['Atendimento',11],['Pre\u00e7o Competitivo',5],['Servi\u00e7o',5]],
   'Janeiro 2026':[['N\u00e3o especificado',70],['Atendimento',16],['Servi\u00e7o',12]],
+  'Junho 2026':[['N\u00e3o especificado',82],['Servi\u00e7o',11],['Atendimento',5],['Pre\u00e7o Competitivo',0]],
   'Maio 2026':[['N\u00e3o especificado',77],['Pre\u00e7o Competitivo',5],['Atendimento',5],['Servi\u00e7o',11]],
 };
 
@@ -896,7 +919,27 @@ const DA=parseAtivos(`ano;mes;st;ativo;ef;ap;rj;vl;ix
 2026;Maio;val;COENZIMA Q10;194;103;91;4826.03;46.91
 2026;Maio;val;CAVAQ10;93;45;48;4689.72;51.61
 2026;Maio;val;KERANAT;12;2;10;4679.99;83.33
-2026;Maio;val;COREBIOME;19;6;13;4209.36;68.42`);
+2026;Maio;val;COREBIOME;19;6;13;4209.36;68.42
+2026;Junho;num;ZINCO QUELATO;336;145;191;545.35;56.85
+2026;Junho;num;VITAMINA C REVESTIDA PO;371;188;183;322.72;49.33
+2026;Junho;num;VITAMINA K2MK7;386;215;171;1269.42;44.33
+2026;Junho;num;METILFOLATO DILUIDO;305;165;140;342.94;45.90
+2026;Junho;num;VITAMINA D3 DILUIDA;267;129;138;203.19;51.69
+2026;Junho;num;MAGNESIO QUELATO;205;91;114;1317.77;55.61
+2026;Junho;num;CELULOSE MICRO PH 101;210;100;110;202.32;52.38
+2026;Junho;num;PIRIDOXAL 5-FOSFATO;235;128;107;513.34;45.53
+2026;Junho;num;BIOTINA DILUIDA USO ORAL;176;73;103;260.49;58.52
+2026;Junho;num;VITAMINA B2;197;97;100;355.64;50.76
+2026;Junho;val;MAGTEIN;150;76;74;12592.50;49.33
+2026;Junho;val;PEPTISTRONG;18;3;15;11386.17;83.33
+2026;Junho;val;EXSYNUTRIMENT;93;48;45;9485.41;48.39
+2026;Junho;val;MOROSIL;39;9;30;7574.69;76.92
+2026;Junho;val;KERANAT;15;3;12;6008.19;80.00
+2026;Junho;val;PHELODENDRON AMURENSE;70;24;46;5432.73;65.71
+2026;Junho;val;CAVAQ10;81;36;45;5413.99;55.56
+2026;Junho;val;COENZIMA Q10;203;104;99;5306.28;48.77
+2026;Junho;val;MAXSOLVE;20;11;9;4156.25;45.00
+2026;Junho;val;BLOOME;10;0;10;4117.50;100.00`);
 
 const MK=[
   {ano:2025,mes:'Novembro',canal:'Meta Ads',invest:286.45,receita:0.00,leads:0,novos:0},
@@ -915,6 +958,8 @@ const MK=[
   {ano:2026,mes:'Abril',canal:'Pedido Pago',invest:668.16,receita:55926.79,leads:165,novos:67},
   {ano:2026,mes:'Maio',canal:'Google Ads',invest:968.72,receita:4631.02,leads:0,novos:204},
   {ano:2026,mes:'Maio',canal:'Pedido Pago',invest:514.44,receita:18472.06,leads:0,novos:0},
+  {ano:2026,mes:'Junho',canal:'Google Ads',invest:2121.49,receita:3738.92,leads:466,novos:181},
+  {ano:2026,mes:'Junho',canal:'Pedido Pago',invest:542.88,receita:47969.34,leads:0,novos:0},
 ];
 const MKC=[
   {ano:2025,mes:'Novembro',canal:'Meta Ads',campanha:'ALQ Friday',invest:286.45,receita:0.00,roas:0},
@@ -945,11 +990,21 @@ const MKC=[
   {ano:2026,mes:'Maio',canal:'Google Ads',campanha:'Orçamentos',invest:968.72,receita:4631.02,roas:4.78},
   {ano:2026,mes:'Maio',canal:'Pedido Pago',campanha:'repesc_15_dias_30/04',invest:294.48,receita:17979.71,roas:61.06},
   {ano:2026,mes:'Maio',canal:'Pedido Pago',campanha:'primeiracompra_abril',invest:219.96,receita:492.35,roas:2.24},
+  {ano:2026,mes:'Junho',canal:'Google Ads',campanha:'Orçamentos',invest:2121.49,receita:3738.92,roas:1.76},
+  {ano:2026,mes:'Junho',canal:'Pedido Pago',campanha:'repesc_15_dias_15/06',invest:322.20,receita:14272.60,roas:44.30},
+  {ano:2026,mes:'Junho',canal:'Pedido Pago',campanha:'primeiracompra_junho',invest:61.92,receita:231.02,roas:3.73},
+  {ano:2026,mes:'Junho',canal:'Pedido Pago',campanha:'repesc_15_dias_30/06',invest:158.76,receita:33465.72,roas:210.80},
 ];
 const MKS=[
   {ano:2026,mes:'Março',metrica:'Primeiras aprovações',valor:7},{ano:2026,mes:'Março',metrica:'Não calculadas',valor:15},{ano:2026,mes:'Março',metrica:'Pag. via Pix',valor:6},{ano:2026,mes:'Março',metrica:'Pag. via Cartão',valor:4},{ano:2026,mes:'Março',metrica:'Tempo médio atendimento',valor:'02h36m'},{ano:2026,mes:'Março',metrica:'Tempo médio cálculo',valor:'03h33m'},
   {ano:2026,mes:'Abril',metrica:'Primeiras aprovações',valor:6},{ano:2026,mes:'Abril',metrica:'Não calculadas',valor:26},{ano:2026,mes:'Abril',metrica:'Pag. via Pix',valor:6},{ano:2026,mes:'Abril',metrica:'Pag. via Cartão',valor:4},{ano:2026,mes:'Abril',metrica:'Tempo médio atendimento',valor:'02h45m'},{ano:2026,mes:'Abril',metrica:'Tempo médio cálculo',valor:'03h30m'},
   {ano:2026,mes:'Maio',metrica:'Primeiras aprovações',valor:6},{ano:2026,mes:'Maio',metrica:'Não calculadas',valor:25},{ano:2026,mes:'Maio',metrica:'Pag. via Pix',valor:9},{ano:2026,mes:'Maio',metrica:'Pag. via Cartão',valor:3},{ano:2026,mes:'Maio',metrica:'Tempo médio atendimento',valor:'02h34m'},{ano:2026,mes:'Maio',metrica:'Tempo médio cálculo',valor:'03h24m'},
+  {ano:2026,mes:'Junho',metrica:'Primeiras aprovações',valor:11},
+  {ano:2026,mes:'Junho',metrica:'Não calculadas',valor:33},
+  {ano:2026,mes:'Junho',metrica:'Pag. via Pix',valor:12},
+  {ano:2026,mes:'Junho',metrica:'Pag. via Cartão',valor:4},
+  {ano:2026,mes:'Junho',metrica:'Tempo médio atendimento',valor:'02h48m'},
+  {ano:2026,mes:'Junho',metrica:'Tempo médio cálculo',valor:'04h22m'},
 ];
 const MKR=[
   {ano:2026,mes:'Março',metrica:'Envios totais',valor:190},{ano:2026,mes:'Março',metrica:'Aprovações',valor:30},{ano:2026,mes:'Março',metrica:'Taxa de conversão (%)',valor:15.79},{ano:2026,mes:'Março',metrica:'Vendas geradas (R$)',valor:24643.72},
@@ -964,10 +1019,12 @@ const MK_CAC=[
   {mes:'Março',ano:2026,cads:509,cac_novo:3.69,comprou:206,cac_compra:9.11,inv:1876},
   {mes:'Abril',ano:2026,cads:467,cac_novo:4.05,comprou:189,cac_compra:10.00,inv:1890},
   {mes:'Maio',ano:2026,cads:534,cac_novo:1.81,comprou:204,cac_compra:4.74,inv:968.72},
+  {mes:'Junho',ano:2026,cads:466,cac_novo:4.55,comprou:181,cac_compra:11.72,inv:2121.49},
 ];
 
 /* ── PERIODS ──────────────────────────────────────────────── */
 const PERIODS=[
+  {id:'jun26',label:'Jun/26',months:[{m:'Junho',a:2026}]},
   {id:'mai26',label:'Mai/26',months:[{m:'Maio',a:2026}]},
   {id:'abr26',label:'Abr/26',months:[{m:'Abril',a:2026}]},
   {id:'mar26',label:'Mar/26',months:[{m:'Março',a:2026}]},
@@ -992,6 +1049,7 @@ function rangeIdsBetween(startId,endId,months){
 }
 function customIdFromIds(ids,prefix='custom:'){return ids.length===1?ids[0]:prefix+ids.join(',')}
 const MK_PERIODS=[
+  {id:'mk-jun26',label:'Jun/26',months:[{m:'Junho',a:2026}]},
   {id:'mk-mai26',label:'Mai/26',months:[{m:'Maio',a:2026}]},
   {id:'mk-abr26',label:'Abr/26',months:[{m:'Abril',a:2026}]},
   {id:'mk-mar26',label:'Mar/26',months:[{m:'Março',a:2026}]},
@@ -1060,9 +1118,9 @@ let cM='Maio',cA=2026;
 let tblSortKey='vl',tblSortDir='desc';
 let ativoSortKey='vl',ativoSortDir='desc';
 let ativoTipo='val';
-let cPeriodIds=['mai26'],cPeriodStartId='mai26',cPeriodEndId='mai26';
-let mkM='Maio',mkA=2026,mkPeriodId='mk-mai26';
-let mkPeriodIds=['mk-mai26'],mkPeriodStartId='mk-mai26',mkPeriodEndId='mk-mai26';
+let cPeriodIds=['jun26'],cPeriodStartId='jun26',cPeriodEndId='jun26';
+let mkM='Junho',mkA=2026,mkPeriodId='mk-jun26';
+let mkPeriodIds=['mk-jun26'],mkPeriodStartId='mk-jun26',mkPeriodEndId='mk-jun26';
 const CH={};
 
 /* ── FATURAMENTO RENDER ───────────────────────────────────── */
@@ -1691,7 +1749,6 @@ const AUTH_DB={users:[
   {username:'gestao',password:'alqfarma2026',name:'Gestão ALQ'},
   {username:'Mainni',password:'Mainni',name:'Mainni'},
   {username:'Teodoro',password:'Teodoro',name:'Teodoro'},
-  {username:'Natalia',password:'Natalia',name:'Natalia'},
 ]};
 function renderLoggedUser(){const name=sessionStorage.getItem('alq-user')||'Usuário';const avatar=document.getElementById('sb-avatar'),label=document.getElementById('sb-user-name');if(avatar)avatar.textContent=name.trim().charAt(0).toUpperCase()||'U';if(label)label.textContent=name}
 function unlockDashboard(){renderLoggedUser();document.body.classList.remove('auth-locked');document.getElementById('auth-error')?.classList.remove('on')}
