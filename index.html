@@ -1862,17 +1862,12 @@ function transformOrcQtd(rows) {
   const result = rows
     .filter(r => r && r.Ano && r.Mês)
     .map(r => {
-      // Nomes reais das colunas na planilha
-      const ap = parseInt(r['Orçamentos Aprovado'] || r['Aprovados'] || r['aprovados'] || 0) || 0;
-      const rj = parseInt(r['Orçamentos Rejeitado'] || r['Rejeitados'] || r['rejeitados'] || 0) || 0;
+      const ap  = parseInt(r['Orçamentos Aprovados'] || r['Orçamentos Aprovado'] || r['Aprovados'] || 0) || 0;
+      const rj  = parseInt(r['Orçamentos Rejeitados'] || r['Orçamentos Rejeitado'] || r['Rejeitados'] || 0) || 0;
       const tot = parseInt(r['Total de Orçamentos'] || r['Total'] || 0) || (ap + rj);
-      const pctAp = parsePercent(r['% de Aprovações por Quantidade'] || r['% Aprovados'] || r['% aprovados'] || 0);
-      const pctRj = parsePercent(r['% de Rejeição por Quantidade'] || r['% Rejeitados'] || r['% rejeitados'] || 0);
-      return {
-        ano: parseInt(r.Ano) || 0,
-        mes: (r.Mês || '').trim(),
-        ap, rj, tot, pctAp, pctRj
-      };
+      const pctAp = parsePercent(r['% de Aprovações por Quantidade'] || r['% de Aprovações'] || r['% Aprovados'] || 0);
+      const pctRj = parsePercent(r['% de Rejeição por Quantidade']   || r['% de Rejeição']   || r['% Rejeitados'] || 0);
+      return { ano: parseInt(r.Ano)||0, mes:(r.Mês||'').trim(), ap, rj, tot, pctAp, pctRj };
     })
     .filter(r => r.mes);
   console.log(`✅ transformOrcQtd retornou ${result.length} registros`, result[result.length-1]);
@@ -1886,16 +1881,12 @@ function transformOrcVal(rows) {
   const result = rows
     .filter(r => r && r.Ano && r.Mês)
     .map(r => {
-      const ap = parseMoney(r['Orçamentos Aprovados'] || r['Valor Aprovado'] || r['valor aprovado'] || '');
-      const rj = parseMoney(r['Orçamentos Rejeitados'] || r['Valor Rejeitado'] || r['valor rejeitado'] || '');
-      const tot = parseMoney(r['Total de Orçamentos'] || r['Total'] || '') || (ap + rj);
-      const pctAp = parsePercent(r['% de Aprovações'] || r['% Aprovações'] || r['% Aprovados'] || r['% aprovados'] || 0);
-      const pctRj = parsePercent(r['% de Rejeição'] || r['% Rejeição'] || r['% Rejeitados'] || r['% rejeitados'] || 0);
-      return {
-        ano: parseInt(r.Ano) || 0,
-        mes: (r.Mês || '').trim(),
-        ap, rj, tot, pctAp, pctRj
-      };
+      const ap  = parseMoney(r['Orçamentos Aprovados'] || r['Orçamentos Aprovado'] || r['Valor Aprovado'] || 0);
+      const rj  = parseMoney(r['Orçamentos Rejeitados'] || r['Orçamentos Rejeitado'] || r['Valor Rejeitado'] || 0);
+      const tot = parseMoney(r['Total de Orçamentos'] || r['Total'] || 0) || (ap + rj);
+      const pctAp = parsePercent(r['% de Aprovações'] || r['% Aprovados'] || 0);
+      const pctRj = parsePercent(r['% de Rejeição']   || r['% Rejeitados'] || 0);
+      return { ano: parseInt(r.Ano)||0, mes:(r.Mês||'').trim(), ap, rj, tot, pctAp, pctRj };
     })
     .filter(r => r.mes);
   console.log(`✅ transformOrcVal retornou ${result.length} registros`, result[result.length-1]);
@@ -2028,7 +2019,7 @@ function transformFatCategs(rows) {
       ano: parseInt(r.Ano) || 0,
       mes: (r.Mês || '').trim(),
       cat: (r.Categoria || r.categoria || '').trim(),
-      fat: parseMoney(r.Valor || r.valor || r.Faturamento || 0)
+      fat: parseMoney(r.Faturamento || r.Valor || r.valor || 0)
     }))
     .filter(r => r.mes && r.cat);
   console.log(`✅ transformFatCategs retornou ${result.length} registros`, result[result.length-1]);
@@ -2088,7 +2079,7 @@ function transformMedicos(rows) {
     .map(r => ({
       ano: parseInt(r.Ano) || 0,
       mes: (r.Mês || '').trim(),
-      med: (r.Ativo || r.ativo || r.Médico || r.medico || '').trim(),
+      med: (r['Médico'] || r.Medico || r.Ativo || r.ativo || '').trim(),
       ef:  parseInt(r.Efetuados || r.efetuados || 0) || 0,
       ap:  parseInt(r.Aprovados || r.aprovados || 0) || 0,
       rj:  parseInt(r.Rejeitados || r.rejeitados || 0) || 0,
@@ -2100,7 +2091,31 @@ function transformMedicos(rows) {
   return result.length > 0 ? result : null;
 }
 
-// Recalcular PERIODS dinamicamente baseado nos dados de faturamento
+// Transformar abas de motivos NPS: Ano, Mês, Motivo, %
+// → {'Mes Ano': [[motivo, valor],...]}
+function transformMotivos(rows) {
+  if (!rows || rows.length === 0) return {};
+  console.log('🔍 transformMotivos:', rows.length, 'linhas | Colunas:', Object.keys(rows[0]).join(', '));
+  const result = {};
+  rows.forEach(r => {
+    const mes = (r.Mês || r.Mes || '').trim();
+    const ano = String(r.Ano || '').trim();
+    if (!mes || !ano) return;
+    const chave = `${mes} ${ano}`;
+    const motivo = (r.Motivo || r.motivo || r['Razão'] || r.Razao || '').trim();
+    const pct = parsePercent(r['%'] || r['Percentual'] || r['Porcentagem'] || r['Indicador'] || 0);
+    if (!motivo) return;
+    if (!result[chave]) result[chave] = [];
+    result[chave].push([motivo, pct]);
+  });
+  // Ordenar por percentual desc, top 4
+  Object.keys(result).forEach(k => {
+    result[k].sort((a,b) => b[1] - a[1]);
+    result[k] = result[k].slice(0, 4);
+  });
+  console.log('✅ transformMotivos chaves:', Object.keys(result));
+  return result;
+}
 function recalcPeriods() {
   if (!DF || DF.length === 0) return;
 
