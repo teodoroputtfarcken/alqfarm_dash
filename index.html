@@ -9,7 +9,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://www.gstatic.com/charts/loader.js"></script>
-<script>google.charts.load('current', {'packages':['corechart']});</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1797,12 +1796,10 @@ async function fetchSheetData(sheetName, gid) {
   try {
     console.log(`📊 Carregando ${sheetName} (gid=${gid})...`);
     
-    // Usar Google Visualization API que funciona sem CORS
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const query = new google.visualization.Query(
-        `https://docs.google.com/spreadsheets/d/${SHEETS_CONFIG.id}/gviz/query?gid=${gid}`
+        `https://docs.google.com/spreadsheets/d/${SHEETS_CONFIG.id}/gviz/query?gid=${gid}&tqx=out:json`
       );
-      
       query.setQuery('select *');
       query.send((response) => {
         if (response.isError()) {
@@ -1810,26 +1807,21 @@ async function fetchSheetData(sheetName, gid) {
           resolve([]);
           return;
         }
-        
         const data = response.getDataTable();
-        const rows = [];
         const cols = [];
-        
-        // Pegar nomes das colunas
         for (let i = 0; i < data.getNumberOfColumns(); i++) {
           cols.push(data.getColumnLabel(i));
         }
-        
-        // Pegar os dados
+        const rows = [];
         for (let i = 0; i < data.getNumberOfRows(); i++) {
           const row = {};
           for (let j = 0; j < cols.length; j++) {
-            row[cols[j]] = data.getValue(i, j);
+            const val = data.getValue(i, j);
+            row[cols[j]] = val !== null ? String(val) : '';
           }
           rows.push(row);
         }
-        
-        console.log(`✅ ${sheetName}: ${rows.length} linhas carregadas`);
+        console.log(`✅ ${sheetName}: ${rows.length} linhas`, rows[0]);
         resolve(rows);
       });
     });
@@ -2049,18 +2041,7 @@ function doLogin(ev){
 function initAuth(){if(sessionStorage.getItem('alq-auth')==='ok')unlockDashboard();else setTimeout(()=>document.getElementById('auth-user')?.focus(),50)}
 
 /* ── INIT ────────────────────────────────────────────────── */
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    loadAllSheetData().finally(()=>{
-      document.fonts.load('500 11px Poppins').then(()=>{
-        initCompSelects();
-        initMkSelects();
-        render();
-        initAuth();
-      });
-    });
-  });
-} else {
+function startDashboard() {
   loadAllSheetData().finally(()=>{
     document.fonts.load('500 11px Poppins').then(()=>{
       initCompSelects();
@@ -2069,6 +2050,17 @@ if (document.readyState === 'loading') {
       initAuth();
     });
   });
+}
+
+// Aguardar Google Charts carregar antes de iniciar
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    google.charts.load('current', {packages: ['corechart']});
+    google.charts.setOnLoadCallback(startDashboard);
+  });
+} else {
+  google.charts.load('current', {packages: ['corechart']});
+  google.charts.setOnLoadCallback(startDashboard);
 }
 </script>
 </body>
