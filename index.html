@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script>google.charts.load('current', {'packages':['corechart']});</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1793,39 +1795,44 @@ function parseTime(str) {
 
 async function fetchSheetData(sheetName, gid) {
   try {
-    const url = getSheetURL(gid);
     console.log(`📊 Carregando ${sheetName} (gid=${gid})...`);
     
-    // Tentar endpoint alternativo com /gviz/tq para evitar CORS
-    const gvizUrl = `https://docs.google.com/spreadsheets/d/${SHEETS_CONFIG.id}/gviz/query?tqx=out:csv&gid=${gid}`;
-    
-    const response = await fetch(gvizUrl, {
-      method: 'GET',
-      mode: 'cors',
-      cache: 'no-cache'
+    // Usar Google Visualization API que funciona sem CORS
+    return new Promise((resolve, reject) => {
+      const query = new google.visualization.Query(
+        `https://docs.google.com/spreadsheets/d/${SHEETS_CONFIG.id}/gviz/query?gid=${gid}`
+      );
+      
+      query.setQuery('select *');
+      query.send((response) => {
+        if (response.isError()) {
+          console.warn(`⚠️  Erro ao carregar ${sheetName}: ${response.getMessage()}`);
+          resolve([]);
+          return;
+        }
+        
+        const data = response.getDataTable();
+        const rows = [];
+        const cols = [];
+        
+        // Pegar nomes das colunas
+        for (let i = 0; i < data.getNumberOfColumns(); i++) {
+          cols.push(data.getColumnLabel(i));
+        }
+        
+        // Pegar os dados
+        for (let i = 0; i < data.getNumberOfRows(); i++) {
+          const row = {};
+          for (let j = 0; j < cols.length; j++) {
+            row[cols[j]] = data.getValue(i, j);
+          }
+          rows.push(row);
+        }
+        
+        console.log(`✅ ${sheetName}: ${rows.length} linhas carregadas`);
+        resolve(rows);
+      });
     });
-    
-    if (!response.ok) {
-      console.error(`❌ HTTP ${response.status} para ${sheetName}`);
-      throw new Error(`HTTP ${response.status}`);
-    }
-    
-    const csv = await response.text();
-    
-    // Verificar se é realmente CSV
-    if (!csv || csv.length < 10 || csv.includes('<!DOCTYPE') || csv.includes('<html')) {
-      console.error(`❌ Resposta inválida para ${sheetName} (${csv.length} bytes)`);
-      return [];
-    }
-    
-    const parsed = Papa.parse(csv, { 
-      header: true, 
-      dynamicTyping: false, 
-      skipEmptyLines: true 
-    });
-    
-    console.log(`✅ ${sheetName}: ${parsed.data.length} linhas carregadas`);
-    return parsed.data;
   } catch (error) {
     console.warn(`⚠️  Erro ao carregar ${sheetName}:`, error.message);
     return [];
