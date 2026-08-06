@@ -1796,25 +1796,21 @@ async function fetchSheetData(sheetName, gid) {
     const url = getSheetURL(gid);
     console.log(`📊 Carregando ${sheetName} (gid=${gid})...`);
     
+    // Tentar com mode: 'no-cors' para evitar CORS blocks
     const response = await fetch(url, {
       method: 'GET',
-      headers: {
-        'Accept': 'text/csv'
-      },
-      mode: 'cors'
+      mode: 'no-cors',
+      cache: 'no-cache'
     });
     
-    if (!response.ok) {
-      console.error(`❌ HTTP ${response.status} para ${sheetName}. URL:`, url);
-      throw new Error(`HTTP ${response.status}`);
-    }
+    console.log(`   Response type: ${response.type}, Status: ${response.status}`);
     
     const csv = await response.text();
     
     // Verificar se é realmente CSV
-    if (!csv || csv.includes('<!DOCTYPE') || csv.includes('<html')) {
-      console.error(`❌ Resposta não é CSV para ${sheetName}. Pode ser HTML de erro.`);
-      throw new Error('Resposta não é CSV');
+    if (!csv || csv.length < 10 || csv.includes('<!DOCTYPE') || csv.includes('<html')) {
+      console.error(`❌ Resposta inválida para ${sheetName} (${csv.length} bytes)`);
+      return [];
     }
     
     const parsed = Papa.parse(csv, { 
@@ -1824,14 +1820,10 @@ async function fetchSheetData(sheetName, gid) {
     });
     
     console.log(`✅ ${sheetName}: ${parsed.data.length} linhas carregadas`);
-    if (parsed.data.length > 0) {
-      console.log('   Colunas:', Object.keys(parsed.data[0]).join(', '));
-      console.log('   1ª linha:', parsed.data[0]);
-    }
     return parsed.data;
   } catch (error) {
     console.warn(`⚠️  Erro ao carregar ${sheetName} (gid=${gid}):`, error.message);
-    return null;
+    return [];
   }
 }
 
