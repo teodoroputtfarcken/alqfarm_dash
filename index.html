@@ -2096,6 +2096,7 @@ function transformMedicos(rows) {
 function transformMotivos(rows) {
   if (!rows || rows.length === 0) return {};
   console.log('🔍 transformMotivos:', rows.length, 'linhas | Colunas:', Object.keys(rows[0]).join(', '));
+  console.log('   1ª linha:', rows[0]);
   const result = {};
   rows.forEach(r => {
     const mes = (r.Mês || r.Mes || '').trim();
@@ -2103,17 +2104,19 @@ function transformMotivos(rows) {
     if (!mes || !ano) return;
     const chave = `${mes} ${ano}`;
     const motivo = (r.Motivo || r.motivo || r['Razão'] || r.Razao || '').trim();
-    const pct = parsePercent(r['%'] || r['Percentual'] || r['Porcentagem'] || r['Indicador'] || 0);
+    // Tentar todas as possíveis colunas de percentual
+    const rawPct = r['%'] ?? r['Percentual'] ?? r['Porcentagem'] ?? r['Indicador'] ?? r['indicador'] ?? r['valor'] ?? r['Valor'] ?? 0;
+    const pct = parsePercent(rawPct);
     if (!motivo) return;
     if (!result[chave]) result[chave] = [];
     result[chave].push([motivo, pct]);
   });
-  // Ordenar por percentual desc, top 4
   Object.keys(result).forEach(k => {
     result[k].sort((a,b) => b[1] - a[1]);
     result[k] = result[k].slice(0, 4);
   });
   console.log('✅ transformMotivos chaves:', Object.keys(result));
+  console.log('   Exemplo Julho 2026:', result['Julho 2026']);
   return result;
 }
 function recalcPeriods() {
