@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://www.gstatic.com/charts/loader.js"></script>
+<style>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1025,7 +1025,7 @@ const MK_CAC=[
 ];
 
 /* ── PERIODS ──────────────────────────────────────────────── */
-const PERIODS=[
+let PERIODS=[
   {id:'jul26',label:'Jul/26',months:[{m:'Julho',a:2026}]},
   {id:'jun26',label:'Jun/26',months:[{m:'Junho',a:2026}]},
   {id:'mai26',label:'Mai/26',months:[{m:'Maio',a:2026}]},
@@ -1034,8 +1034,8 @@ const PERIODS=[
   {id:'fev26',label:'Fev/26',months:[{m:'Fevereiro',a:2026}]},
   {id:'jan26',label:'Jan/26',months:[{m:'Janeiro',a:2026}]},
 ];
-const MONTH_PERIODS=PERIODS.filter(p=>p.months.length===1);
-const LATEST_MONTH_ID=MONTH_PERIODS[0].id;
+let MONTH_PERIODS=PERIODS.filter(p=>p.months.length===1);
+const LATEST_MONTH_ID='jul26';
 function monthKey(x){return x.a*12+MO.indexOf(x.m)}
 function periodFromIds(ids){
   const periods=ids.flatMap(id=>id&&id.startsWith('custom:')?id.replace('custom:','').split(','):[id]).map(id=>MONTH_PERIODS.find(p=>p.id===id)).filter(Boolean).sort((a,b)=>monthKey(a.months[0])-monthKey(b.months[0]));
@@ -1746,36 +1746,67 @@ function expCSV(){
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=file;a.click();
 }
 // ════════════════════════════════════════════════════════════════
-// GOOGLE SHEETS INTEGRATION — GIDs REAIS
+// GOOGLE SHEETS INTEGRATION — URL PÚBLICA (Publicado na web)
 // ════════════════════════════════════════════════════════════════
 const SHEETS_CONFIG = {
-  id: '1r210oBEixzxAIVN0Eo-8MD6pbt6Ahz6PFbEj5CdcWO0',
+  pubId: '2PACX-1vS6IOPbCVpIQ3_Zi5sfy92nHYFgyv3PuiSnM__ibxu6gjQAltYlnaPbnTmTv9XxWqPT_WBUB2bMjiWQ',
   tabs: {
-    faturamento:       1772642311,  // FATURAMENTO
-    orcQtd:            727311525,   // ORÇAMENTOS | QTD.
-    orcVal:            458663227,   // ORÇAMENTOS | VALOR
-    ticketMedio:       848102954,   // TICKET MÉDIO
-    ticketCategs:      914139087,   // TICKET MÉDIO POR CATEGORIA
-    faturamentoCategs: 1977652534,  // FATURAMENTO CATEGORIAS
-    rejeitadoAtivos:   764610529,   // REJEITADO POR ATIVOS
-    rejeitadoMedicos:  2069867860,  // REJEITADO POR MÉDICOS
-    tempos:            695003676,   // TEMPOS DE ATENDIMENTO
-    nps:               322663367,   // NPS
-    promotores:        2014915797,  // PROMOTORES
-    neutros:           2052875415,  // NEUTROS
-    detratores:        1865171733,  // DETRATORES
-    googleAds:         1893673251,  // Google Ads - Solicitações
-    novosCac:          142706480,   // Novos Clientes e CAC
-    roas:              586083326,   // ROAS
-    campanhas:         234776793,   // Campanhas
-    repescagem:        1194167509   // Pedido Pago - Repescagem Diária
+    faturamento:       1772642311,
+    orcQtd:            727311525,
+    orcVal:            458663227,
+    ticketMedio:       848102954,
+    ticketCategs:      914139087,
+    faturamentoCategs: 1977652534,
+    rejeitadoAtivos:   764610529,
+    rejeitadoMedicos:  2069867860,
+    tempos:            695003676,
+    nps:               322663367,
+    promotores:        2014915797,
+    neutros:           2052875415,
+    detratores:        1865171733,
+    googleAds:         1893673251,
+    novosCac:          142706480,
+    roas:              586083326,
+    campanhas:         234776793,
+    repescagem:        1194167509
   }
 };
 
 function getSheetURL(gid) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEETS_CONFIG.id}/export?format=csv&gid=${gid}`;
-  console.log(`🔗 URL para aba ${gid}:`, url);
-  return url;
+  return `https://docs.google.com/spreadsheets/d/e/${SHEETS_CONFIG.pubId}/pub?gid=${gid}&single=true&output=csv`;
+}
+
+async function fetchSheetData(sheetName, gid) {
+  try {
+    const url = getSheetURL(gid);
+    console.log(`📊 Carregando ${sheetName} (gid=${gid})...`);
+
+    const response = await fetch(url, { cache: 'no-cache' });
+
+    if (!response.ok) {
+      console.warn(`⚠️  HTTP ${response.status} para ${sheetName}`);
+      return [];
+    }
+
+    const csv = await response.text();
+
+    if (!csv || csv.length < 10 || csv.includes('<!DOCTYPE') || csv.includes('<html')) {
+      console.warn(`⚠️  Resposta inválida para ${sheetName}`);
+      return [];
+    }
+
+    const parsed = Papa.parse(csv, {
+      header: true,
+      dynamicTyping: false,
+      skipEmptyLines: true
+    });
+
+    console.log(`✅ ${sheetName}: ${parsed.data.length} linhas`, parsed.data[0]);
+    return parsed.data;
+  } catch (error) {
+    console.warn(`⚠️  Erro ao carregar ${sheetName}:`, error.message);
+    return [];
+  }
 }
 
 function parseMoney(str) {
@@ -1797,45 +1828,6 @@ function parseTime(str) {
   const s = String(str);
   const match = s.match(/(\d+)h(\d+)m/);
   return match ? +match[1] * 60 + +match[2] : 0;
-}
-
-async function fetchSheetData(sheetName, gid) {
-  try {
-    console.log(`📊 Carregando ${sheetName} (gid=${gid})...`);
-    
-    return new Promise((resolve) => {
-      const query = new google.visualization.Query(
-        `https://docs.google.com/spreadsheets/d/${SHEETS_CONFIG.id}/gviz/query?gid=${gid}&tqx=out:json`
-      );
-      query.setQuery('select *');
-      query.send((response) => {
-        if (response.isError()) {
-          console.warn(`⚠️  Erro ao carregar ${sheetName}: ${response.getMessage()}`);
-          resolve([]);
-          return;
-        }
-        const data = response.getDataTable();
-        const cols = [];
-        for (let i = 0; i < data.getNumberOfColumns(); i++) {
-          cols.push(data.getColumnLabel(i));
-        }
-        const rows = [];
-        for (let i = 0; i < data.getNumberOfRows(); i++) {
-          const row = {};
-          for (let j = 0; j < cols.length; j++) {
-            const val = data.getValue(i, j);
-            row[cols[j]] = val !== null ? String(val) : '';
-          }
-          rows.push(row);
-        }
-        console.log(`✅ ${sheetName}: ${rows.length} linhas`, rows[0]);
-        resolve(rows);
-      });
-    });
-  } catch (error) {
-    console.warn(`⚠️  Erro ao carregar ${sheetName}:`, error.message);
-    return [];
-  }
 }
 
 function transformFaturamento(rows) {
@@ -1957,6 +1949,7 @@ function transformNPS(rows) {
 
 async function loadAllSheetData() {
   console.log('🔄 Carregando dados do Google Sheets (18 abas)...');
+  let anyLoaded = false;
   try {
     const [fatur, orcQ, orcV, ticket, tempos, nps, googleAds, novosCac, roas, campanhas, repescagem] = await Promise.all([
       fetchSheetData('Faturamento', SHEETS_CONFIG.tabs.faturamento),
@@ -1971,33 +1964,80 @@ async function loadAllSheetData() {
       fetchSheetData('Campanhas', SHEETS_CONFIG.tabs.campanhas),
       fetchSheetData('Repescagem', SHEETS_CONFIG.tabs.repescagem)
     ]);
-    
-    // Só atualiza se houver dados
-    if (fatur && fatur.length > 0) DF = transformFaturamento(fatur);
-    if (orcQ && orcQ.length > 0) DOQ = transformOrcQtd(orcQ);
-    if (orcV && orcV.length > 0) DOV = transformOrcVal(orcV);
-    if (ticket && ticket.length > 0) DTM = transformTicket(ticket);
-    if (tempos && tempos.length > 0) DT = transformTempos(tempos);
-    if (nps && nps.length > 0) DN = transformNPS(nps);
-    
-    // Dados adicionais de marketing (sem transformação ainda)
+
+    if (fatur && fatur.length > 0) { const r=transformFaturamento(fatur); if(r){DF=r;anyLoaded=true;} }
+    if (orcQ && orcQ.length > 0) { const r=transformOrcQtd(orcQ); if(r){DOQ=r;anyLoaded=true;} }
+    if (orcV && orcV.length > 0) { const r=transformOrcVal(orcV); if(r){DOV=r;anyLoaded=true;} }
+    if (ticket && ticket.length > 0) { const r=transformTicket(ticket); if(r){DTM=r;anyLoaded=true;} }
+    if (tempos && tempos.length > 0) { const r=transformTempos(tempos); if(r){DT=r;anyLoaded=true;} }
+    if (nps && nps.length > 0) { const r=transformNPS(nps); if(r){DN=r;anyLoaded=true;} }
+
     if (googleAds && googleAds.length > 0) console.log('✅ Google Ads:', googleAds.length, 'linhas');
     if (novosCac && novosCac.length > 0) console.log('✅ Novos Clientes CAC:', novosCac.length, 'linhas');
     if (roas && roas.length > 0) console.log('✅ ROAS:', roas.length, 'linhas');
     if (campanhas && campanhas.length > 0) console.log('✅ Campanhas:', campanhas.length, 'linhas');
     if (repescagem && repescagem.length > 0) console.log('✅ Repescagem:', repescagem.length, 'linhas');
-    
-    console.log('✅ Todos os dados do Google Sheets carregados!');
-    console.log('📈 Faturamento:', DF?.length, 'meses');
-    console.log('📋 Orçamentos:', DOQ?.length, 'meses');
-    console.log('💰 Ticket Médio:', DTM?.length, 'meses');
-    console.log('⏱️ Tempos:', DT?.length, 'meses');
-    console.log('⭐ NPS:', DN?.length, 'meses');
-    return true;
+
+    if (anyLoaded) {
+      recalcPeriods();
+      console.log('✅ Dados do Google Sheets carregados!');
+      console.log('📈 Faturamento:', DF?.length, 'meses');
+      console.log('📋 Orçamentos:', DOQ?.length, 'meses');
+      console.log('💰 Ticket Médio:', DTM?.length, 'meses');
+      console.log('⏱️ Tempos:', DT?.length, 'meses');
+      console.log('⭐ NPS:', DN?.length, 'meses');
+    } else {
+      console.log('ℹ️  Usando dados offline (hardcoded)');
+    }
+    return anyLoaded;
   } catch (error) {
     console.error('❌ Erro ao carregar dados:', error);
     console.log('ℹ️  Usando dados offline (hardcoded)');
     return false;
+  }
+}
+
+// Recalcular PERIODS dinamicamente baseado nos dados de faturamento
+function recalcPeriods() {
+  if (!DF || DF.length === 0) return;
+
+  const seen = new Set();
+  const meses2026 = DF
+    .filter(d => d.ano === 2026)
+    .sort((a,b) => MO.indexOf(b.mes) - MO.indexOf(a.mes))
+    .filter(d => {
+      const k = `${d.ano}-${d.mes}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+
+  if (meses2026.length === 0) return;
+
+  const newPeriods = meses2026.map(d => {
+    const abbr = MS[MO.indexOf(d.mes)];
+    const yr = String(d.ano).slice(-2);
+    const id = d.mes.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s/g, '-') + yr;
+    return { id, label: `${abbr}/${yr}`, months: [{m: d.mes, a: d.ano}] };
+  });
+
+  // Atualizar PERIODS e MONTH_PERIODS in-place
+  PERIODS.length = 0;
+  newPeriods.forEach(p => PERIODS.push(p));
+  MONTH_PERIODS.length = 0;
+  PERIODS.filter(p => p.months.length === 1).forEach(p => MONTH_PERIODS.push(p));
+
+  // Atualizar state para o mês mais recente
+  const latest = MONTH_PERIODS[0];
+  if (latest) {
+    cPeriodIds = [latest.id];
+    cPeriodStartId = latest.id;
+    cPeriodEndId = latest.id;
+    cM = latest.months[0].m;
+    cA = latest.months[0].a;
+    console.log(`📅 Período mais recente detectado: ${latest.label} (${cM}/${cA})`);
   }
 }
 
@@ -2051,25 +2091,35 @@ function initAuth(){if(sessionStorage.getItem('alq-auth')==='ok')unlockDashboard
 
 /* ── INIT ────────────────────────────────────────────────── */
 function startDashboard() {
-  loadAllSheetData().finally(()=>{
-    document.fonts.load('500 11px Poppins').then(()=>{
+  // Primeiro: inicializar com dados hardcoded para mostrar algo
+  initCompSelects();
+  initMkSelects();
+  document.fonts.load('500 11px Poppins').then(()=>{
+    render();
+    initAuth();
+  });
+  
+  // Depois: tentar carregar do Google Sheets e atualizar
+  loadAllSheetData().then(success => {
+    if (success) {
+      console.log('🔄 Re-inicializando selects com dados do Sheets...');
       initCompSelects();
       initMkSelects();
+      // Destruir charts antes de re-renderizar
+      Object.keys(CH).forEach(key => {
+        if (CH[key] && CH[key].destroy) { try { CH[key].destroy(); } catch(e){} }
+        CH[key] = null;
+      });
       render();
-      initAuth();
-    });
+    }
   });
 }
 
-// Aguardar Google Charts carregar antes de iniciar
+// Aguardar DOM e iniciar
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    google.charts.load('current', {packages: ['corechart']});
-    google.charts.setOnLoadCallback(startDashboard);
-  });
+  document.addEventListener('DOMContentLoaded', startDashboard);
 } else {
-  google.charts.load('current', {packages: ['corechart']});
-  google.charts.setOnLoadCallback(startDashboard);
+  startDashboard();
 }
 </script>
 </body>
