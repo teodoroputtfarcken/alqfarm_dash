@@ -1743,11 +1743,30 @@ function expCSV(){
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=file;a.click();
 }
 // ════════════════════════════════════════════════════════════════
-// GOOGLE SHEETS INTEGRATION
+// GOOGLE SHEETS INTEGRATION — TODAS AS ABAS
 // ════════════════════════════════════════════════════════════════
 const SHEETS_CONFIG = {
   id: '1r210oBEixzxAIVN0Eo-8MD6pbt6Ahz6PFbEj5CdcWO0',
-  tabs: { faturamento: 0, orcQtd: 1, orcVal: 2, ticket: 3, tempos: 4, nps: 5 }
+  tabs: {
+    faturamento: 0,              // FATURAMENTO
+    orcQtd: 1,                   // ORÇAMENTOS | QTD.
+    orcVal: 2,                   // ORÇAMENTOS | VALOR
+    ticketMedio: 3,              // TICKET MÉDIO
+    ticketCategs: 4,             // TICKET MÉDIO POR CATEGORIA
+    faturamentoCategs: 5,        // FATURAMENTO CATEGORIAS
+    rejeitadoAtivos: 6,          // REJEITADO POR ATIVOS
+    rejeitadoMedicos: 7,         // REJEITADO POR MÉDICOS
+    tempos: 8,                   // TEMPOS DE ATENDIMENTO
+    nps: 9,                      // NPS
+    promotores: 10,              // PROMOTORES
+    neutros: 11,                 // NEUTROS
+    detratores: 12,              // DETRATORES
+    googleAds: 13,               // Google Ads - Solicitações
+    novosCac: 14,                // Novos Clientes e CAC
+    roas: 15,                    // ROAS
+    campanhas: 16,               // Campanhas (Ano, Mês, Canal, Campanha, Investimento, Retorno, ROAS)
+    repescagem: 17               // Pedido Pago - Repescagem Diária
+  }
 };
 
 function getSheetURL(gid) {
@@ -1773,109 +1792,189 @@ function parseTime(str) {
 async function fetchSheetData(sheetName, gid) {
   try {
     const url = getSheetURL(gid);
-    console.log(`📊 Carregando ${sheetName}...`);
+    console.log(`📊 Carregando ${sheetName} (gid=${gid})...`);
+    
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
     const csv = await response.text();
-    const parsed = Papa.parse(csv, { header: true, dynamicTyping: false, skipEmptyLines: true });
-    console.log(`✅ ${sheetName} carregado`);
+    const parsed = Papa.parse(csv, { 
+      header: true, 
+      dynamicTyping: false, 
+      skipEmptyLines: true 
+    });
+    
+    console.log(`✅ ${sheetName}: ${parsed.data.length} linhas carregadas`);
+    if (parsed.data.length > 0) {
+      console.log('   Colunas:', Object.keys(parsed.data[0]).join(', '));
+      console.log('   1ª linha:', parsed.data[0]);
+    }
     return parsed.data;
   } catch (error) {
-    console.warn(`⚠️  Erro ao carregar ${sheetName}:`, error.message);
+    console.warn(`⚠️  Erro ao carregar ${sheetName} (gid=${gid}):`, error.message);
     return null;
   }
 }
 
 function transformFaturamento(rows) {
-  if (!rows) return null;
-  return rows.map(r => ({
-    ano: +r.Ano,
-    mes: r.Mês?.trim(),
-    fat: parseMoney(r['Faturamento Mensal']),
-    fatTrim: parseMoney(r['Faturamento Trimestral']) || null
-  })).filter(r => r.mes);
+  if (!rows || rows.length === 0) {
+    console.warn('⚠️  transformFaturamento: sem dados');
+    return null;
+  }
+  console.log('🔍 transformFaturamento: procesando', rows.length, 'linhas');
+  const result = rows
+    .filter(r => r && r.Ano && r.Mês)
+    .map(r => {
+      const ano = parseInt(r.Ano) || 0;
+      const mes = (r.Mês || '').trim();
+      const fat = parseMoney(r['Faturamento Mensal'] || r['faturamento mensal'] || '');
+      const fatTrim = parseMoney(r['Faturamento Trimestral'] || r['faturamento trimestral'] || '');
+      
+      if (mes) {
+        console.log(`  → ${ano} ${mes}: R$ ${fat}`);
+      }
+      return { ano, mes, fat, fatTrim: fatTrim || null };
+    })
+    .filter(r => r.mes);
+  
+  console.log(`✅ transformFaturamento retornou ${result.length} registros`);
+  return result.length > 0 ? result : null;
 }
 
 function transformOrcQtd(rows) {
-  if (!rows) return null;
-  return rows.map(r => ({
-    ano: +r.Ano,
-    mes: r.Mês?.trim(),
-    ap: +r.Aprovados || 0,
-    rj: +r.Rejeitados || 0,
-    tot: (+r.Aprovados || 0) + (+r.Rejeitados || 0),
-    pctAp: parsePercent(r['% Aprovados']),
-    pctRj: parsePercent(r['% Rejeitados'])
-  })).filter(r => r.mes);
+  if (!rows || rows.length === 0) return null;
+  console.log('🔍 transformOrcQtd: processando', rows.length, 'linhas');
+  const result = rows
+    .filter(r => r && r.Ano && r.Mês)
+    .map(r => ({
+      ano: parseInt(r.Ano) || 0,
+      mes: (r.Mês || '').trim(),
+      ap: parseInt(r.Aprovados || r['aprovados'] || 0) || 0,
+      rj: parseInt(r.Rejeitados || r['rejeitados'] || 0) || 0,
+      tot: (parseInt(r.Aprovados || 0) || 0) + (parseInt(r.Rejeitados || 0) || 0),
+      pctAp: parsePercent(r['% Aprovados'] || r['% aprovados'] || 0),
+      pctRj: parsePercent(r['% Rejeitados'] || r['% rejeitados'] || 0)
+    }))
+    .filter(r => r.mes);
+  
+  console.log(`✅ transformOrcQtd retornou ${result.length} registros`);
+  return result.length > 0 ? result : null;
 }
 
 function transformOrcVal(rows) {
-  if (!rows) return null;
-  return rows.map(r => ({
-    ano: +r.Ano,
-    mes: r.Mês?.trim(),
-    ap: parseMoney(r['Valor Aprovado']),
-    rj: parseMoney(r['Valor Rejeitado']),
-    tot: parseMoney(r['Valor Aprovado']) + parseMoney(r['Valor Rejeitado']),
-    pctAp: parsePercent(r['% Aprovados']),
-    pctRj: parsePercent(r['% Rejeitados'])
-  })).filter(r => r.mes);
+  if (!rows || rows.length === 0) return null;
+  console.log('🔍 transformOrcVal: processando', rows.length, 'linhas');
+  const result = rows
+    .filter(r => r && r.Ano && r.Mês)
+    .map(r => ({
+      ano: parseInt(r.Ano) || 0,
+      mes: (r.Mês || '').trim(),
+      ap: parseMoney(r['Valor Aprovado'] || r['valor aprovado'] || ''),
+      rj: parseMoney(r['Valor Rejeitado'] || r['valor rejeitado'] || ''),
+      tot: parseMoney(r['Valor Aprovado'] || '') + parseMoney(r['Valor Rejeitado'] || ''),
+      pctAp: parsePercent(r['% Aprovados'] || r['% aprovados'] || 0),
+      pctRj: parsePercent(r['% Rejeitados'] || r['% rejeitados'] || 0)
+    }))
+    .filter(r => r.mes);
+  
+  console.log(`✅ transformOrcVal retornou ${result.length} registros`);
+  return result.length > 0 ? result : null;
 }
 
 function transformTicket(rows) {
-  if (!rows) return null;
-  return rows.map(r => ({
-    ano: +r.Ano,
-    mes: r.Mês?.trim(),
-    ap: +r['Ticket Aprovado'] || 0,
-    rj: +r['Ticket Rejeitado'] || 0
-  })).filter(r => r.mes);
+  if (!rows || rows.length === 0) return null;
+  console.log('🔍 transformTicket: processando', rows.length, 'linhas');
+  const result = rows
+    .filter(r => r && r.Ano && r.Mês)
+    .map(r => ({
+      ano: parseInt(r.Ano) || 0,
+      mes: (r.Mês || '').trim(),
+      ap: parseFloat(r['Ticket Aprovado'] || r['ticket aprovado'] || 0) || 0,
+      rj: parseFloat(r['Ticket Rejeitado'] || r['ticket rejeitado'] || 0) || 0
+    }))
+    .filter(r => r.mes);
+  
+  console.log(`✅ transformTicket retornou ${result.length} registros`);
+  return result.length > 0 ? result : null;
 }
 
 function transformTempos(rows) {
-  if (!rows) return null;
-  return rows.map(r => ({
-    ano: +r.Ano,
-    mes: r.Mês?.trim(),
-    at: parseTime(r['Atendimento']),
-    ca: parseTime(r['Cálculos']),
-    ap: parseTime(r['Aprovações']),
-    in: parseTime(r['Inclusões'])
-  })).filter(r => r.mes);
+  if (!rows || rows.length === 0) return null;
+  console.log('🔍 transformTempos: processando', rows.length, 'linhas');
+  const result = rows
+    .filter(r => r && r.Ano && r.Mês)
+    .map(r => ({
+      ano: parseInt(r.Ano) || 0,
+      mes: (r.Mês || '').trim(),
+      at: parseTime(r['Atendimento'] || r['atendimento'] || ''),
+      ca: parseTime(r['Cálculos'] || r['calculos'] || ''),
+      ap: parseTime(r['Aprovações'] || r['aprovacoes'] || ''),
+      in: parseTime(r['Inclusões'] || r['inclusoes'] || '')
+    }))
+    .filter(r => r.mes);
+  
+  console.log(`✅ transformTempos retornou ${result.length} registros`);
+  return result.length > 0 ? result : null;
 }
 
 function transformNPS(rows) {
-  if (!rows) return null;
-  return rows.map(r => ({
-    ano: +r.Ano,
-    mes: r.Mês?.trim(),
-    nota: +r.NPS || 0
-  })).filter(r => r.mes);
+  if (!rows || rows.length === 0) return null;
+  console.log('🔍 transformNPS: processando', rows.length, 'linhas');
+  const result = rows
+    .filter(r => r && r.Ano && r.Mês)
+    .map(r => ({
+      ano: parseInt(r.Ano) || 0,
+      mes: (r.Mês || '').trim(),
+      nota: parseInt(r.NPS || r['nps'] || 0) || 0
+    }))
+    .filter(r => r.mes);
+  
+  console.log(`✅ transformNPS retornou ${result.length} registros`);
+  return result.length > 0 ? result : null;
 }
 
 async function loadAllSheetData() {
-  console.log('🔄 Carregando dados do Google Sheets...');
+  console.log('🔄 Carregando dados do Google Sheets (18 abas)...');
   try {
-    const [fatur, orcQ, orcV, ticket, tempos, nps] = await Promise.all([
+    const [fatur, orcQ, orcV, ticket, tempos, nps, googleAds, novosCac, roas, campanhas, repescagem] = await Promise.all([
       fetchSheetData('Faturamento', SHEETS_CONFIG.tabs.faturamento),
       fetchSheetData('Orçamentos Qtd', SHEETS_CONFIG.tabs.orcQtd),
       fetchSheetData('Orçamentos Val', SHEETS_CONFIG.tabs.orcVal),
-      fetchSheetData('Ticket Médio', SHEETS_CONFIG.tabs.ticket),
+      fetchSheetData('Ticket Médio', SHEETS_CONFIG.tabs.ticketMedio),
       fetchSheetData('Tempos', SHEETS_CONFIG.tabs.tempos),
-      fetchSheetData('NPS', SHEETS_CONFIG.tabs.nps)
+      fetchSheetData('NPS', SHEETS_CONFIG.tabs.nps),
+      fetchSheetData('Google Ads', SHEETS_CONFIG.tabs.googleAds),
+      fetchSheetData('Novos Clientes CAC', SHEETS_CONFIG.tabs.novosCac),
+      fetchSheetData('ROAS', SHEETS_CONFIG.tabs.roas),
+      fetchSheetData('Campanhas', SHEETS_CONFIG.tabs.campanhas),
+      fetchSheetData('Repescagem', SHEETS_CONFIG.tabs.repescagem)
     ]);
     
-    if (fatur) DF = transformFaturamento(fatur);
-    if (orcQ) DOQ = transformOrcQtd(orcQ);
-    if (orcV) DOV = transformOrcVal(orcV);
-    if (ticket) DTM = transformTicket(ticket);
-    if (tempos) DT = transformTempos(tempos);
-    if (nps) DN = transformNPS(nps);
+    // Só atualiza se houver dados
+    if (fatur && fatur.length > 0) DF = transformFaturamento(fatur);
+    if (orcQ && orcQ.length > 0) DOQ = transformOrcQtd(orcQ);
+    if (orcV && orcV.length > 0) DOV = transformOrcVal(orcV);
+    if (ticket && ticket.length > 0) DTM = transformTicket(ticket);
+    if (tempos && tempos.length > 0) DT = transformTempos(tempos);
+    if (nps && nps.length > 0) DN = transformNPS(nps);
     
-    console.log('✅ Dados do Google Sheets carregados!');
+    // Dados adicionais de marketing (sem transformação ainda)
+    if (googleAds && googleAds.length > 0) console.log('✅ Google Ads:', googleAds.length, 'linhas');
+    if (novosCac && novosCac.length > 0) console.log('✅ Novos Clientes CAC:', novosCac.length, 'linhas');
+    if (roas && roas.length > 0) console.log('✅ ROAS:', roas.length, 'linhas');
+    if (campanhas && campanhas.length > 0) console.log('✅ Campanhas:', campanhas.length, 'linhas');
+    if (repescagem && repescagem.length > 0) console.log('✅ Repescagem:', repescagem.length, 'linhas');
+    
+    console.log('✅ Todos os dados do Google Sheets carregados!');
+    console.log('📈 Faturamento:', DF?.length, 'meses');
+    console.log('📋 Orçamentos:', DOQ?.length, 'meses');
+    console.log('💰 Ticket Médio:', DTM?.length, 'meses');
+    console.log('⏱️ Tempos:', DT?.length, 'meses');
+    console.log('⭐ NPS:', DN?.length, 'meses');
     return true;
   } catch (error) {
-    console.error('❌ Erro:', error);
+    console.error('❌ Erro ao carregar dados:', error);
+    console.log('ℹ️  Usando dados offline (hardcoded)');
     return false;
   }
 }
@@ -1927,14 +2026,27 @@ function doLogin(ev){
 function initAuth(){if(sessionStorage.getItem('alq-auth')==='ok')unlockDashboard();else setTimeout(()=>document.getElementById('auth-user')?.focus(),50)}
 
 /* ── INIT ────────────────────────────────────────────────── */
-loadAllSheetData().finally(()=>{
-  document.fonts.load('500 11px Poppins').then(()=>{
-    initCompSelects();
-    initMkSelects();
-    render();
-    initAuth();
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    loadAllSheetData().finally(()=>{
+      document.fonts.load('500 11px Poppins').then(()=>{
+        initCompSelects();
+        initMkSelects();
+        render();
+        initAuth();
+      });
+    });
   });
-});
+} else {
+  loadAllSheetData().finally(()=>{
+    document.fonts.load('500 11px Poppins').then(()=>{
+      initCompSelects();
+      initMkSelects();
+      render();
+      initAuth();
+    });
+  });
+}
 </script>
 </body>
 </html>
