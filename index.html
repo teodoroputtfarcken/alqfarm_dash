@@ -1982,15 +1982,16 @@ async function loadAllSheetData() {
     if (rejMedicos&& rejMedicos.length > 0){ const r=transformMedicos(rejMedicos);    if(r){DR=r;anyLoaded=true;} }
     if (tempos    && tempos.length > 0)    { const r=transformTempos(tempos);          if(r){DT=r;anyLoaded=true;} }
     if (nps       && nps.length > 0)       { const r=transformNPS(nps);               if(r){DN=r;anyLoaded=true;} }
-    if (promotores&& promotores.length > 0){ DP_PROM=transformMotivos(promotores); console.log('✅ Promotores:', Object.keys(DP_PROM)); }
-    if (neutros   && neutros.length > 0)   { DP_NEU=transformMotivos(neutros);     console.log('✅ Neutros:',    Object.keys(DP_NEU)); }
-    if (detratores&& detratores.length > 0){ DP_DET=transformMotivos(detratores);  console.log('✅ Detratores:', Object.keys(DP_DET)); }
+    if (promotores && promotores.length > 0) { DP_PROM=transformMotivos(promotores); console.log('✅ Promotores:', Object.keys(DP_PROM)); }
+    if (neutros    && neutros.length > 0)    { DP_NEU=transformMotivos(neutros);     console.log('✅ Neutros:',    Object.keys(DP_NEU)); }
+    if (detratores && detratores.length > 0) { DP_DET=transformMotivos(detratores);  console.log('✅ Detratores:', Object.keys(DP_DET)); }
 
-    if (googleAds  && googleAds.length > 0)  console.log('✅ Google Ads:', googleAds.length, 'linhas');
-    if (novosCac   && novosCac.length > 0)   console.log('✅ Novos Clientes CAC:', novosCac.length, 'linhas');
-    if (roas       && roas.length > 0)       console.log('✅ ROAS:', roas.length, 'linhas');
-    if (campanhas  && campanhas.length > 0)  console.log('✅ Campanhas:', campanhas.length, 'linhas');
-    if (repescagem && repescagem.length > 0) console.log('✅ Repescagem:', repescagem.length, 'linhas');
+    // Marketing
+    if (googleAds  && googleAds.length > 0)  { const r=transformMetricaIndicador(googleAds);  if(r){MKS=r;} console.log('✅ Google Ads Solicitações:', googleAds.length, 'linhas'); }
+    if (novosCac   && novosCac.length > 0)   { const r=transformNovosCac(novosCac);            if(r){MK_CAC=r;} console.log('✅ Novos Clientes CAC:', novosCac.length, 'linhas'); }
+    if (campanhas  && campanhas.length > 0)  { const r=transformCampanhas(campanhas);          if(r){const {mk,mkc}=r; MK=mk; MKC=mkc;} console.log('✅ Campanhas:', campanhas.length, 'linhas'); }
+    if (repescagem && repescagem.length > 0) { const r=transformMetricaIndicador(repescagem);  if(r){MKR=r;} console.log('✅ Repescagem:', repescagem.length, 'linhas'); }
+    if (roas       && roas.length > 0)       { console.log('✅ ROAS:', roas.length, 'linhas'); }
 
     if (anyLoaded) {
       recalcPeriods();
@@ -2103,9 +2104,9 @@ function transformMotivos(rows) {
     const ano = String(r.Ano || '').trim();
     if (!mes || !ano) return;
     const chave = `${mes} ${ano}`;
-    const motivo = (r.Motivo || r.motivo || r['Razão'] || r.Razao || '').trim();
-    // Tentar todas as possíveis colunas de percentual
-    const rawPct = r['%'] ?? r['Percentual'] ?? r['Porcentagem'] ?? r['Indicador'] ?? r['indicador'] ?? r['valor'] ?? r['Valor'] ?? 0;
+    const motivo = (r.Motivo || r.motivo || '').trim();
+    // Coluna real é "Taxa"
+    const rawPct = r['Taxa'] ?? r['%'] ?? r['Percentual'] ?? r['Indicador'] ?? r['valor'] ?? 0;
     const pct = parsePercent(rawPct);
     if (!motivo) return;
     if (!result[chave]) result[chave] = [];
@@ -2118,6 +2119,82 @@ function transformMotivos(rows) {
   console.log('✅ transformMotivos chaves:', Object.keys(result));
   console.log('   Exemplo Julho 2026:', result['Julho 2026']);
   return result;
+}
+
+// ── TRANSFORMERS DE MARKETING ──────────────────────────────────
+
+// Campanhas: Ano, Mês, Canal, Campanha, Investimento, Retorno, ROAS
+// → {MK: [...], MKC: [...]}
+function transformCampanhas(rows) {
+  if (!rows || rows.length === 0) return null;
+  console.log('🔍 transformCampanhas:', rows.length, 'linhas | Colunas:', Object.keys(rows[0]).join(', '));
+  const mk = {};  // Agrupa por canal
+  const mkc = [];
+  rows.forEach(r => {
+    const ano = parseInt(r.Ano) || 0;
+    const mes = (r.Mês || '').trim();
+    const canal = (r.Canal || r.canal || '').trim();
+    const campanha = (r.Campanha || r.campanha || '').trim();
+    const invest = parseMoney(r.Investimento || r.investimento || 0);
+    const receita = parseMoney(r.Retorno || r.retorno || r.Receita || r.receita || 0);
+    const roas = parseFloat(String(r.ROAS || r.roas || 0).replace(',', '.')) || (invest > 0 ? receita/invest : 0);
+    if (!mes || !canal) return;
+
+    // MKC — por campanha
+    mkc.push({ ano, mes, canal, campanha, invest, receita, roas });
+
+    // MK — agrupa por canal
+    const key = `${ano}-${mes}-${canal}`;
+    if (!mk[key]) mk[key] = { ano, mes, canal, invest: 0, receita: 0, leads: 0, novos: 0 };
+    mk[key].invest += invest;
+    mk[key].receita += receita;
+  });
+  const mkArr = Object.values(mk);
+  console.log(`✅ transformCampanhas: ${mkArr.length} canais, ${mkc.length} campanhas`, mkc[mkc.length-1]);
+  return { mk: mkArr, mkc };
+}
+
+// Google Ads Solicitações / Repescagem: Ano, Mês, Métrica, Indicador
+// → [{ano, mes, metrica, valor}]
+function transformMetricaIndicador(rows) {
+  if (!rows || rows.length === 0) return null;
+  console.log('🔍 transformMetricaIndicador:', rows.length, 'linhas | Colunas:', Object.keys(rows[0]).join(', '));
+  const result = rows
+    .filter(r => r && r.Ano && r.Mês)
+    .map(r => {
+      const raw = r.Indicador || r.indicador || r.Valor || r.valor || 0;
+      const valor = isNaN(parseFloat(String(raw).replace(',','.'))) ? raw : parseFloat(String(raw).replace(',','.'));
+      return {
+        ano: parseInt(r.Ano) || 0,
+        mes: (r.Mês || '').trim(),
+        metrica: (r.Métrica || r.Metrica || r.metrica || '').trim(),
+        valor
+      };
+    })
+    .filter(r => r.mes && r.metrica);
+  console.log(`✅ transformMetricaIndicador retornou ${result.length} registros`, result[result.length-1]);
+  return result.length > 0 ? result : null;
+}
+
+// Novos Clientes e CAC: Ano, Mês, Novos Cadastros, CAC/Cadastro, Novos Cadastros com Compras, CAC/Compra, Investimento
+// → [{mes, ano, cads, cac_novo, comprou, cac_compra, inv}]
+function transformNovosCac(rows) {
+  if (!rows || rows.length === 0) return null;
+  console.log('🔍 transformNovosCac:', rows.length, 'linhas | Colunas:', Object.keys(rows[0]).join(', '));
+  const result = rows
+    .filter(r => r && r.Ano && r.Mês)
+    .map(r => ({
+      ano: parseInt(r.Ano) || 0,
+      mes: (r.Mês || '').trim(),
+      cads:       parseInt(r['Novos Cadastros'] || 0) || 0,
+      cac_novo:   parseMoney(r['CAC/Cadastro'] || 0),
+      comprou:    parseInt(r['Novos Cadastros com Compras'] || 0) || 0,
+      cac_compra: parseMoney(r['CAC/Compra'] || 0),
+      inv:        parseMoney(r['Investimento'] || 0)
+    }))
+    .filter(r => r.mes);
+  console.log(`✅ transformNovosCac retornou ${result.length} registros`, result[result.length-1]);
+  return result.length > 0 ? result : null;
 }
 function recalcPeriods() {
   if (!DF || DF.length === 0) return;
