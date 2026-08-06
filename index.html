@@ -1026,6 +1026,7 @@ const MK_CAC=[
 
 /* ── PERIODS ──────────────────────────────────────────────── */
 const PERIODS=[
+  {id:'jul26',label:'Jul/26',months:[{m:'Julho',a:2026}]},
   {id:'jun26',label:'Jun/26',months:[{m:'Junho',a:2026}]},
   {id:'mai26',label:'Mai/26',months:[{m:'Maio',a:2026}]},
   {id:'abr26',label:'Abr/26',months:[{m:'Abril',a:2026}]},
@@ -1051,6 +1052,7 @@ function rangeIdsBetween(startId,endId,months){
 }
 function customIdFromIds(ids,prefix='custom:'){return ids.length===1?ids[0]:prefix+ids.join(',')}
 const MK_PERIODS=[
+  {id:'mk-jul26',label:'Jul/26',months:[{m:'Julho',a:2026}]},
   {id:'mk-jun26',label:'Jun/26',months:[{m:'Junho',a:2026}]},
   {id:'mk-mai26',label:'Mai/26',months:[{m:'Maio',a:2026}]},
   {id:'mk-abr26',label:'Abr/26',months:[{m:'Abril',a:2026}]},
@@ -1116,13 +1118,13 @@ const CDef={
 };
 
 /* ── State ────────────────────────────────────────────────── */
-let cM='Maio',cA=2026;
+let cM='Julho',cA=2026;
 let tblSortKey='vl',tblSortDir='desc';
 let ativoSortKey='vl',ativoSortDir='desc';
 let ativoTipo='val';
-let cPeriodIds=['jun26'],cPeriodStartId='jun26',cPeriodEndId='jun26';
-let mkM='Junho',mkA=2026,mkPeriodId='mk-jun26';
-let mkPeriodIds=['mk-jun26'],mkPeriodStartId='mk-jun26',mkPeriodEndId='mk-jun26';
+let cPeriodIds=['jul26'],cPeriodStartId='jul26',cPeriodEndId='jul26';
+let mkM='Julho',mkA=2026,mkPeriodId='mk-jul26';
+let mkPeriodIds=['mk-jul26'],mkPeriodStartId='mk-jul26',mkPeriodEndId='mk-jul26';
 const CH={};
 
 /* ── FATURAMENTO RENDER ───────────────────────────────────── */
@@ -1700,7 +1702,7 @@ function renderMkSelects(){const period=document.getElementById('mk-period-main'
 function updateMarketingPeriod(){mkPeriodIds=rangeIdsBetween(mkPeriodStartId,mkPeriodEndId,MK_MONTH_PERIODS)}
 function setMkPeriodFromSelect(sel){mkPeriodStartId=sel.value||'mk-mai26';updateMarketingPeriod();renderMarketing()}
 function setMkCompFromSelect(sel){mkPeriodEndId=sel.value||mkPeriodStartId;updateMarketingPeriod();renderMarketing()}
-function setLastMkMonth(){mkPeriodStartId='mk-mai26';mkPeriodEndId='mk-mai26';updateMarketingPeriod();renderMarketing()}
+function setLastMkMonth(){mkPeriodStartId='mk-jul26';mkPeriodEndId='mk-jul26';updateMarketingPeriod();renderMarketing()}
 
 /* ── TAB / NAV ───────────────────────────────────────────── */
 function swTab(tab,btn){
@@ -1777,18 +1779,23 @@ function getSheetURL(gid) {
 }
 
 function parseMoney(str) {
-  if (!str || typeof str !== 'string') return 0;
-  return parseFloat(str.replace(/[R$\s\.]/g, '').replace(',', '.')) || 0;
+  if (str === null || str === undefined || str === '') return 0;
+  // Se já é número, retorna direto
+  if (typeof str === 'number') return str;
+  // Se é string com formato brasileiro (R$ 1.234,56)
+  return parseFloat(String(str).replace(/[R$\s\.]/g, '').replace(',', '.')) || 0;
 }
 
 function parsePercent(str) {
-  if (!str) return 0;
-  return parseFloat(str.toString().replace('%', '').replace(',', '.')) || 0;
+  if (str === null || str === undefined || str === '') return 0;
+  if (typeof str === 'number') return str;
+  return parseFloat(String(str).replace('%', '').replace(',', '.')) || 0;
 }
 
 function parseTime(str) {
   if (!str) return 0;
-  const match = str.match(/(\d+)h(\d+)m/);
+  const s = String(str);
+  const match = s.match(/(\d+)h(\d+)m/);
   return match ? +match[1] * 60 + +match[2] : 0;
 }
 
@@ -2001,6 +2008,7 @@ function refData() {
   b.textContent = '↻ Atualizando...';
   b.disabled = true;
   
+  // Destruir charts
   Object.keys(CH).forEach(key => {
     if (CH[key] && CH[key].destroy) {
       try { CH[key].destroy(); } catch (e) {}
@@ -2008,6 +2016,7 @@ function refData() {
     CH[key] = null;
   });
   
+  // Recarregar dados e re-renderizar
   loadAllSheetData().then(success => {
     const isMk = document.getElementById('tab-marketing')?.classList.contains('on');
     if (isMk) renderMarketing();
@@ -2018,7 +2027,7 @@ function refData() {
     b.style.filter = 'brightness(1.15)';
     setTimeout(() => { b.style.filter = 'brightness(1)'; }, 300);
     
-    if (success) console.log('✅ Dashboard atualizado!');
+    console.log('✅ Dashboard atualizado!');
   });
 }
 
