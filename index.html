@@ -1770,7 +1770,9 @@ const SHEETS_CONFIG = {
 };
 
 function getSheetURL(gid) {
-  return `https://docs.google.com/spreadsheets/d/${SHEETS_CONFIG.id}/export?format=csv&gid=${gid}`;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEETS_CONFIG.id}/export?format=csv&gid=${gid}`;
+  console.log(`🔗 URL para aba ${gid}:`, url);
+  return url;
 }
 
 function parseMoney(str) {
@@ -1794,10 +1796,27 @@ async function fetchSheetData(sheetName, gid) {
     const url = getSheetURL(gid);
     console.log(`📊 Carregando ${sheetName} (gid=${gid})...`);
     
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'text/csv'
+      },
+      mode: 'cors'
+    });
+    
+    if (!response.ok) {
+      console.error(`❌ HTTP ${response.status} para ${sheetName}. URL:`, url);
+      throw new Error(`HTTP ${response.status}`);
+    }
     
     const csv = await response.text();
+    
+    // Verificar se é realmente CSV
+    if (!csv || csv.includes('<!DOCTYPE') || csv.includes('<html')) {
+      console.error(`❌ Resposta não é CSV para ${sheetName}. Pode ser HTML de erro.`);
+      throw new Error('Resposta não é CSV');
+    }
+    
     const parsed = Papa.parse(csv, { 
       header: true, 
       dynamicTyping: false, 
