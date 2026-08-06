@@ -577,7 +577,7 @@ const MO=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto'
 const MS=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
 /* ── FATURAMENTO ─────────────────────────────────────────── */
-const DF=[
+let DF=[
   {ano:2025,mes:'Janeiro', fat:889272, fatTrim:2581894},
   {ano:2025,mes:'Fevereiro',fat:823451, fatTrim:null},
   {ano:2025,mes:'Março',   fat:869171, fatTrim:null},
@@ -607,7 +607,7 @@ const DF_TRIM=[
   {ano:2026,trim:'Q2',label:'Q2/26',fat:2377634},
 ];
 /* categorias */
-const DFC=[
+let DFC=[
   {ano:2025,mes:'Janeiro',cat:'Manipulação',fat:535437.93},{ano:2025,mes:'Janeiro',cat:'Varejo',fat:25598.93},{ano:2025,mes:'Janeiro',cat:'BioFAO',fat:326843.99},
   {ano:2025,mes:'Fevereiro',cat:'Manipulação',fat:462349.56},{ano:2025,mes:'Fevereiro',cat:'Varejo',fat:23389.68},{ano:2025,mes:'Fevereiro',cat:'BioFAO',fat:337712.07},
   {ano:2025,mes:'Março',cat:'Manipulação',fat:476846.52},{ano:2025,mes:'Março',cat:'Varejo',fat:30665.04},{ano:2025,mes:'Março',cat:'BioFAO',fat:361389.91},
@@ -631,7 +631,7 @@ const DFC=[
 ];
 
 /* ── ORÇAMENTOS ──────────────────────────────────────────── */
-const DOQ=[
+let DOQ=[
   {ano:2025,mes:'Janeiro',ap:4308,rj:1979,tot:6287,pctAp:68.5,pctRj:31.5},
   {ano:2025,mes:'Fevereiro',ap:3931,rj:1987,tot:5918,pctAp:66.4,pctRj:33.6},
   {ano:2025,mes:'Março',ap:3805,rj:2328,tot:6133,pctAp:62.0,pctRj:38.0},
@@ -651,7 +651,7 @@ const DOQ=[
   {ano:2026,mes:'Maio',ap:3295,rj:2535,tot:5830,pctAp:56.5,pctRj:43.5},
   {ano:2026,mes:'Junho',ap:3295,rj:2371,tot:5666,pctAp:58.0,pctRj:42.0},
 ];
-const DOV=[
+let DOV=[
   {ano:2025,mes:'Janeiro',ap:540253,rj:305193,tot:845446,pctAp:63.9,pctRj:36.1},
   {ano:2025,mes:'Fevereiro',ap:486971,rj:313728,tot:800699,pctAp:60.8,pctRj:39.2},
   {ano:2025,mes:'Março',ap:481296,rj:425748,tot:907044,pctAp:53.1,pctRj:46.9},
@@ -671,7 +671,7 @@ const DOV=[
   {ano:2026,mes:'Maio',ap:420277,rj:483646,tot:903873,pctAp:46.5,pctRj:53.5},
   {ano:2026,mes:'Junho',ap:432364,rj:459364,tot:891728,pctAp:49.0,pctRj:51.0},
 ];
-const DTM=[
+let DTM=[
   {ano:2025,mes:'Janeiro',ap:125.41,rj:154.22},
   {ano:2025,mes:'Fevereiro',ap:123.88,rj:157.89},
   {ano:2025,mes:'Março',ap:147.90,rj:182.88},
@@ -691,7 +691,7 @@ const DTM=[
   {ano:2026,mes:'Maio',ap:127.53,rj:190.79},
   {ano:2026,mes:'Junho',ap:130.75,rj:194.35},
 ];
-const DTMC=[
+let DTMC=[
   {ano:2026,mes:'Janeiro',manip:123.87,fao:214.53,varejo:30.55},
   {ano:2026,mes:'Fevereiro',manip:120.09,fao:213.15,varejo:59.70},
   {ano:2026,mes:'Março',manip:116.86,fao:217.24,varejo:29.03},
@@ -702,7 +702,7 @@ const DTMC=[
 
 
 /* ── DR (médicos) incl. Maio/26 ─────────────────────────── */
-const DR=[
+let DR=[
   {ano:2026,mes:'Janeiro',med:'PATRICIA MACHADO',ef:307,ap:54,rj:253,vl:42298.91,ix:82.41},
   {ano:2026,mes:'Janeiro',med:'ISIS CARLA QUEIROZ DE SOUZA',ef:126,ap:45,rj:81,vl:12536.85,ix:64.29},
   {ano:2026,mes:'Janeiro',med:'CAMILA C. DO VALLE SERRA D\u00b4\u00c1VILA',ef:179,ap:99,rj:80,vl:12449.35,ix:44.69},
@@ -768,7 +768,7 @@ const DR=[
 function pt(s){const m=s.match(/(\d+)h(\d+)m/);return m?+m[1]*60+ +m[2]:0}
 function ft(n){const h=Math.floor(n/60),m=n%60;return`${h}h${String(m).padStart(2,'0')}m`}
 
-const DT=[
+let DT=[
   {ano:2025,mes:'Abril',    at:pt('1h34m'),ca:pt('2h30m'),ap:pt('6h33m'),in:pt('6h42m')},
   {ano:2025,mes:'Maio',     at:pt('1h40m'),ca:pt('2h31m'),ap:pt('6h45m'),in:pt('2h29m')},
   {ano:2025,mes:'Junho',    at:pt('1h50m'),ca:pt('2h38m'),ap:pt('7h02m'),in:pt('2h09m')},
@@ -786,7 +786,7 @@ const DT=[
   {ano:2026,mes:'Junho',    at:pt('2h00m'),ca:pt('2h54m'),ap:pt('7h05m'),in:pt('2h25m')},
 ];
 
-const DN=[
+let DN=[
   {ano:2025,mes:'Abril',nota:85},{ano:2025,mes:'Maio',nota:68},{ano:2025,mes:'Junho',nota:73},
   {ano:2025,mes:'Julho',nota:81},{ano:2025,mes:'Agosto',nota:75},{ano:2025,mes:'Setembro',nota:77},
   {ano:2025,mes:'Outubro',nota:73},{ano:2025,mes:'Novembro',nota:69},{ano:2025,mes:'Dezembro',nota:72},
@@ -821,7 +821,7 @@ const DP_NEU={
 };
 
 function parseAtivos(txt){return txt.trim().split('\n').slice(1).map(l=>{const[ano,mes,st,ativo,ef,ap,rj,vl,ix]=l.split(';');return{ano:+ano,mes,st,ativo,ef:+ef,ap:+ap,rj:+rj,vl:+vl,ix:+ix}})}
-const DA=parseAtivos(`ano;mes;st;ativo;ef;ap;rj;vl;ix
+let DA=parseAtivos(`ano;mes;st;ativo;ef;ap;rj;vl;ix
 2026;Janeiro;num;VITAMINA K2MK7;371;188;183;1772.98;49.33
 2026;Janeiro;num;VITAMINA C REVESTIDA PO;337;181;156;399.13;46.29
 2026;Janeiro;num;ZINCO QUELATO;302;149;153;359.95;50.66
@@ -943,7 +943,7 @@ const DA=parseAtivos(`ano;mes;st;ativo;ef;ap;rj;vl;ix
 2026;Junho;val;MAXSOLVE;20;11;9;4156.25;45.00
 2026;Junho;val;BLOOME;10;0;10;4117.50;100.00`);
 
-const MK=[
+let MK=[
   {ano:2025,mes:'Novembro',canal:'Meta Ads',invest:286.45,receita:0.00,leads:0,novos:0},
   {ano:2025,mes:'Dezembro',canal:'Pedido Pago',invest:59.76,receita:5100.88,leads:0,novos:0},
   {ano:2025,mes:'Dezembro',canal:'Google Ads',invest:473.01,receita:312.00,leads:0,novos:0},
@@ -963,7 +963,7 @@ const MK=[
   {ano:2026,mes:'Junho',canal:'Google Ads',invest:2121.49,receita:3738.92,leads:466,novos:181},
   {ano:2026,mes:'Junho',canal:'Pedido Pago',invest:542.88,receita:47969.34,leads:0,novos:0},
 ];
-const MKC=[
+let MKC=[
   {ano:2025,mes:'Novembro',canal:'Meta Ads',campanha:'ALQ Friday',invest:286.45,receita:0.00,roas:0},
   {ano:2025,mes:'Dezembro',canal:'Pedido Pago',campanha:'retomada_nov._pepti',invest:22.68,receita:1316.82,roas:58.05},
   {ano:2025,mes:'Dezembro',canal:'Pedido Pago',campanha:'ayuer_dez2025pr_natal',invest:9.72,receita:1454.71,roas:149.67},
@@ -997,7 +997,7 @@ const MKC=[
   {ano:2026,mes:'Junho',canal:'Pedido Pago',campanha:'primeiracompra_junho',invest:61.92,receita:231.02,roas:3.73},
   {ano:2026,mes:'Junho',canal:'Pedido Pago',campanha:'repesc_15_dias_30/06',invest:158.76,receita:33465.72,roas:210.80},
 ];
-const MKS=[
+let MKS=[
   {ano:2026,mes:'Março',metrica:'Primeiras aprovações',valor:7},{ano:2026,mes:'Março',metrica:'Não calculadas',valor:15},{ano:2026,mes:'Março',metrica:'Pag. via Pix',valor:6},{ano:2026,mes:'Março',metrica:'Pag. via Cartão',valor:4},{ano:2026,mes:'Março',metrica:'Tempo médio atendimento',valor:'02h36m'},{ano:2026,mes:'Março',metrica:'Tempo médio cálculo',valor:'03h33m'},
   {ano:2026,mes:'Abril',metrica:'Primeiras aprovações',valor:6},{ano:2026,mes:'Abril',metrica:'Não calculadas',valor:26},{ano:2026,mes:'Abril',metrica:'Pag. via Pix',valor:6},{ano:2026,mes:'Abril',metrica:'Pag. via Cartão',valor:4},{ano:2026,mes:'Abril',metrica:'Tempo médio atendimento',valor:'02h45m'},{ano:2026,mes:'Abril',metrica:'Tempo médio cálculo',valor:'03h30m'},
   {ano:2026,mes:'Maio',metrica:'Primeiras aprovações',valor:6},{ano:2026,mes:'Maio',metrica:'Não calculadas',valor:25},{ano:2026,mes:'Maio',metrica:'Pag. via Pix',valor:9},{ano:2026,mes:'Maio',metrica:'Pag. via Cartão',valor:3},{ano:2026,mes:'Maio',metrica:'Tempo médio atendimento',valor:'02h34m'},{ano:2026,mes:'Maio',metrica:'Tempo médio cálculo',valor:'03h24m'},
@@ -1008,14 +1008,14 @@ const MKS=[
   {ano:2026,mes:'Junho',metrica:'Tempo médio atendimento',valor:'02h48m'},
   {ano:2026,mes:'Junho',metrica:'Tempo médio cálculo',valor:'04h22m'},
 ];
-const MKR=[
+let MKR=[
   {ano:2026,mes:'Março',metrica:'Envios totais',valor:190},{ano:2026,mes:'Março',metrica:'Aprovações',valor:30},{ano:2026,mes:'Março',metrica:'Taxa de conversão (%)',valor:15.79},{ano:2026,mes:'Março',metrica:'Vendas geradas (R$)',valor:24643.72},
   {ano:2026,mes:'Abril',metrica:'Envios totais',valor:242},{ano:2026,mes:'Abril',metrica:'Aprovações',valor:39},{ano:2026,mes:'Abril',metrica:'Taxa de conversão (%)',valor:16.10},{ano:2026,mes:'Abril',metrica:'Vendas geradas (R$)',valor:32032.72},
   {ano:2026,mes:'Maio',metrica:'Envios totais',valor:103},{ano:2026,mes:'Maio',metrica:'Aprovações',valor:17},{ano:2026,mes:'Maio',metrica:'Taxa de conversão (%)',valor:16.50},{ano:2026,mes:'Maio',metrica:'Vendas geradas (R$)',valor:16639.67},
 ];
 
 /* Novos clientes e CAC */
-const MK_CAC=[
+let MK_CAC=[
   {mes:'Janeiro',ano:2026,cads:448,cac_novo:2.67,comprou:197,cac_compra:6.07,inv:1195},
   {mes:'Fevereiro',ano:2026,cads:155,cac_novo:11.96,comprou:206,cac_compra:9.00,inv:1854},
   {mes:'Março',ano:2026,cads:509,cac_novo:3.69,comprou:206,cac_compra:9.11,inv:1876},
