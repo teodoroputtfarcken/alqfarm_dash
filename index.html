@@ -7,6 +7,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1741,7 +1742,171 @@ function expCSV(){
   else{const cp=periodFromIds(cPeriodIds),d=grP(cp),t=timeP(cp),nps=npsP(cp);csv=[['Médico','Efetuados','Aprovados','Rejeitados','Valor (R$)','Índice (%)'],...d.map(x=>[x.med,x.ef,x.ap,x.rj,x.vl.toFixed(2).replace('.',','),x.ix.toFixed(2).replace('.',',')]),[], ['NPS',nps||''],['T. Atend.',t?ft(t.at):''],['T. Cálculo',t?ft(t.ca):'']].map(r=>r.join(';')).join('\n');file=`ALQ_Farma_${pLabel(cp).replace(/[^A-Za-z0-9]+/g,'_')}.csv`;}
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=file;a.click();
 }
-function refData(){const b=document.getElementById('btn-ref');b.textContent='↻ Atualizando...';b.disabled=true;setTimeout(()=>{b.textContent='↻ Atualizar';b.disabled=false;render()},1000)}
+// ════════════════════════════════════════════════════════════════
+// GOOGLE SHEETS INTEGRATION
+// ════════════════════════════════════════════════════════════════
+const SHEETS_CONFIG = {
+  id: '1r210oBEixzxAIVN0Eo-8MD6pbt6Ahz6PFbEj5CdcWO0',
+  tabs: { faturamento: 0, orcQtd: 1, orcVal: 2, ticket: 3, tempos: 4, nps: 5 }
+};
+
+function getSheetURL(gid) {
+  return `https://docs.google.com/spreadsheets/d/${SHEETS_CONFIG.id}/export?format=csv&gid=${gid}`;
+}
+
+function parseMoney(str) {
+  if (!str || typeof str !== 'string') return 0;
+  return parseFloat(str.replace(/[R$\s\.]/g, '').replace(',', '.')) || 0;
+}
+
+function parsePercent(str) {
+  if (!str) return 0;
+  return parseFloat(str.toString().replace('%', '').replace(',', '.')) || 0;
+}
+
+function parseTime(str) {
+  if (!str) return 0;
+  const match = str.match(/(\d+)h(\d+)m/);
+  return match ? +match[1] * 60 + +match[2] : 0;
+}
+
+async function fetchSheetData(sheetName, gid) {
+  try {
+    const url = getSheetURL(gid);
+    console.log(`📊 Carregando ${sheetName}...`);
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const csv = await response.text();
+    const parsed = Papa.parse(csv, { header: true, dynamicTyping: false, skipEmptyLines: true });
+    console.log(`✅ ${sheetName} carregado`);
+    return parsed.data;
+  } catch (error) {
+    console.warn(`⚠️  Erro ao carregar ${sheetName}:`, error.message);
+    return null;
+  }
+}
+
+function transformFaturamento(rows) {
+  if (!rows) return null;
+  return rows.map(r => ({
+    ano: +r.Ano,
+    mes: r.Mês?.trim(),
+    fat: parseMoney(r['Faturamento Mensal']),
+    fatTrim: parseMoney(r['Faturamento Trimestral']) || null
+  })).filter(r => r.mes);
+}
+
+function transformOrcQtd(rows) {
+  if (!rows) return null;
+  return rows.map(r => ({
+    ano: +r.Ano,
+    mes: r.Mês?.trim(),
+    ap: +r.Aprovados || 0,
+    rj: +r.Rejeitados || 0,
+    tot: (+r.Aprovados || 0) + (+r.Rejeitados || 0),
+    pctAp: parsePercent(r['% Aprovados']),
+    pctRj: parsePercent(r['% Rejeitados'])
+  })).filter(r => r.mes);
+}
+
+function transformOrcVal(rows) {
+  if (!rows) return null;
+  return rows.map(r => ({
+    ano: +r.Ano,
+    mes: r.Mês?.trim(),
+    ap: parseMoney(r['Valor Aprovado']),
+    rj: parseMoney(r['Valor Rejeitado']),
+    tot: parseMoney(r['Valor Aprovado']) + parseMoney(r['Valor Rejeitado']),
+    pctAp: parsePercent(r['% Aprovados']),
+    pctRj: parsePercent(r['% Rejeitados'])
+  })).filter(r => r.mes);
+}
+
+function transformTicket(rows) {
+  if (!rows) return null;
+  return rows.map(r => ({
+    ano: +r.Ano,
+    mes: r.Mês?.trim(),
+    ap: +r['Ticket Aprovado'] || 0,
+    rj: +r['Ticket Rejeitado'] || 0
+  })).filter(r => r.mes);
+}
+
+function transformTempos(rows) {
+  if (!rows) return null;
+  return rows.map(r => ({
+    ano: +r.Ano,
+    mes: r.Mês?.trim(),
+    at: parseTime(r['Atendimento']),
+    ca: parseTime(r['Cálculos']),
+    ap: parseTime(r['Aprovações']),
+    in: parseTime(r['Inclusões'])
+  })).filter(r => r.mes);
+}
+
+function transformNPS(rows) {
+  if (!rows) return null;
+  return rows.map(r => ({
+    ano: +r.Ano,
+    mes: r.Mês?.trim(),
+    nota: +r.NPS || 0
+  })).filter(r => r.mes);
+}
+
+async function loadAllSheetData() {
+  console.log('🔄 Carregando dados do Google Sheets...');
+  try {
+    const [fatur, orcQ, orcV, ticket, tempos, nps] = await Promise.all([
+      fetchSheetData('Faturamento', SHEETS_CONFIG.tabs.faturamento),
+      fetchSheetData('Orçamentos Qtd', SHEETS_CONFIG.tabs.orcQtd),
+      fetchSheetData('Orçamentos Val', SHEETS_CONFIG.tabs.orcVal),
+      fetchSheetData('Ticket Médio', SHEETS_CONFIG.tabs.ticket),
+      fetchSheetData('Tempos', SHEETS_CONFIG.tabs.tempos),
+      fetchSheetData('NPS', SHEETS_CONFIG.tabs.nps)
+    ]);
+    
+    if (fatur) DF = transformFaturamento(fatur);
+    if (orcQ) DOQ = transformOrcQtd(orcQ);
+    if (orcV) DOV = transformOrcVal(orcV);
+    if (ticket) DTM = transformTicket(ticket);
+    if (tempos) DT = transformTempos(tempos);
+    if (nps) DN = transformNPS(nps);
+    
+    console.log('✅ Dados do Google Sheets carregados!');
+    return true;
+  } catch (error) {
+    console.error('❌ Erro:', error);
+    return false;
+  }
+}
+
+function refData() {
+  const b = document.getElementById('btn-ref');
+  if (!b) return;
+  
+  b.textContent = '↻ Atualizando...';
+  b.disabled = true;
+  
+  Object.keys(CH).forEach(key => {
+    if (CH[key] && CH[key].destroy) {
+      try { CH[key].destroy(); } catch (e) {}
+    }
+    CH[key] = null;
+  });
+  
+  loadAllSheetData().then(success => {
+    const isMk = document.getElementById('tab-marketing')?.classList.contains('on');
+    if (isMk) renderMarketing();
+    else render();
+    
+    b.textContent = '↻ Atualizar';
+    b.disabled = false;
+    b.style.filter = 'brightness(1.15)';
+    setTimeout(() => { b.style.filter = 'brightness(1)'; }, 300);
+    
+    if (success) console.log('✅ Dashboard atualizado!');
+  });
+}
 
 /* ── AUTH ────────────────────────────────────────────────── */
 const AUTH_DB={users:[
@@ -1762,7 +1927,14 @@ function doLogin(ev){
 function initAuth(){if(sessionStorage.getItem('alq-auth')==='ok')unlockDashboard();else setTimeout(()=>document.getElementById('auth-user')?.focus(),50)}
 
 /* ── INIT ────────────────────────────────────────────────── */
-document.fonts.load('500 11px Poppins').then(()=>{initCompSelects();initMkSelects();render();initAuth()});
+loadAllSheetData().finally(()=>{
+  document.fonts.load('500 11px Poppins').then(()=>{
+    initCompSelects();
+    initMkSelects();
+    render();
+    initAuth();
+  });
+});
 </script>
 </body>
 </html>
