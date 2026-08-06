@@ -1796,14 +1796,19 @@ async function fetchSheetData(sheetName, gid) {
     const url = getSheetURL(gid);
     console.log(`📊 Carregando ${sheetName} (gid=${gid})...`);
     
-    // Tentar com mode: 'no-cors' para evitar CORS blocks
-    const response = await fetch(url, {
+    // Tentar endpoint alternativo com /gviz/tq para evitar CORS
+    const gvizUrl = `https://docs.google.com/spreadsheets/d/${SHEETS_CONFIG.id}/gviz/query?tqx=out:csv&gid=${gid}`;
+    
+    const response = await fetch(gvizUrl, {
       method: 'GET',
-      mode: 'no-cors',
+      mode: 'cors',
       cache: 'no-cache'
     });
     
-    console.log(`   Response type: ${response.type}, Status: ${response.status}`);
+    if (!response.ok) {
+      console.error(`❌ HTTP ${response.status} para ${sheetName}`);
+      throw new Error(`HTTP ${response.status}`);
+    }
     
     const csv = await response.text();
     
@@ -1822,7 +1827,7 @@ async function fetchSheetData(sheetName, gid) {
     console.log(`✅ ${sheetName}: ${parsed.data.length} linhas carregadas`);
     return parsed.data;
   } catch (error) {
-    console.warn(`⚠️  Erro ao carregar ${sheetName} (gid=${gid}):`, error.message);
+    console.warn(`⚠️  Erro ao carregar ${sheetName}:`, error.message);
     return [];
   }
 }
