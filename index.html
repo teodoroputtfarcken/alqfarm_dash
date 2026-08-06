@@ -1984,7 +1984,11 @@ async function loadAllSheetData() {
     if (nps       && nps.length > 0)       { const r=transformNPS(nps);               if(r){DN=r;anyLoaded=true;} }
     if (promotores && promotores.length > 0) { DP_PROM=transformMotivos(promotores); console.log('✅ Promotores:', Object.keys(DP_PROM)); }
     if (neutros    && neutros.length > 0)    { DP_NEU=transformMotivos(neutros);     console.log('✅ Neutros:',    Object.keys(DP_NEU)); }
-    if (detratores && detratores.length > 0) { DP_DET=transformMotivos(detratores);  console.log('✅ Detratores:', Object.keys(DP_DET)); }
+    if (detratores && detratores.length > 0) {
+      console.log('🔍 DEBUG Detratores primeiras 3 linhas:', JSON.stringify(detratores.slice(0,3)));
+      DP_DET=transformMotivos(detratores);
+      console.log('✅ Detratores:', Object.keys(DP_DET));
+    }
 
     // Marketing
     if (googleAds  && googleAds.length > 0)  { const r=transformMetricaIndicador(googleAds);  if(r){MKS=r;} console.log('✅ Google Ads Solicitações:', googleAds.length, 'linhas'); }
