@@ -2101,21 +2101,57 @@ function transformMedicos(rows) {
 function transformMotivos(rows) {
   if (!rows || rows.length === 0) return {};
   console.log('🔍 transformMotivos:', rows.length, 'linhas | Colunas:', Object.keys(rows[0]).join(', '));
-  console.log('   1ª linha:', rows[0]);
-  const result = {};
-  rows.forEach(r => {
-    const mes = (r.Mês || r.Mes || '').trim();
-    const ano = String(r.Ano || '').trim();
-    if (!mes || !ano) return;
-    const chave = `${mes} ${ano}`;
-    const motivo = (r.Motivo || r.motivo || '').trim();
-    // Coluna real é "Taxa"
-    const rawPct = r['Taxa'] ?? r['%'] ?? r['Percentual'] ?? r['Indicador'] ?? r['valor'] ?? 0;
-    const pct = parsePercent(rawPct);
-    if (!motivo) return;
-    if (!result[chave]) result[chave] = [];
-    result[chave].push([motivo, pct]);
-  });
+  
+  const cols = Object.keys(rows[0]);
+  
+  // Verificar se o cabeçalho é correto (tem coluna "Mês" ou "Mes")
+  const hasMes = cols.some(c => c === 'Mês' || c === 'Mes');
+  
+  let result = {};
+  
+  if (hasMes) {
+    // Cabeçalho correto: Ano, Mês, Motivo, Taxa
+    rows.forEach(r => {
+      const mes = (r.Mês || r.Mes || '').trim();
+      const ano = String(r.Ano || '').trim();
+      if (!mes || !ano) return;
+      const chave = `${mes} ${ano}`;
+      const motivo = (r.Motivo || r.motivo || '').trim();
+      const rawPct = r['Taxa'] ?? r['%'] ?? r['Percentual'] ?? r['Indicador'] ?? 0;
+      const pct = parsePercent(rawPct);
+      if (!motivo) return;
+      if (!result[chave]) result[chave] = [];
+      result[chave].push([motivo, pct]);
+    });
+  } else {
+    // Cabeçalho malformado (Detratores) — colunas são: [col0=Ano, col1=Mês, col2=Motivo, col3=Taxa]
+    // Os nomes das colunas são os valores da primeira linha
+    const [colAno, colMes, colMotivo, colTaxa] = cols;
+    // Incluir a primeira linha também (é dado real)
+    rows.forEach(r => {
+      const mes = (r[colMes] || '').trim();
+      const ano = String(r[colAno] || '').trim();
+      if (!mes || !ano) return;
+      const chave = `${mes} ${ano}`;
+      const motivo = (r[colMotivo] || '').trim();
+      const rawPct = r[colTaxa] ?? 0;
+      const pct = parsePercent(rawPct);
+      if (!motivo) return;
+      if (!result[chave]) result[chave] = [];
+      result[chave].push([motivo, pct]);
+    });
+    // Adicionar a "primeira linha" que virou cabeçalho
+    const mes = colMes.trim();
+    const ano = colAno.trim();
+    const motivo = colMotivo.trim();
+    const pct = parsePercent(colTaxa);
+    if (mes && ano && motivo) {
+      const chave = `${mes} ${ano}`;
+      if (!result[chave]) result[chave] = [];
+      result[chave].push([motivo, pct]);
+    }
+  }
+  
   Object.keys(result).forEach(k => {
     result[k].sort((a,b) => b[1] - a[1]);
     result[k] = result[k].slice(0, 4);
