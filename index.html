@@ -1523,11 +1523,12 @@ function renderEvo(){
   ]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>c.datasetIndex===0?` Rej.: ${c.parsed.y.toLocaleString('pt-BR')}`:` Valor: ${brl(c.parsed.y)}`}}},scales:{x:{...CDef.scales.x},y:{...CDef.scales.y,position:'left'},y2:{...CDef.scales.y,position:'right',grid:{display:false},ticks:{...CDef.scales.y.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}}}}});
 }
 function renderFunil(){
-  const d=grP(periodFromIds(cPeriodIds));
-  const ef=d.reduce((s,x)=>s+x.ef,0),ap=d.reduce((s,x)=>s+x.ap,0),rj=d.reduce((s,x)=>s+x.rj,0);
-  const pA=ef>0?(ap/ef*100).toFixed(1):'—',pR=ef>0?(rj/ef*100).toFixed(1):'—';
+  const cp=periodFromIds(cPeriodIds);
+  const d=orcQtdSumP(cp);
+  const tot=d.tot,ap=d.ap,rj=d.rj;
+  const pA=tot>0?(ap/tot*100).toFixed(1):'—',pR=tot>0?(rj/tot*100).toFixed(1):'—';
   document.getElementById('funil').innerHTML=`<div class="funnel">
-    <div class="f-step" style="width:100%;background:#123b7a"><div><div class="f-label">Efetuados</div><div class="f-pct">100%</div></div><div class="f-val">${ef.toLocaleString('pt-BR')}</div></div>
+    <div class="f-step" style="width:100%;background:#123b7a"><div><div class="f-label">Total de Orçamentos</div><div class="f-pct">100%</div></div><div class="f-val">${tot.toLocaleString('pt-BR')}</div></div>
     <div class="f-conn"><div class="f-clbl">taxa de aprovação</div><div class="f-conv">${pA}%</div></div>
     <div class="f-step" style="width:78%;background:#006bd6"><div><div class="f-label">Aprovados</div><div class="f-pct">${pA}%</div></div><div class="f-val">${ap.toLocaleString('pt-BR')}</div></div>
     <div class="f-conn"><div class="f-clbl">taxa de rejeição</div><div class="f-conv" style="color:#a02020">${pR}%</div></div>
