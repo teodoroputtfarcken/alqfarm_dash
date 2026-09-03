@@ -1734,13 +1734,13 @@ function renderCompSelects(){const period=document.getElementById('period-main')
 function updateCommercialPeriod(){cPeriodIds=rangeIdsBetween(cPeriodStartId,cPeriodEndId,MONTH_PERIODS)}
 function setPeriodFromSelect(sel){cPeriodStartId=sel.value||LATEST_MONTH_ID;updateCommercialPeriod();render()}
 function setCompFromSelect(which,sel){if(which==='a')cPeriodEndId=sel.value||cPeriodStartId;updateCommercialPeriod();render()}
-function setLastMonth(){cPeriodStartId=LATEST_MONTH_ID;cPeriodEndId=LATEST_MONTH_ID;updateCommercialPeriod();render()}
+function setLastMonth(){const latest=MONTH_PERIODS[0]?.id||LATEST_MONTH_ID;cPeriodStartId=latest;cPeriodEndId=latest;updateCommercialPeriod();renderCompSelects();render()}
 function initMkSelects(){const opts=MK_MONTH_PERIODS.map(p=>`<option value="${p.id}">${p.label}</option>`).join('');['mk-period-main','mk-comp-a'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts})}
 function renderMkSelects(){const period=document.getElementById('mk-period-main'),comp=document.getElementById('mk-comp-a');if(period&&period.value!==mkPeriodStartId)period.value=mkPeriodStartId;if(comp&&comp.value!==mkPeriodEndId)comp.value=mkPeriodEndId}
 function updateMarketingPeriod(){mkPeriodIds=rangeIdsBetween(mkPeriodStartId,mkPeriodEndId,MK_MONTH_PERIODS)}
 function setMkPeriodFromSelect(sel){mkPeriodStartId=sel.value||'mk-mai26';updateMarketingPeriod();renderMarketing()}
 function setMkCompFromSelect(sel){mkPeriodEndId=sel.value||mkPeriodStartId;updateMarketingPeriod();renderMarketing()}
-function setLastMkMonth(){mkPeriodStartId='mk-jul26';mkPeriodEndId='mk-jul26';updateMarketingPeriod();renderMarketing()}
+function setLastMkMonth(){const latest=MK_MONTH_PERIODS[0]?.id||'mk-jul26';mkPeriodStartId=latest;mkPeriodEndId=latest;updateMarketingPeriod();renderMkSelects();renderMarketing()}
 
 /* ── TAB / NAV ───────────────────────────────────────────── */
 function swTab(tab,btn){
@@ -1776,12 +1776,76 @@ function closeSidebar(){
   sb.classList.remove('open');hb.classList.remove('open');ov.classList.remove('visible');document.body.style.overflow='';
   setTimeout(()=>{if(!ov.classList.contains('visible'))ov.style.display='none'},280);
 }
+function csvCell(v){
+  if(v===null||v===undefined)return'';
+  if(typeof v==='number')return String(v).replace('.',',');
+  const t=String(v).replace(/\r?\n/g,' ').replace(/;/g,',');
+  return t.includes('"')?'"'+t.replace(/"/g,'""')+'"':t;
+}
+function csvSection(title,rows){
+  const out=[[title]];
+  if(!rows||!rows.length){out.push(['Sem dados']);out.push([]);return out;}
+  const keys=[...new Set(rows.flatMap(r=>Object.keys(r||{})))];
+  out.push(keys);
+  rows.forEach(r=>out.push(keys.map(k=>r?.[k]??'')));
+  out.push([]);
+  return out;
+}
+function motivesToRows(src,tipo){
+  const rows=[];
+  Object.entries(src||{}).forEach(([periodo,itens])=>{
+    (itens||[]).forEach(item=>rows.push({tipo,periodo,motivo:Array.isArray(item)?item[0]:'',valor:Array.isArray(item)?item[1]:''}));
+  });
+  return rows;
+}
 function expCSV(){
-  const isMk=document.getElementById('tab-marketing').classList.contains('on');
-  let csv,file;
-  if(isMk){const mp=mkPeriodFromIds(mkPeriodIds),rows=mkRowsP(mp),tot=mkSumP(mp);csv=[['Canal','Investimento','Receita','Leads','Novos','ROAS'],...rows.map(x=>[x.canal,x.invest.toFixed(2).replace('.',','),x.receita.toFixed(2).replace('.',','),x.leads,x.novos,x.roas.toFixed(2).replace('.',',')]),[], ['Total Investimento',tot.invest.toFixed(2).replace('.',',')],['Total Receita',tot.receita.toFixed(2).replace('.',',')],['ROAS Médio',tot.roas.toFixed(2).replace('.',',')]].map(r=>r.join(';')).join('\n');file=`ALQ_Farma_Marketing.csv`;}
-  else{const cp=periodFromIds(cPeriodIds),d=grP(cp),t=timeP(cp),nps=npsP(cp);csv=[['Médico','Efetuados','Aprovados','Rejeitados','Valor (R$)','Índice (%)'],...d.map(x=>[x.med,x.ef,x.ap,x.rj,x.vl.toFixed(2).replace('.',','),x.ix.toFixed(2).replace('.',',')]),[], ['NPS',nps||''],['T. Atend.',t?ft(t.at):''],['T. Cálculo',t?ft(t.ca):'']].map(r=>r.join(';')).join('\n');file=`ALQ_Farma_${pLabel(cp).replace(/[^A-Za-z0-9]+/g,'_')}.csv`;}
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=file;a.click();
+  const cp=periodFromIds(cPeriodIds), t=timeP(cp), nps=npsP(cp), q=orcQtdSumP(cp), v=orcValSumP(cp);
+  const med=grP(cp), ativoNum=grAtP(cp,'num'), ativoVal=grAtP(cp,'val');
+  const resumo=[{
+    periodo:pLabel(cp),
+    nps:nps??'',
+    taxa_rejeicao_medicos_pct:ar(med)??'',
+    tempo_atendimento:t?ft(t.at):'',
+    tempo_calculo:t?ft(t.ca):'',
+    tempo_aprovacao:t?ft(t.ap):'',
+    tempo_inclusao:t?ft(t.in):'',
+    orcamentos_total:q.tot,
+    orcamentos_aprovados:q.ap,
+    orcamentos_rejeitados:q.rj,
+    taxa_aprovacao_qtd_pct:q.pctAp,
+    valor_orcamentos_total:v.tot,
+    valor_aprovado:v.ap,
+    valor_rejeitado:v.rj,
+    taxa_aprovacao_valor_pct:v.pctAp
+  }];
+  let rows=[];
+  rows.push(...csvSection('RESUMO DO PERÍODO SELECIONADO',resumo));
+  rows.push(...csvSection('FATURAMENTO MENSAL',DF));
+  rows.push(...csvSection('FATURAMENTO POR CATEGORIA',DFC));
+  rows.push(...csvSection('ORÇAMENTOS - QUANTIDADE',DOQ));
+  rows.push(...csvSection('ORÇAMENTOS - VALORES',DOV));
+  rows.push(...csvSection('TICKET MÉDIO',DTM));
+  rows.push(...csvSection('TICKET MÉDIO POR CATEGORIA',DTMC));
+  rows.push(...csvSection('REJEIÇÃO POR MÉDICO - PERÍODO SELECIONADO',med));
+  rows.push(...csvSection('REJEIÇÃO POR ATIVO - QUANTIDADE - PERÍODO SELECIONADO',ativoNum));
+  rows.push(...csvSection('REJEIÇÃO POR ATIVO - VALOR - PERÍODO SELECIONADO',ativoVal));
+  rows.push(...csvSection('REJEIÇÕES POR MÉDICO - HISTÓRICO COMPLETO',DR));
+  rows.push(...csvSection('REJEIÇÕES POR ATIVO - HISTÓRICO COMPLETO',DA));
+  rows.push(...csvSection('TEMPOS DE ATENDIMENTO',DT));
+  rows.push(...csvSection('NPS MENSAL',DN));
+  rows.push(...csvSection('MOTIVOS NPS',[
+    ...motivesToRows(DP_PROM,'Promotores'),
+    ...motivesToRows(DP_NEU,'Neutros'),
+    ...motivesToRows(DP_DET,'Detratores')
+  ]));
+  rows.push(...csvSection('MARKETING - CONSOLIDADO POR CANAL',MK));
+  rows.push(...csvSection('MARKETING - CAMPANHAS',MKC));
+  rows.push(...csvSection('MARKETING - GOOGLE ADS / INDICADORES',MKS));
+  rows.push(...csvSection('MARKETING - NOVOS CLIENTES / CAC',MK_CAC));
+  rows.push(...csvSection('MARKETING - REPESCAGEM',MKR));
+  const csv='\uFEFF'+rows.map(r=>r.map(csvCell).join(';')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ALQ_Farma_Dashboard_Dados.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
 
 
@@ -1796,75 +1860,86 @@ function setPdfProgress(step,total,label){
 }
 function hidePdfProgress(){document.getElementById('pdf-progress')?.classList.remove('on')}
 function safePdfName(){
-  const d=new Date();
-  const pad=n=>String(n).padStart(2,'0');
+  const d=new Date(),pad=n=>String(n).padStart(2,'0');
   return `ALQ_Farma_Dashboard_${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()}.pdf`;
 }
-async function captureNodeToPdf(pdf,node,isFirstPageRef){
-  node.scrollIntoView({block:'start'});
-  await new Promise(r=>setTimeout(r,120));
-  const canvas=await html2canvas(node,{scale:1.6,useCORS:true,backgroundColor:'#ffffff',logging:false,windowWidth:Math.max(document.documentElement.scrollWidth,1400)});
-  const imgW=canvas.width,imgH=canvas.height;
+async function pdfCanvas(node){
+  if(!node)return null;
+  await new Promise(r=>setTimeout(r,80));
+  return html2canvas(node,{
+    scale:1.8,useCORS:true,backgroundColor:'#ffffff',logging:false,
+    scrollX:0,scrollY:-window.scrollY,
+    windowWidth:Math.max(1440,document.documentElement.clientWidth),
+    onclone:doc=>{
+      doc.querySelectorAll('.pdf-progress,.auth-modal,.overlay').forEach(el=>el.style.display='none');
+    }
+  });
+}
+function addCanvasFit(pdf,canvas,firstRef,opts={}){
+  if(!canvas)return;
   const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight();
-  const margin=7;
-  const drawW=pageW-margin*2;
-  const maxDrawH=pageH-margin*2;
-  const srcSliceH=Math.floor(maxDrawH*imgW/drawW);
-  let y=0;
-  while(y<imgH){
-    const sliceH=Math.min(srcSliceH,imgH-y);
-    const slice=document.createElement('canvas');
-    slice.width=imgW;slice.height=sliceH;
-    slice.getContext('2d').drawImage(canvas,0,y,imgW,sliceH,0,0,imgW,sliceH);
-    const drawH=sliceH*drawW/imgW;
-    if(!isFirstPageRef.value)pdf.addPage('a4','landscape');
-    isFirstPageRef.value=false;
-    pdf.addImage(slice.toDataURL('image/jpeg',0.94),'JPEG',margin,margin,drawW,drawH,undefined,'FAST');
-    y+=sliceH;
+  const margin=opts.margin??7, top=opts.top??margin;
+  const maxW=pageW-margin*2, maxH=pageH-top-margin;
+  const ratio=Math.min(maxW/canvas.width,maxH/canvas.height);
+  const w=canvas.width*ratio,h=canvas.height*ratio;
+  const x=(pageW-w)/2;
+  if(!firstRef.value)pdf.addPage('a4','landscape');
+  firstRef.value=false;
+  pdf.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',x,top,w,h,undefined,'FAST');
+}
+async function addSummaryPage(pdf,nodes,firstRef){
+  const canvases=[];
+  for(const n of nodes){const c=await pdfCanvas(n);if(c)canvases.push(c)}
+  if(!canvases.length)return;
+  const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),margin=7,gap=3;
+  if(!firstRef.value)pdf.addPage('a4','landscape');
+  firstRef.value=false;
+  let y=margin;
+  const maxW=pageW-margin*2;
+  for(const c of canvases){
+    let scale=maxW/c.width;
+    let h=c.height*scale;
+    const remain=pageH-margin-y;
+    if(h>remain){scale=remain/c.height;h=c.height*scale;}
+    const w=c.width*scale;
+    pdf.addImage(c.toDataURL('image/jpeg',0.95),'JPEG',(pageW-w)/2,y,w,h,undefined,'FAST');
+    y+=h+gap;
+    if(y>=pageH-margin)break;
   }
 }
 async function exportPDF(){
-  if(document.body.classList.contains('auth-locked')){
-    alert('Entre no dashboard antes de exportar o PDF.');return;
-  }
-  if(typeof html2canvas==='undefined'||!window.jspdf?.jsPDF){
-    alert('Não foi possível carregar o gerador de PDF. Verifique sua conexão e tente novamente.');return;
-  }
+  if(document.body.classList.contains('auth-locked')){alert('Entre no dashboard antes de exportar o PDF.');return;}
+  if(typeof html2canvas==='undefined'||!window.jspdf?.jsPDF){alert('Não foi possível carregar o gerador de PDF. Verifique sua conexão e tente novamente.');return;}
   const prevTab=document.getElementById('tab-marketing').classList.contains('on')?'marketing':'comercial';
   const prevScroll=window.scrollY;
   try{
-    setPdfProgress(0,1,'Preparando gráficos e páginas...');
+    setPdfProgress(0,1,'Preparando gráficos...');
     render();renderMarketing();
-    document.body.classList.add('pdf-exporting');
-    document.body.classList.remove('auth-locked');
-    await document.fonts.ready;
-    await new Promise(r=>setTimeout(r,450));
-
-    const commercial=document.getElementById('tab-comercial');
-    const marketing=document.getElementById('tab-marketing');
+    await document.fonts.ready;await new Promise(r=>setTimeout(r,350));
+    const commercial=document.getElementById('tab-comercial'),marketing=document.getElementById('tab-marketing');
+    const oldC=commercial.classList.contains('on'),oldM=marketing.classList.contains('on');
     commercial.classList.add('on');marketing.classList.add('on');
-
-    const nodes=[
-      ...commercial.querySelectorAll('.page-hd, .insight-strip, .kpi-grid, .sec'),
-      ...marketing.querySelectorAll('.mk-hero, .sec')
-    ].filter(el=>el && el.offsetWidth>0 && el.offsetHeight>0);
-
-    const {jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true});
-    const first={value:true};
-    for(let i=0;i<nodes.length;i++){
-      const node=nodes[i];
-      const title=node.querySelector?.('.sec-title,.page-hd-title,.mk-hero-title')?.textContent?.trim()||`Página ${i+1}`;
-      setPdfProgress(i,nodes.length,`Exportando ${i+1} de ${nodes.length}: ${title}`);
-      await captureNodeToPdf(pdf,node,first);
+    commercial.style.display='block';marketing.style.display='block';
+    const {jsPDF}=window.jspdf,pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true}),first={value:true};
+    const summaryNodes=[commercial.querySelector('.page-hd'),commercial.querySelector('.insight-strip'),commercial.querySelector('.kpi-grid')].filter(Boolean);
+    const sections=[...commercial.querySelectorAll('.sec'),marketing.querySelector('.mk-hero'),...marketing.querySelectorAll('.sec')].filter(Boolean);
+    const total=1+sections.length;
+    setPdfProgress(0,total,'Montando resumo comercial...');
+    await addSummaryPage(pdf,summaryNodes,first);
+    for(let i=0;i<sections.length;i++){
+      const node=sections[i];
+      const title=node.querySelector?.('.sec-title,.mk-hero-title')?.textContent?.trim()||`Página ${i+2}`;
+      setPdfProgress(i+1,total,`Exportando ${i+2} de ${total}: ${title}`);
+      node.scrollIntoView({block:'start'});await new Promise(r=>setTimeout(r,60));
+      const canvas=await pdfCanvas(node);
+      addCanvasFit(pdf,canvas,first);
     }
-    setPdfProgress(nodes.length,nodes.length,'Finalizando arquivo...');
+    setPdfProgress(total,total,'Finalizando PDF...');
     pdf.save(safePdfName());
-  }catch(err){
-    console.error('Erro ao exportar PDF:',err);
-    alert('O PDF não pôde ser gerado. Abra o console do navegador para ver o erro.');
-  }finally{
-    document.body.classList.remove('pdf-exporting');
+    commercial.style.display='';marketing.style.display='';
+    commercial.classList.toggle('on',oldC);marketing.classList.toggle('on',oldM);
+  }catch(err){console.error('Erro ao exportar PDF:',err);alert('O PDF não pôde ser gerado. Abra o console do navegador para ver o erro.');}
+  finally{
     hidePdfProgress();
     showTab(prevTab);
     window.scrollTo(0,prevScroll);
@@ -2170,11 +2245,12 @@ function recalcPeriods() {
   if (meses2026.length === 0) return;
   const newPeriods = meses2026.map(d => {
     const abbr = MS[MO.indexOf(d.mes)]; const yr = String(d.ano).slice(-2);
-    const id = d.mes.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s/g, '-') + yr;
+    const id = abbr.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') + yr;
     return { id, label: `${abbr}/${yr}`, months: [{m: d.mes, a: d.ano}] };
   });
   PERIODS.length = 0; newPeriods.forEach(p => PERIODS.push(p));
   MONTH_PERIODS.length = 0; PERIODS.filter(p => p.months.length === 1).forEach(p => MONTH_PERIODS.push(p));
+  initCompSelects();
   const latest = MONTH_PERIODS[0];
   if (latest) {
     cPeriodIds = [latest.id]; cPeriodStartId = latest.id; cPeriodEndId = latest.id;
