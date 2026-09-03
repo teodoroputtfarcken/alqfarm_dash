@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -202,6 +204,24 @@ body.auth-locked .auth-modal{display:flex}
 .fat-kpi-tag{font-size:9px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
 .fat-kpi-val{font-size:24px;font-weight:700;color:var(--navy);letter-spacing:-.02em;margin-bottom:6px}
 .fat-kpi-sub{font-size:10px;color:var(--blue);font-weight:500}
+/* PDF export */
+.pdf-exporting .auth-modal{display:none!important}
+.pdf-exporting .sidebar,.pdf-exporting .topbar,.pdf-exporting .overlay{display:none!important}
+.pdf-exporting .main{margin-left:0!important;width:100%!important}
+.pdf-exporting .tc{display:block!important}
+.pdf-exporting .content{padding:18px!important}
+.pdf-exporting .filter-strip,.pdf-exporting .page-hd-actions{display:none!important}
+.pdf-exporting .sec,.pdf-exporting .mk-hero{box-shadow:none!important}
+.pdf-btn{background:#fff;color:var(--navy);border:1px solid rgba(255,255,255,.28)}
+.pdf-btn-dark{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pdf-progress{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(10,15,30,.52);backdrop-filter:blur(4px)}
+.pdf-progress.on{display:flex}
+.pdf-progress-card{width:min(360px,calc(100% - 32px));background:#fff;border-radius:16px;padding:24px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.25)}
+.pdf-progress-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.pdf-progress-sub{font-size:11px;color:var(--blue);line-height:1.5}
+.pdf-progress-bar{height:7px;background:#edf2f9;border-radius:99px;overflow:hidden;margin-top:16px}
+.pdf-progress-fill{height:100%;width:0;background:var(--navy);transition:width .2s ease}
+
 /* scrollbar */
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -233,6 +253,14 @@ body.auth-locked .auth-modal{display:flex}
   </form>
 </div>
 
+<div class="pdf-progress" id="pdf-progress" aria-live="polite">
+  <div class="pdf-progress-card">
+    <div class="pdf-progress-title">Gerando PDF do dashboard</div>
+    <div class="pdf-progress-sub" id="pdf-progress-text">Preparando páginas...</div>
+    <div class="pdf-progress-bar"><div class="pdf-progress-fill" id="pdf-progress-fill"></div></div>
+  </div>
+</div>
+
 <aside class="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-mark"><img class="sb-logo-img" src="logo.png" alt="ALQ Farma" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none;font-size:16px;font-weight:800;color:#fff;letter-spacing:-.02em">ALQ Farma</span></div>
@@ -252,6 +280,7 @@ body.auth-locked .auth-modal{display:flex}
     <button class="sb-item" onclick="goSection('sec-nps',this)"><span class="sb-item-icon">⭐</span> NPS</button>
     <div class="sb-section-label" style="margin-top:8px">Ferramentas</div>
     <button class="sb-item" onclick="expCSV()"><span class="sb-item-icon">⬇</span> Exportar CSV</button>
+    <button class="sb-item" onclick="exportPDF()"><span class="sb-item-icon">📄</span> Exportar PDF</button>
     <button class="sb-item" onclick="refData()"><span class="sb-item-icon">↻</span> Atualizar dados</button>
   </nav>
   <div class="sb-footer">
@@ -277,7 +306,8 @@ body.auth-locked .auth-modal{display:flex}
         <button class="tab-switch-btn on" onclick="swTab('comercial',this)">Comercial</button>
         <button class="tab-switch-btn" onclick="swTab('marketing',this)">Marketing</button>
       </div>
-      <button class="topbar-btn" onclick="expCSV()">⬇ Exportar</button>
+      <button class="topbar-btn" onclick="expCSV()">⬇ CSV</button>
+      <button class="topbar-btn pdf-btn-dark" onclick="exportPDF()">📄 PDF</button>
       <button class="topbar-btn topbar-btn-p" id="btn-ref" onclick="refData()">↻ Atualizar</button>
     </div>
   </header>
@@ -1752,6 +1782,93 @@ function expCSV(){
   if(isMk){const mp=mkPeriodFromIds(mkPeriodIds),rows=mkRowsP(mp),tot=mkSumP(mp);csv=[['Canal','Investimento','Receita','Leads','Novos','ROAS'],...rows.map(x=>[x.canal,x.invest.toFixed(2).replace('.',','),x.receita.toFixed(2).replace('.',','),x.leads,x.novos,x.roas.toFixed(2).replace('.',',')]),[], ['Total Investimento',tot.invest.toFixed(2).replace('.',',')],['Total Receita',tot.receita.toFixed(2).replace('.',',')],['ROAS Médio',tot.roas.toFixed(2).replace('.',',')]].map(r=>r.join(';')).join('\n');file=`ALQ_Farma_Marketing.csv`;}
   else{const cp=periodFromIds(cPeriodIds),d=grP(cp),t=timeP(cp),nps=npsP(cp);csv=[['Médico','Efetuados','Aprovados','Rejeitados','Valor (R$)','Índice (%)'],...d.map(x=>[x.med,x.ef,x.ap,x.rj,x.vl.toFixed(2).replace('.',','),x.ix.toFixed(2).replace('.',',')]),[], ['NPS',nps||''],['T. Atend.',t?ft(t.at):''],['T. Cálculo',t?ft(t.ca):'']].map(r=>r.join(';')).join('\n');file=`ALQ_Farma_${pLabel(cp).replace(/[^A-Za-z0-9]+/g,'_')}.csv`;}
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download=file;a.click();
+}
+
+
+/* ── PDF COMPLETO DO DASHBOARD ───────────────────────────── */
+function setPdfProgress(step,total,label){
+  const modal=document.getElementById('pdf-progress');
+  const txt=document.getElementById('pdf-progress-text');
+  const fill=document.getElementById('pdf-progress-fill');
+  if(modal)modal.classList.add('on');
+  if(txt)txt.textContent=label||'Gerando páginas...';
+  if(fill)fill.style.width=`${Math.max(2,Math.round((step/Math.max(total,1))*100))}%`;
+}
+function hidePdfProgress(){document.getElementById('pdf-progress')?.classList.remove('on')}
+function safePdfName(){
+  const d=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  return `ALQ_Farma_Dashboard_${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()}.pdf`;
+}
+async function captureNodeToPdf(pdf,node,isFirstPageRef){
+  node.scrollIntoView({block:'start'});
+  await new Promise(r=>setTimeout(r,120));
+  const canvas=await html2canvas(node,{scale:1.6,useCORS:true,backgroundColor:'#ffffff',logging:false,windowWidth:Math.max(document.documentElement.scrollWidth,1400)});
+  const imgW=canvas.width,imgH=canvas.height;
+  const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight();
+  const margin=7;
+  const drawW=pageW-margin*2;
+  const maxDrawH=pageH-margin*2;
+  const srcSliceH=Math.floor(maxDrawH*imgW/drawW);
+  let y=0;
+  while(y<imgH){
+    const sliceH=Math.min(srcSliceH,imgH-y);
+    const slice=document.createElement('canvas');
+    slice.width=imgW;slice.height=sliceH;
+    slice.getContext('2d').drawImage(canvas,0,y,imgW,sliceH,0,0,imgW,sliceH);
+    const drawH=sliceH*drawW/imgW;
+    if(!isFirstPageRef.value)pdf.addPage('a4','landscape');
+    isFirstPageRef.value=false;
+    pdf.addImage(slice.toDataURL('image/jpeg',0.94),'JPEG',margin,margin,drawW,drawH,undefined,'FAST');
+    y+=sliceH;
+  }
+}
+async function exportPDF(){
+  if(document.body.classList.contains('auth-locked')){
+    alert('Entre no dashboard antes de exportar o PDF.');return;
+  }
+  if(typeof html2canvas==='undefined'||!window.jspdf?.jsPDF){
+    alert('Não foi possível carregar o gerador de PDF. Verifique sua conexão e tente novamente.');return;
+  }
+  const prevTab=document.getElementById('tab-marketing').classList.contains('on')?'marketing':'comercial';
+  const prevScroll=window.scrollY;
+  try{
+    setPdfProgress(0,1,'Preparando gráficos e páginas...');
+    render();renderMarketing();
+    document.body.classList.add('pdf-exporting');
+    document.body.classList.remove('auth-locked');
+    await document.fonts.ready;
+    await new Promise(r=>setTimeout(r,450));
+
+    const commercial=document.getElementById('tab-comercial');
+    const marketing=document.getElementById('tab-marketing');
+    commercial.classList.add('on');marketing.classList.add('on');
+
+    const nodes=[
+      ...commercial.querySelectorAll('.page-hd, .insight-strip, .kpi-grid, .sec'),
+      ...marketing.querySelectorAll('.mk-hero, .sec')
+    ].filter(el=>el && el.offsetWidth>0 && el.offsetHeight>0);
+
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true});
+    const first={value:true};
+    for(let i=0;i<nodes.length;i++){
+      const node=nodes[i];
+      const title=node.querySelector?.('.sec-title,.page-hd-title,.mk-hero-title')?.textContent?.trim()||`Página ${i+1}`;
+      setPdfProgress(i,nodes.length,`Exportando ${i+1} de ${nodes.length}: ${title}`);
+      await captureNodeToPdf(pdf,node,first);
+    }
+    setPdfProgress(nodes.length,nodes.length,'Finalizando arquivo...');
+    pdf.save(safePdfName());
+  }catch(err){
+    console.error('Erro ao exportar PDF:',err);
+    alert('O PDF não pôde ser gerado. Abra o console do navegador para ver o erro.');
+  }finally{
+    document.body.classList.remove('pdf-exporting');
+    hidePdfProgress();
+    showTab(prevTab);
+    window.scrollTo(0,prevScroll);
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
