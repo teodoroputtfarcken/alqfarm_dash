@@ -539,8 +539,8 @@ body.auth-locked .auth-modal{display:flex}
   <div class="tc" id="tab-marketing"><div class="content">
     <div class="mk-hero">
       <div class="mk-hero-ey">ALQ Farma — Relatório de Marketing</div>
-      <div class="mk-hero-title">Performance Consolidada</div>
-      <div class="mk-hero-sub">Análise de campanhas, novos clientes, solicitações pelo site e projeção.</div>
+      <div class="mk-hero-title">Performance de Campanhas</div>
+      <div class="mk-hero-sub">Investimento, retorno e eficiência das campanhas no período selecionado.</div>
       <div class="mk-hero-metrics">
         <div><div class="mk-hero-k">Investimento total</div><div class="mk-hero-v" id="mk-hero-invest">—</div></div>
         <div><div class="mk-hero-k">Retorno total</div><div class="mk-hero-v" id="mk-hero-rev">—</div></div>
@@ -549,54 +549,20 @@ body.auth-locked .auth-modal{display:flex}
       </div>
     </div>
     <div class="filter-strip">
-      <span class="fl">Período:</span>
+      <span class="fl">De:</span>
       <div class="comp-tag"><span class="dot da"></span><select class="comp-select multi-select" id="mk-period-main" onchange="setMkPeriodFromSelect(this)"></select></div>
+      <span class="fl">Até:</span>
       <div class="comp-tag"><span class="dot db"></span><select class="comp-select multi-select" id="mk-comp-a" onchange="setMkCompFromSelect(this)"></select></div>
+      <span class="fl">Campanha:</span>
+      <div class="comp-tag"><select class="comp-select" id="mk-campaign" onchange="setMkCampaign(this)"></select></div>
       <button class="last-month-btn" type="button" onclick="setLastMkMonth()">Último mês</button>
     </div>
     <div class="sec" id="mk-sec-visao">
-      <div class="sec-hd"><div><div class="sec-tag">Visão geral</div><div class="sec-title">Performance de campanhas — nov/25 a mai/26</div></div></div>
+      <div class="sec-hd"><div><div class="sec-tag">Campanhas</div><div class="sec-title">Investimento, retorno e ROAS — <span id="mk-chart-period">—</span></div></div></div>
       <div class="sec-body">
-        <div class="sec-tag" style="margin-bottom:8px">Investimento vs retorno por mês</div>
-        <div class="cwrap" style="height:340px"><canvas id="mkChMonthly"></canvas></div>
-        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">ROAS médio por mês</div><div class="cwrap" style="height:245px"><canvas id="mkChRoasMonth"></canvas></div></div>
-        <div class="sec-div">
-          <div class="g2">
-            <div class="mk-panel mk-panel-bordered"><div class="sec-tag" style="margin-bottom:10px">Destaques de <span id="mk-highlight-period">Abril/26</span></div><div id="mk-camp-tbl" style="overflow-x:auto"></div></div>
-            <div class="mk-panel mk-panel-bordered"><div class="sec-tag" style="margin-bottom:10px">ROAS por canal — <span id="mk-roas-period">Abril/26</span></div><div id="mkRoasChannelBars" class="mk-bar-list"></div></div>
-          </div>
-        </div>
-        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Evolução do ROAS por canal</div><div class="cwrap" style="height:300px"><canvas id="mkChRoasEvo"></canvas></div></div>
-        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Google Ads — ROAS isolado</div><div class="cwrap" style="height:220px"><canvas id="mkChGoogleRoas"></canvas></div></div>
-      </div>
-    </div>
-    <div class="sec" id="mk-sec-clientes">
-      <div class="sec-hd"><div><div class="sec-tag">Novos clientes</div><div class="sec-title">Cadastros e conversões — jan a mai/26</div></div></div>
-      <div class="sec-body">
-        <div class="mk-small-cards" id="mk-client-cards"></div>
-        <div class="leg"><span class="li"><span class="lb" style="background:var(--chart-blue-1)"></span>Cadastros novos</span><span class="li"><span class="lb" style="background:var(--chart-blue-4)"></span>Com compras</span></div>
-        <div class="sec-tag" style="margin:10px 0 8px">Cadastros novos vs com compras</div>
-        <div class="cwrap" style="height:320px"><canvas id="mkChCadastros"></canvas></div>
-        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Taxa de conversão por mês (%)</div><div class="cwrap" style="height:230px"><canvas id="mkChConv"></canvas></div></div>
-        <div class="sec-div"><div class="g2"><div class="mk-panel mk-panel-bordered" id="mk-cac-new"></div><div class="mk-panel mk-panel-bordered" id="mk-cac-buy"></div></div></div>
-        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">CAC comparativo (R$)</div><div class="cwrap" style="height:260px"><canvas id="mkChCac"></canvas></div></div>
-      </div>
-    </div>
-    <div class="sec" id="mk-sec-google">
-      <div class="sec-hd"><div><div class="sec-tag">Google Ads — solicitações pelo site</div><div class="sec-title">Resultados de <span id="mk-google-period">abril</span></div></div></div>
-      <div class="sec-body">
-        <div class="mk-small-cards" id="mk-google-cards"></div>
-        <div class="sec-title" style="font-size:15px;margin:8px 0">Projeção — próximo mês</div>
-        <p class="mk-note">Projeção baseada na eficiência do mês selecionado com investimento previsto. Se conversão e ticket médio se mantiverem, o valor aprovado pode chegar ao cenário projetado.</p>
-        <div id="mk-proj-tbl" style="overflow-x:auto"></div>
-      </div>
-    </div>
-    <div class="sec" id="mk-sec-repescagem">
-      <div class="sec-hd"><div><div class="sec-tag">Pedido Pago — ação recorrente</div><div class="sec-title">Repescagem diária</div></div></div>
-      <div class="sec-body">
-        <p class="mk-note">Ação contínua do canal Pedido Pago com envios automáticos para a base de clientes.</p>
-        <div class="g2" id="mk-rep-cards"></div>
-        <div class="sec-div"><div class="sec-tag" style="margin-bottom:8px">Evolução março → maio</div><div class="cwrap" style="height:280px"><canvas id="mkChRepescagem"></canvas></div></div>
+        <div class="sec-tag" id="mk-chart-campaign" style="margin-bottom:8px">Todas as campanhas</div>
+        <div class="mk-note" id="mk-chart-empty" style="display:none;margin-bottom:12px">Não há dados para os filtros selecionados.</div>
+        <div class="cwrap" style="height:420px"><canvas id="mkChCampaignPerformance"></canvas></div>
       </div>
     </div>
   </div></div><!-- /tab-marketing -->
@@ -1151,6 +1117,7 @@ let ativoTipo='val';
 let cPeriodIds=['jul26'],cPeriodStartId='jul26',cPeriodEndId='jul26';
 let mkM='Julho',mkA=2026,mkPeriodId='mk-jul26';
 let mkPeriodIds=['mk-jul26'],mkPeriodStartId='mk-jul26',mkPeriodEndId='mk-jul26';
+let mkCampaignFilter='all';
 const CH={};
 
 /* ── FATURAMENTO RENDER ───────────────────────────────────── */
@@ -1628,55 +1595,50 @@ function renderDonut(id,lgId,data,colors){
 
 /* ── MARKETING RENDER ─────────────────────────────────────── */
 function mkReportPeriods(){return MK_PERIODS.filter(p=>p.months.length===1).slice().reverse()}
-function mkMonthName(p){return pEnd(p).m.toLowerCase()}
-function mkGoogleMetrics(p){
-  const rows=MKS.filter(d=>inP(d,p));
-  const val=name=>rows.find(d=>d.metrica===name)?.valor||'—';
-  const end=pEnd(p);
-  const mCamp=MKC.filter(d=>d.mes===end.m&&d.ano===end.a&&d.canal==='Google Ads');
-  const totSol=end.mes==='Maio'?86:(end.mes==='Abril'?70:45);
-  const totAprov=end.mes==='Maio'?12:(end.mes==='Abril'?10:11);
-  const ticket=end.mes==='Maio'?233.75:(end.mes==='Abril'?233.75:402.69);
-  const valor=end.mes==='Maio'?2805.00:(end.mes==='Abril'?2337.50:9072.42);
-  return{sol:totSol,aprov:totAprov,ticket,valor,at:val('Tempo médio atendimento'),calc:val('Tempo médio cálculo'),pix:val('Pag. via Pix'),cartao:val('Pag. via Cartão'),naoCalc:val('Não calculadas'),primeiras:end.mes==='Maio'?75:(end.mes==='Abril'?61:31),primeirasAp:val('Primeiras aprovações')}
+function mkFilteredCampaignRows(p){return MKC.filter(d=>inP(d,p)&&(mkCampaignFilter==='all'||d.campanha===mkCampaignFilter))}
+function mkCampaignSummary(p){
+  const rows=mkFilteredCampaignRows(p);
+  const invest=rows.reduce((s,d)=>s+d.invest,0),receita=rows.reduce((s,d)=>s+d.receita,0);
+  return{rows,invest,receita,roas:invest?receita/invest:0};
+}
+function renderMkCampaignSelect(mp){
+  const el=document.getElementById('mk-campaign');if(!el)return;
+  const campaigns=[...new Set(MKC.filter(d=>inP(d,mp)).map(d=>d.campanha).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  if(mkCampaignFilter!=='all'&&!campaigns.includes(mkCampaignFilter))mkCampaignFilter='all';
+  el.innerHTML='';
+  const all=document.createElement('option');all.value='all';all.textContent='Todas as campanhas';el.appendChild(all);
+  campaigns.forEach(c=>{const option=document.createElement('option');option.value=c;option.textContent=c;el.appendChild(option)});
+  el.value=mkCampaignFilter;
 }
 function renderMarketing(){
-  const mp=mkPeriodFromIds(mkPeriodIds),cmp=null;
+  const mp=mkPeriodFromIds(mkPeriodIds);
   const end=pEnd(mp);mkM=end.m;mkA=end.a;
-  const cur=mkSumP(mp),prev=cmp?mkSumP(cmp):null;
   renderMkSelects();
+  renderMkCampaignSelect(mp);
+  const cur=mkCampaignSummary(mp);
   if(document.getElementById('tab-marketing').classList.contains('on'))document.getElementById('tb-path').textContent='Marketing';
-  const periods=mkReportPeriods(),monthly=periods.map(p=>({p,sum:mkSumP(p)}));
-  const best=monthly.slice().sort((a,b)=>b.sum.roas-a.sum.roas)[0];
+  const monthly=mp.months.slice().sort((a,b)=>monthKey(a)-monthKey(b)).map(month=>{
+    const p={months:[month]},sum=mkCampaignSummary(p);
+    return{p,label:sl(month.m,month.a),sum};
+  });
+  const best=monthly.filter(x=>x.sum.invest>0).sort((a,b)=>b.sum.roas-a.sum.roas)[0];
   document.getElementById('mk-hero-invest').textContent=brl(cur.invest).replace(',00','');
   document.getElementById('mk-hero-rev').textContent=brl(cur.receita).replace(',00','');
   document.getElementById('mk-hero-roas').textContent=cur.roas.toFixed(1)+'×';
-  document.getElementById('mk-hero-best').textContent=best?pLabel(best.p):'—';
-  document.getElementById('mk-highlight-period').textContent=pLabel(mp);
-  document.getElementById('mk-roas-period').textContent=pLabel(mp);
-  document.getElementById('mk-google-period').textContent=mkMonthName(mp);
-  renderMkCharts(mp,periods,monthly);
-  renderMkTables(mp);
-  renderMkClientes();
-  renderMkGoogle(mp);
-  renderMkRepescagem();
+  document.getElementById('mk-hero-best').textContent=best?best.label:'—';
+  document.getElementById('mk-chart-period').textContent=pLabel(mp);
+  document.getElementById('mk-chart-campaign').textContent=mkCampaignFilter==='all'?'Todas as campanhas':mkCampaignFilter;
+  document.getElementById('mk-chart-empty').style.display=cur.rows.length?'none':'block';
+  renderMkCharts(monthly);
 }
-function renderMkCharts(mp,periods,monthed){
-  const labels=periods.map(p=>p.label);
-  if(CH.mkMonthly)CH.mkMonthly.destroy();
-  CH.mkMonthly=new Chart(document.getElementById('mkChMonthly'),{type:'bar',data:{labels,datasets:[
-    {label:'Investimento',data:monthed.map(x=>x.sum.invest),backgroundColor:'#2f4174',borderRadius:0,barPercentage:.35},
-    {label:'Retorno',data:monthed.map(x=>x.sum.receita),backgroundColor:'#86a1cf',borderRadius:0,barPercentage:.35}
-  ]},options:{...CDef,plugins:{...CDef.plugins,tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>'R$'+(v/1000).toFixed(0)+'k'}}}}});
-  if(CH.mkRoasMonth)CH.mkRoasMonth.destroy();
-  CH.mkRoasMonth=new Chart(document.getElementById('mkChRoasMonth'),{type:'line',data:{labels,datasets:[{label:'ROAS',data:monthed.map(x=>x.sum.roas),borderColor:'#2f4174',backgroundColor:'rgba(47,65,116,.10)',fill:true,tension:.25,pointRadius:5,pointBackgroundColor:'#2f4174'}]},options:{...CDef,scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v.toFixed(1)+'×'}}}}});
-  renderMkRoasChannel(mkRoasByChannelP(mp));
-  const channels=[...new Set(MK.map(r=>r.canal))];
-  if(CH.mkRoasEvo)CH.mkRoasEvo.destroy();
-  CH.mkRoasEvo=new Chart(document.getElementById('mkChRoasEvo'),{type:'line',data:{labels,datasets:channels.map((ch,i)=>({label:ch,data:periods.map(p=>mkRowsP(p).find(r=>r.canal===ch)?.roas||null),borderColor:['#2f4174','#86a1cf','#182a5c'][i%3],backgroundColor:'transparent',tension:.2,pointRadius:3,borderDash:i===1?[6,4]:[]}))},options:{...CDef,plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:8,font:{family:'Poppins',size:10}}}},scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v+'×'}}}}});
-  if(CH.mkGoogleRoas)CH.mkGoogleRoas.destroy();
-  const googlePeriods=periods.filter(p=>mkRowsP(p).some(r=>r.canal==='Google Ads'));
-  CH.mkGoogleRoas=new Chart(document.getElementById('mkChGoogleRoas'),{type:'line',data:{labels:googlePeriods.map(p=>p.label),datasets:[{label:'Google Ads',data:googlePeriods.map(p=>mkRowsP(p).find(r=>r.canal==='Google Ads').roas),borderColor:'#46598f',backgroundColor:'rgba(70,89,143,.10)',fill:true,tension:.25,pointRadius:4,pointBackgroundColor:'#46598f'}]},options:{...CDef,scales:{...CDef.scales,y:{...CDef.scales.y,ticks:{...CDef.scales.y.ticks,callback:v=>v.toFixed(1)+'×'}}}}});
+function renderMkCharts(monthly){
+  const labels=monthly.map(x=>x.label);
+  if(CH.mkCampaignPerformance)CH.mkCampaignPerformance.destroy();
+  CH.mkCampaignPerformance=new Chart(document.getElementById('mkChCampaignPerformance'),{type:'bar',data:{labels,datasets:[
+    {type:'bar',label:'Investimento',data:monthly.map(x=>x.sum.invest),backgroundColor:'#2f4174',borderRadius:4,barPercentage:.55,categoryPercentage:.72,yAxisID:'y'},
+    {type:'bar',label:'Retorno',data:monthly.map(x=>x.sum.receita),backgroundColor:'#86a1cf',borderRadius:4,barPercentage:.55,categoryPercentage:.72,yAxisID:'y'},
+    {type:'line',label:'ROAS',data:monthly.map(x=>x.sum.invest?x.sum.roas:null),borderColor:'#00a6c8',backgroundColor:'#00a6c8',borderWidth:3,tension:.25,pointRadius:5,pointHoverRadius:7,pointBackgroundColor:'#00a6c8',yAxisID:'yRoas'}
+  ]},options:{...CDef,interaction:{mode:'index',intersect:false},plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:10,usePointStyle:true,font:{family:'Poppins',size:11,weight:'600'}}},tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>c.dataset.label==='ROAS'?` ROAS: ${Number(c.parsed.y).toFixed(2)}×`:` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},scales:{x:CDef.scales.x,y:{...CDef.scales.y,position:'left',beginAtZero:true,ticks:{...CDef.scales.y.ticks,callback:v=>v>=1000?'R$ '+(v/1000).toLocaleString('pt-BR',{maximumFractionDigits:0})+' mil':'R$ '+v.toLocaleString('pt-BR')}},yRoas:{position:'right',beginAtZero:true,grid:{drawOnChartArea:false},border:{display:false},ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e',callback:v=>v.toLocaleString('pt-BR',{maximumFractionDigits:1})+'×'}}}}});
 }
 function renderMkRoasChannel(rows){const el=document.getElementById('mkRoasChannelBars');if(!el)return;const max=Math.max(...rows.map(r=>r.roas),1);el.innerHTML=rows.length?rows.map(r=>`<div class="mk-bar-row"><div>${r.canal}</div><div class="mk-bar-track"><div class="mk-bar-fill" style="width:${Math.max(3,r.roas/max*100).toFixed(1)}%"></div></div><div class="mk-bar-value">${r.roas.toFixed(1)}×</div></div>`).join(''):'<div class="mk-note">Sem dados.</div>'}
 function renderMkTables(mp){const camps=mkCampsP(mp).slice().sort((a,b)=>b.roas-a.roas).slice(0,5);document.getElementById('mk-camp-tbl').innerHTML=`<table class="dt"><thead><tr><th>Campanha</th><th>Canal</th><th class="tr">ROAS</th></tr></thead><tbody>${camps.map(c=>`<tr><td>${c.campanha}</td><td><span class="badge bg">${c.canal}</span></td><td class="tr"><strong>${c.roas>=10?c.roas.toFixed(0):c.roas.toFixed(1)}×</strong></td></tr>`).join('')}</tbody></table>`}
@@ -1740,6 +1702,7 @@ function renderMkSelects(){const period=document.getElementById('mk-period-main'
 function updateMarketingPeriod(){mkPeriodIds=rangeIdsBetween(mkPeriodStartId,mkPeriodEndId,MK_MONTH_PERIODS)}
 function setMkPeriodFromSelect(sel){mkPeriodStartId=sel.value||'mk-mai26';updateMarketingPeriod();renderMarketing()}
 function setMkCompFromSelect(sel){mkPeriodEndId=sel.value||mkPeriodStartId;updateMarketingPeriod();renderMarketing()}
+function setMkCampaign(sel){mkCampaignFilter=sel.value||'all';renderMarketing()}
 function setLastMkMonth(){const latest=MK_MONTH_PERIODS[0]?.id||'mk-jul26';mkPeriodStartId=latest;mkPeriodEndId=latest;updateMarketingPeriod();renderMkSelects();renderMarketing()}
 
 /* ── TAB / NAV ───────────────────────────────────────────── */
@@ -2191,7 +2154,7 @@ function transformNovosCac(rows) {
 async function loadAllSheetData() {
   let anyLoaded = false;
   try {
-    const [fatur, fatCategs, orcQ, orcV, ticket, ticketCat, rejAtivos, rejMedicos, tempos, nps, promotores, neutros, detratores, googleAds, novosCac, roas, campanhas, repescagem] = await Promise.all([
+    const [fatur, fatCategs, orcQ, orcV, ticket, ticketCat, rejAtivos, rejMedicos, tempos, nps, promotores, neutros, detratores, campanhas] = await Promise.all([
       fetchSheetData('Faturamento', SHEETS_CONFIG.tabs.faturamento),
       fetchSheetData('Faturamento Categorias', SHEETS_CONFIG.tabs.faturamentoCategs),
       fetchSheetData('Orçamentos Qtd', SHEETS_CONFIG.tabs.orcQtd),
@@ -2205,11 +2168,7 @@ async function loadAllSheetData() {
       fetchSheetData('Promotores', SHEETS_CONFIG.tabs.promotores),
       fetchSheetData('Neutros', SHEETS_CONFIG.tabs.neutros),
       fetchSheetData('Detratores', SHEETS_CONFIG.tabs.detratores),
-      fetchSheetData('Google Ads', SHEETS_CONFIG.tabs.googleAds),
-      fetchSheetData('Novos Clientes CAC', SHEETS_CONFIG.tabs.novosCac),
-      fetchSheetData('ROAS', SHEETS_CONFIG.tabs.roas),
-      fetchSheetData('Campanhas', SHEETS_CONFIG.tabs.campanhas),
-      fetchSheetData('Repescagem', SHEETS_CONFIG.tabs.repescagem)
+      fetchSheetData('Campanhas', SHEETS_CONFIG.tabs.campanhas)
     ]);
     if (fatur && fatur.length > 0)     { const r=transformFaturamento(fatur);   if(r){DF=r;anyLoaded=true;} }
     if (fatCategs && fatCategs.length) { const r=transformFatCategs(fatCategs); if(r){DFC=r;anyLoaded=true;} }
@@ -2224,11 +2183,8 @@ async function loadAllSheetData() {
     if (promotores && promotores.length) { DP_PROM=transformMotivos(promotores); }
     if (neutros && neutros.length)       { DP_NEU=transformMotivos(neutros); }
     if (detratores && detratores.length) { DP_DET=transformMotivos(detratores); }
-    if (googleAds && googleAds.length)   { const r=transformMetricaIndicador(googleAds); if(r){MKS=r;} }
-    if (novosCac && novosCac.length)     { const r=transformNovosCac(novosCac);          if(r){MK_CAC=r;} }
     if (campanhas && campanhas.length)   { const r=transformCampanhas(campanhas);        if(r){MK=r.mk; MKC=r.mkc;} }
-    if (repescagem && repescagem.length) { const r=transformMetricaIndicador(repescagem);if(r){MKR=r;} }
-    if (anyLoaded) recalcPeriods();
+    if (anyLoaded) { recalcPeriods(); recalcMarketingPeriods(); }
     return anyLoaded;
   } catch (error) {
     console.error('❌ Erro ao carregar dados:', error);
@@ -2256,6 +2212,26 @@ function recalcPeriods() {
     cPeriodIds = [latest.id]; cPeriodStartId = latest.id; cPeriodEndId = latest.id;
     cM = latest.months[0].m; cA = latest.months[0].a;
   }
+}
+
+function recalcMarketingPeriods() {
+  if (!MKC || MKC.length === 0) return;
+  const seen = new Set();
+  const months = MKC.filter(d => d.ano && MO.includes(d.mes))
+    .sort((a,b) => monthKey({m:b.mes,a:b.ano}) - monthKey({m:a.mes,a:a.ano}))
+    .filter(d => { const key=`${d.ano}-${d.mes}`; if(seen.has(key))return false; seen.add(key); return true; });
+  if (!months.length) return;
+  const newPeriods = months.map(d => {
+    const abbr=MS[MO.indexOf(d.mes)],yr=String(d.ano).slice(-2);
+    const slug=abbr.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return{id:`mk-${slug}${yr}`,label:`${abbr}/${yr}`,months:[{m:d.mes,a:d.ano}]};
+  });
+  MK_PERIODS.length=0;newPeriods.forEach(p=>MK_PERIODS.push(p));
+  MK_MONTH_PERIODS.length=0;newPeriods.forEach(p=>MK_MONTH_PERIODS.push(p));
+  const latest=MK_MONTH_PERIODS[0];
+  if(latest){mkPeriodStartId=latest.id;mkPeriodEndId=latest.id;mkPeriodIds=[latest.id];mkM=latest.months[0].m;mkA=latest.months[0].a;}
+  mkCampaignFilter='all';
+  initMkSelects();
 }
 
 function refData() {
@@ -2292,6 +2268,7 @@ function initAuth(){if(sessionStorage.getItem('alq-auth')==='ok')unlockDashboard
 /* ── INIT ────────────────────────────────────────────────── */
 function startDashboard() {
   initCompSelects();
+  recalcMarketingPeriods();
   initMkSelects();
   document.fonts.load('500 11px Poppins').then(()=>{ render(); initAuth(); });
   loadAllSheetData().then(success => {
