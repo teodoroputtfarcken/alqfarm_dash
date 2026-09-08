@@ -553,12 +553,13 @@ body.auth-locked .auth-modal{display:flex}
       <div class="comp-tag"><span class="dot da"></span><select class="comp-select multi-select" id="mk-period-main" onchange="setMkPeriodFromSelect(this)"></select></div>
       <span class="fl">Até:</span>
       <div class="comp-tag"><span class="dot db"></span><select class="comp-select multi-select" id="mk-comp-a" onchange="setMkCompFromSelect(this)"></select></div>
-      <span class="fl">Campanha:</span>
-      <div class="comp-tag"><select class="comp-select" id="mk-campaign" onchange="setMkCampaign(this)"></select></div>
       <button class="last-month-btn" type="button" onclick="setLastMkMonth()">Último mês</button>
     </div>
     <div class="sec" id="mk-sec-visao">
-      <div class="sec-hd"><div><div class="sec-tag">Campanhas</div><div class="sec-title">Investimento, retorno e ROAS — <span id="mk-chart-period">—</span></div></div></div>
+      <div class="sec-hd">
+        <div><div class="sec-tag">Campanhas</div><div class="sec-title">Investimento, retorno e ROAS — <span id="mk-chart-period">—</span></div></div>
+        <div class="comp-tag"><span class="fl">Campanha:</span><select class="comp-select" id="mk-campaign" onchange="setMkCampaign(this)"></select></div>
+      </div>
       <div class="sec-body">
         <div class="sec-tag" id="mk-chart-campaign" style="margin-bottom:8px">Todas as campanhas</div>
         <div class="mk-note" id="mk-chart-empty" style="display:none;margin-bottom:12px">Não há dados para os filtros selecionados.</div>
@@ -1595,7 +1596,21 @@ function renderDonut(id,lgId,data,colors){
 
 /* ── MARKETING RENDER ─────────────────────────────────────── */
 function mkReportPeriods(){return MK_PERIODS.filter(p=>p.months.length===1).slice().reverse()}
-function mkFilteredCampaignRows(p){return MKC.filter(d=>inP(d,p)&&(mkCampaignFilter==='all'||d.campanha===mkCampaignFilter))}
+const MK_ALLOWED_CAMPAIGNS=[
+  {id:'orcamento',label:'orçamento'},
+  {id:'primeira_compra',label:'primeira_compra'},
+  {id:'repesc_15dias',label:'repesc_15dias'},
+  {id:'primeira_compra_espaco',label:'primeira compra'}
+];
+function mkCampaignGroup(name){
+  const raw=String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if(/^orcamentos?$/.test(raw))return'orcamento';
+  if(/^primeira_compra(?:_|$)/.test(raw))return'primeira_compra';
+  if(/^repesc_15_?dias(?:_|$)/.test(raw))return'repesc_15dias';
+  if(/^primeira compra(?: |$)/.test(raw)||/^primeiracompra(?:_|$)/.test(raw))return'primeira_compra_espaco';
+  return null;
+}
+function mkFilteredCampaignRows(p){return MKC.filter(d=>{const group=mkCampaignGroup(d.campanha);return group&&inP(d,p)&&(mkCampaignFilter==='all'||group===mkCampaignFilter)})}
 function mkCampaignSummary(p){
   const rows=mkFilteredCampaignRows(p);
   const invest=rows.reduce((s,d)=>s+d.invest,0),receita=rows.reduce((s,d)=>s+d.receita,0);
@@ -1603,11 +1618,10 @@ function mkCampaignSummary(p){
 }
 function renderMkCampaignSelect(mp){
   const el=document.getElementById('mk-campaign');if(!el)return;
-  const campaigns=[...new Set(MKC.filter(d=>inP(d,mp)).map(d=>d.campanha).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-  if(mkCampaignFilter!=='all'&&!campaigns.includes(mkCampaignFilter))mkCampaignFilter='all';
+  if(mkCampaignFilter!=='all'&&!MK_ALLOWED_CAMPAIGNS.some(c=>c.id===mkCampaignFilter))mkCampaignFilter='all';
   el.innerHTML='';
   const all=document.createElement('option');all.value='all';all.textContent='Todas as campanhas';el.appendChild(all);
-  campaigns.forEach(c=>{const option=document.createElement('option');option.value=c;option.textContent=c;el.appendChild(option)});
+  MK_ALLOWED_CAMPAIGNS.forEach(c=>{const option=document.createElement('option');option.value=c.id;option.textContent=c.label;el.appendChild(option)});
   el.value=mkCampaignFilter;
 }
 function renderMarketing(){
@@ -1627,7 +1641,8 @@ function renderMarketing(){
   document.getElementById('mk-hero-roas').textContent=cur.roas.toFixed(1)+'×';
   document.getElementById('mk-hero-best').textContent=best?best.label:'—';
   document.getElementById('mk-chart-period').textContent=pLabel(mp);
-  document.getElementById('mk-chart-campaign').textContent=mkCampaignFilter==='all'?'Todas as campanhas':mkCampaignFilter;
+  const campaignLabel=MK_ALLOWED_CAMPAIGNS.find(c=>c.id===mkCampaignFilter)?.label||'Todas as campanhas';
+  document.getElementById('mk-chart-campaign').textContent=campaignLabel;
   document.getElementById('mk-chart-empty').style.display=cur.rows.length?'none':'block';
   renderMkCharts(monthly);
 }
@@ -2217,7 +2232,7 @@ function recalcPeriods() {
 function recalcMarketingPeriods() {
   if (!MKC || MKC.length === 0) return;
   const seen = new Set();
-  const months = MKC.filter(d => d.ano && MO.includes(d.mes))
+  const months = MKC.filter(d => d.ano && MO.includes(d.mes) && mkCampaignGroup(d.campanha))
     .sort((a,b) => monthKey({m:b.mes,a:b.ano}) - monthKey({m:a.mes,a:a.ano}))
     .filter(d => { const key=`${d.ano}-${d.mes}`; if(seen.has(key))return false; seen.add(key); return true; });
   if (!months.length) return;
