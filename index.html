@@ -1618,10 +1618,12 @@ function mkCampaignSummary(p){
 }
 function renderMkCampaignSelect(mp){
   const el=document.getElementById('mk-campaign');if(!el)return;
-  if(mkCampaignFilter!=='all'&&!MK_ALLOWED_CAMPAIGNS.some(c=>c.id===mkCampaignFilter))mkCampaignFilter='all';
+  const available=new Set(MKC.filter(d=>inP(d,mp)).map(d=>mkCampaignGroup(d.campanha)).filter(Boolean));
+  const campaigns=MK_ALLOWED_CAMPAIGNS.filter(c=>available.has(c.id));
+  if(mkCampaignFilter!=='all'&&!campaigns.some(c=>c.id===mkCampaignFilter))mkCampaignFilter='all';
   el.innerHTML='';
   const all=document.createElement('option');all.value='all';all.textContent='Todas as campanhas';el.appendChild(all);
-  MK_ALLOWED_CAMPAIGNS.forEach(c=>{const option=document.createElement('option');option.value=c.id;option.textContent=c.label;el.appendChild(option)});
+  campaigns.forEach(c=>{const option=document.createElement('option');option.value=c.id;option.textContent=c.label;el.appendChild(option)});
   el.value=mkCampaignFilter;
 }
 function renderMarketing(){
@@ -1652,7 +1654,7 @@ function renderMkCharts(monthly){
   CH.mkCampaignPerformance=new Chart(document.getElementById('mkChCampaignPerformance'),{type:'bar',data:{labels,datasets:[
     {type:'bar',label:'Investimento',data:monthly.map(x=>x.sum.invest),backgroundColor:'#2f4174',borderRadius:4,barPercentage:.55,categoryPercentage:.72,yAxisID:'y'},
     {type:'bar',label:'Retorno',data:monthly.map(x=>x.sum.receita),backgroundColor:'#86a1cf',borderRadius:4,barPercentage:.55,categoryPercentage:.72,yAxisID:'y'},
-    {type:'line',label:'ROAS',data:monthly.map(x=>x.sum.invest?x.sum.roas:null),borderColor:'#00a6c8',backgroundColor:'#00a6c8',borderWidth:3,tension:.25,pointRadius:5,pointHoverRadius:7,pointBackgroundColor:'#00a6c8',yAxisID:'yRoas'}
+    {type:'line',label:'ROAS',data:monthly.map(x=>x.sum.invest?x.sum.roas:null),borderColor:'#00a6c8',backgroundColor:'#00a6c8',borderWidth:3,tension:.25,pointRadius:0,pointHoverRadius:0,yAxisID:'yRoas'}
   ]},options:{...CDef,interaction:{mode:'index',intersect:false},plugins:{...CDef.plugins,legend:{display:true,position:'top',labels:{boxWidth:10,usePointStyle:true,font:{family:'Poppins',size:11,weight:'600'}}},tooltip:{...CDef.plugins.tooltip,callbacks:{label:c=>c.dataset.label==='ROAS'?` ROAS: ${Number(c.parsed.y).toFixed(2)}×`:` ${c.dataset.label}: ${brl(c.parsed.y)}`}}},scales:{x:CDef.scales.x,y:{...CDef.scales.y,position:'left',beginAtZero:true,ticks:{...CDef.scales.y.ticks,callback:v=>v>=1000?'R$ '+(v/1000).toLocaleString('pt-BR',{maximumFractionDigits:0})+' mil':'R$ '+v.toLocaleString('pt-BR')}},yRoas:{position:'right',beginAtZero:true,grid:{drawOnChartArea:false},border:{display:false},ticks:{font:{family:'Poppins',size:10,weight:'500'},color:'#0a0f1e',callback:v=>v.toLocaleString('pt-BR',{maximumFractionDigits:1})+'×'}}}}});
 }
 function renderMkRoasChannel(rows){const el=document.getElementById('mkRoasChannelBars');if(!el)return;const max=Math.max(...rows.map(r=>r.roas),1);el.innerHTML=rows.length?rows.map(r=>`<div class="mk-bar-row"><div>${r.canal}</div><div class="mk-bar-track"><div class="mk-bar-fill" style="width:${Math.max(3,r.roas/max*100).toFixed(1)}%"></div></div><div class="mk-bar-value">${r.roas.toFixed(1)}×</div></div>`).join(''):'<div class="mk-note">Sem dados.</div>'}
