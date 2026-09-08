@@ -238,18 +238,48 @@ body.auth-locked .auth-modal{display:flex}
 @media(max-width:768px){body{flex-direction:column;font-size:12px}.sidebar{transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);z-index:100;overflow-y:auto}.sidebar.open{transform:translateX(0)}.overlay{display:block}.main{margin-left:0}.topbar{padding:0 14px;height:52px;gap:8px}.topbar-title{font-size:13px}.topbar-sep{display:none}.topbar-path{display:none}.status-dot{display:none}.status-label{display:none}.tab-switch{display:none}.topbar-btn:not(.topbar-btn-p){display:none}.topbar-btn-p{padding:5px 10px;font-size:10px}.hamburger{display:flex}.content{padding:14px 16px}.page-hd{flex-direction:column;gap:10px;margin-bottom:16px}.page-hd-title{font-size:18px}.page-hd-sub{font-size:11px}.page-hd-actions{flex-wrap:wrap;gap:6px}.filter-strip{gap:8px;padding:10px 12px}.fl{display:none}.insight-strip{flex-direction:column;gap:0;padding:0}.insight-strip>div{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.1);min-width:unset;width:100%}.insight-strip>div:last-child{border-bottom:none}.insight-strip>div[style*="width:1px"]{display:none}.kpi-grid{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.kpi-val{font-size:22px}.kpi-card{padding:14px 16px}.g2,.g3{grid-template-columns:1fr;gap:16px}.g4{grid-template-columns:1fr 1fr;gap:10px}.cwrap[style*="height:300px"]{height:220px!important}.cwrap[style*="height:280px"]{height:220px!important}.cwrap[style*="height:220px"]{height:180px!important}.cwrap[style*="height:180px"]{height:150px!important}.cwrap[style*="height:160px"]{height:140px!important}.cwrap[style*="height:130px"]{height:120px!important}.sec-hd{padding:12px 16px}.sec-body{padding:16px}.sec-div{margin-top:16px;padding-top:16px}.sec-title{font-size:13px}#tbl{overflow-x:auto;-webkit-overflow-scrolling:touch}.dt{min-width:540px}.dt th,.dt td{padding:8px 10px}.f-step{padding:10px 14px}.f-val{font-size:15px}.tc-val{font-size:17px}.nps-num{font-size:52px}.mbtns{flex-wrap:wrap}.fat-kpi-row{grid-template-columns:1fr}}
 @media(max-width:400px){.kpi-grid{grid-template-columns:1fr}.g4{grid-template-columns:1fr}}
 </style>
+<style id="alq-experience">
+/* ALQ / luminous blue — presentation layer, independent of data logic */
+:root{--bg:#edf2fa;--navy:#24375f;--border:#d8e2f1;--soft-shadow:0 8px 12px -9px #24375f22,0 22px 50px -26px #24375f44;--surface-border:#ffffff;--topbar:76px}
+body{background:radial-gradient(ellipse at 85% 0%,#dce7fb 0,transparent 45%),#edf2fa;font-size:14px}
+.main{min-width:0}.content{padding:30px clamp(18px,3vw,48px);max-width:1900px;width:100%;margin:auto}
+.sidebar{background:radial-gradient(ellipse at 0 0,#425d93,transparent 55%),linear-gradient(175deg,#223456,#101e38);box-shadow:10px 0 40px #16274412;overflow-y:auto}
+.sb-logo{padding:30px 22px 24px}.sb-logo-img{object-fit:contain}.sb-sub{font-size:12px;color:#bbcce8;letter-spacing:.16em;margin-top:12px}.sb-nav{padding:18px 12px}.sb-section-label{font-size:12px;color:#a4b8d9;letter-spacing:.1em;padding-top:20px}.sb-item{min-height:44px;font-size:14px;color:#ccd8ed;font-weight:500;border:1px solid transparent;transition:background .25s,transform .25s,border-color .25s}.sb-item:hover{transform:translateX(3px);background:#ffffff0d}.sb-item.active{background:linear-gradient(110deg,#7897d03b,#7897d012);border-color:#91aee543;box-shadow:inset 3px 0 #a5c7ff;color:#fff}.sb-avatar{width:38px;height:38px;border-radius:12px;background:linear-gradient(140deg,#7187bc,#384f7e);box-shadow:0 6px 18px #0002}.sb-user-name{font-size:14px}.sb-user-role{font-size:12px;color:#a4b8d9}
+.topbar{background:#f6f9fddf;backdrop-filter:blur(18px);border-bottom:1px solid #ffffff;box-shadow:0 5px 30px #23375f06}.topbar-title{font-size:17px}.topbar-path,.status-label{font-size:12px}.topbar-btn,.tab-switch-btn{font-size:13px;min-height:36px}.topbar-btn{border-radius:11px}.topbar-btn-p,.last-month-btn{background:linear-gradient(120deg,#4a5684,#283e6c);box-shadow:0 6px 14px #304a7626}.tab-switch{border:0;padding:4px;background:#e6edf7}.tab-switch-btn.on{background:white;box-shadow:0 4px 10px #23365d12}.page-hd-title{letter-spacing:-.045em;font-weight:600}.page-hd-title-lg{font-size:clamp(28px,3vw,42px)}
+.sec,.kpi-card{border-radius:22px;box-shadow:var(--soft-shadow);border:1px solid #fff}.sec{margin-bottom:28px;background:linear-gradient(150deg,#fff,#fbfdff)}.sec-hd{padding:24px 28px;background:linear-gradient(100deg,#f8faff,#fff);border-bottom:1px solid #e8eef7;gap:16px;flex-wrap:wrap}.sec-body{padding:26px 28px}.sec-title{font-size:18px;font-weight:600;letter-spacing:-.02em}.sec-tag{font-size:12px;letter-spacing:.12em;color:#586e9b}.kpi-card{padding:24px;transition:box-shadow .3s,transform .3s}.kpi-card:before{content:'';position:absolute;left:24px;top:0;width:38px;height:3px;background:linear-gradient(90deg,#4a5684,#85a0cc);border-radius:0 0 4px 4px}.kpi-card:hover{transform:translateY(-4px);box-shadow:0 22px 40px -22px #24375f66}.kpi-tag,.fat-kpi-tag,.tc-lbl{font-size:13px}.kpi-val{font-weight:600;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.kpi-comps,.fat-kpi-sub{font-size:12px}.filter-strip{padding:16px 20px;border-radius:17px;background:#ffffffc9;box-shadow:0 8px 25px #2e42620a;border:1px solid #fff}.fl{font-size:12px}.comp-tag{padding:7px 12px;background:#e9eff9;border:1px solid #dce5f4;border-radius:11px;max-width:100%;gap:8px}.comp-select{font-size:14px;max-width:100%;min-width:0}.last-month-btn{font-size:12px;padding:10px 16px;border-radius:11px}.sec-hd .comp-tag{max-width:100%}.dt th{font-size:12px;background:#f3f6fb}.dt td{font-size:14px}.dt tbody tr{transition:background .2s}.dt tbody tr:hover{background:#edf3ff}.dt td,.dt th{border-bottom-color:#eaf0f8}.mk-note{font-size:14px}
+.mk-hero{position:relative;isolation:isolate;overflow:hidden;border:1px solid #6d86b055;border-radius:24px;background:radial-gradient(ellipse at 100% 0%,#5a76ac 0,transparent 55%),linear-gradient(115deg,#17294b,#304772);box-shadow:0 18px 40px -18px #233b6b80;padding:28px 32px}.mk-hero:after{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(500px circle at var(--mx,80%) var(--my,20%),#b7d2ff20,transparent 65%);pointer-events:none}.mk-hero-title{font-size:clamp(26px,3vw,38px);font-weight:500;letter-spacing:-.04em}.mk-hero-ey{font-size:12px;letter-spacing:.16em;color:#c8d9f5}.mk-hero-sub{font-size:14px;opacity:1;color:#c9d7ed}.mk-hero-metrics{gap:20px;border-color:#d5e3ff25}.mk-hero-metrics>div{border-left:1px solid #d5e3ff25;padding-left:18px}.mk-hero-k{font-size:12px;opacity:1;color:#c3d2ea}.mk-hero-v{font-size:clamp(20px,2.1vw,30px);font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.035em}.insight-strip{background:linear-gradient(115deg,#24375f,#506798);border-radius:17px;box-shadow:0 10px 25px #24375f20}
+button,select{touch-action:manipulation}button:focus-visible,select:focus-visible{outline:3px solid #7aa3e7;outline-offset:3px}button{position:relative}.alq-ripple{position:absolute;border-radius:50%;background:#adc8f855;pointer-events:none;width:20px;height:20px;transform:translate(-50%,-50%)}
+/* Login: an immersive split composition with a live light field. */
+.auth-modal{background:#0d1930;backdrop-filter:none;overflow-y:auto;padding:clamp(22px,5vw,80px);gap:clamp(32px,7vw,120px);isolation:isolate}
+.auth-modal:before{content:'';position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 15% 10%,#536fa563,transparent 55%),radial-gradient(ellipse at 85% 90%,#526ea33d,transparent 50%),linear-gradient(120deg,#101e36,#101b30 65%,#1e3153)}
+.auth-atmosphere{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;opacity:.8}.auth-story{flex:1;max-width:660px;color:#fff;padding:35px 0}.auth-logo{width:190px;max-height:70px;object-fit:contain;object-position:left;margin-bottom:70px}.auth-eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.24em;color:#adc5ec;margin-bottom:22px}.auth-story h1{font-size:clamp(38px,4.8vw,72px);line-height:1.1;font-weight:500;letter-spacing:-.055em;max-width:640px}.auth-story h1 span{color:#9ab7eb}.auth-story p{font-size:16px;line-height:1.8;color:#c3d0e5;max-width:390px;margin-top:25px}.auth-story-foot{margin-top:70px;padding-top:20px;border-top:1px solid #c6d8f328;font-size:12px;letter-spacing:.13em;color:#a3b9db;text-transform:uppercase}
+.auth-card{flex-shrink:0;width:min(440px,100%);padding:44px;border-radius:26px;background:linear-gradient(150deg,#ffffff,#f1f5fc);box-shadow:0 35px 100px #0005,inset 0 1px #fff;border:1px solid #ffffff99}.auth-brand{display:block;margin-bottom:30px}.auth-mark{display:none}.auth-title{font-size:28px;font-weight:600;letter-spacing:-.04em}.auth-sub{font-size:14px;line-height:1.6;margin-top:12px;color:#637395}.auth-field{margin-top:22px}.auth-field label{font-size:13px;text-transform:none;letter-spacing:0;color:#3f5276;font-weight:500;margin-bottom:9px}.auth-input{font-size:16px;background:#fff;padding:15px 16px;border-radius:12px;min-height:52px;border-color:#d6dfef;box-shadow:0 2px 4px #2c467304}.auth-input:focus{border-color:#7280bb;box-shadow:0 0 0 4px #7280bb20}.auth-submit{overflow:hidden;padding:16px 20px;font-size:15px;margin-top:28px;border-radius:12px;background:linear-gradient(110deg,#526ea3,#334671);box-shadow:0 10px 25px #38568740;min-height:54px}.auth-submit:hover{background:linear-gradient(110deg,#637fba,#435a8f);box-shadow:0 14px 30px #38568750}.auth-error{font-size:13px}.auth-footnote{font-size:12px;color:#6b7c9b;text-align:center;margin-top:24px}.auth-card::after{content:'';display:block;height:3px;width:36px;border-radius:2px;background:#b9c9e2;margin:28px auto 0}
+@media(max-width:1100px){.auth-logo{margin-bottom:45px}.auth-story-foot{margin-top:45px}.auth-card{padding:32px}.topbar-path,.status-label,.topbar .status-dot{display:none}.topbar{gap:8px;padding:0 20px}.mk-hero-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:768px){:root{--topbar:64px}.topbar{height:64px;padding:0 16px}.topbar-title{font-size:14px}.content{padding:22px 14px}.auth-modal{flex-direction:column;justify-content:flex-start;padding:28px 22px;gap:20px}.auth-story{flex:none;padding:0;width:min(440px,100%)}.auth-logo{width:138px;margin-bottom:22px}.auth-eyebrow{margin-bottom:10px;font-size:12px}.auth-story h1{font-size:36px}.auth-story p,.auth-story-foot{display:none}.auth-card{padding:28px}.auth-title{font-size:25px}.auth-sub{margin-top:8px}.sec-hd,.sec-body{padding:20px 17px}.sec-title{font-size:16px}.sec,.kpi-card{border-radius:18px}.mk-hero{padding:24px 20px}.mk-hero-metrics{gap:20px 10px}.mk-hero-metrics>div{padding-left:10px}.mk-hero-v{font-size:22px}.comp-select{font-size:14px}.filter-strip{gap:8px;padding:12px}.fl{display:inline;font-size:12px}.cwrap[style*="height:420px"]{height:320px!important}.sec-hd .comp-tag{width:100%;justify-content:space-between}.kpi-card{padding:20px 16px}.auth-brand{margin-bottom:18px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.auth-atmosphere{display:none}}
+@media print{.sec,.kpi-card{box-shadow:none}.auth-atmosphere{display:none}}
+</style>
 </head>
 <body class="auth-locked">
 <div class="auth-modal" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  <canvas class="auth-atmosphere" id="auth-atmosphere" aria-hidden="true"></canvas>
+  <div class="auth-story">
+    <img class="auth-logo" src="logo.png" alt="ALQ Farma">
+    <div class="auth-eyebrow">Analytics / ALQ Farma</div>
+    <h1>Uma visão clara.<br><span>Novas possibilidades.</span></h1>
+    <p>Resultados comerciais e de marketing, conectados para orientar suas decisões.</p>
+    <div class="auth-story-foot">Performance &nbsp; / &nbsp; Estratégia &nbsp; / &nbsp; Crescimento</div>
+  </div>
   <form class="auth-card" onsubmit="return doLogin(event)">
     <div class="auth-brand">
       <div class="auth-mark">ALQ</div>
-      <div><div class="auth-title" id="auth-title">Acesso restrito</div><div class="auth-sub">Entre para visualizar o dashboard</div></div>
+      <div><div class="auth-title" id="auth-title">Bem-vindo de volta.</div><div class="auth-sub">Entre com suas credenciais para acompanhar os resultados.</div></div>
     </div>
     <div class="auth-field"><label for="auth-user">Usuário</label><input class="auth-input" id="auth-user" type="text" autocomplete="username" autofocus></div>
     <div class="auth-field"><label for="auth-pass">Senha</label><input class="auth-input" id="auth-pass" type="password" autocomplete="current-password"></div>
     <div class="auth-error" id="auth-error">Usuário ou senha inválidos.</div>
-    <button class="auth-submit" type="submit">Entrar</button>
+    <button class="auth-submit" type="submit">Acessar dashboard &nbsp; →</button>
+    <div class="auth-footnote">Acesso exclusivo à equipe ALQ Farma</div>
   </form>
 </div>
 
@@ -2297,6 +2327,53 @@ function startDashboard() {
   });
 }
 if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', startDashboard); } else { startDashboard(); }
+</script>
+<script>
+/* Motion enhancement: no dependencies, no changes to data or authentication. */
+(()=>{
+  const preference=matchMedia('(prefers-reduced-motion: reduce)');
+  const animate=(el,frames,options)=>{if(el&&el.animate&&!preference.matches)return el.animate(frames,options)};
+  document.querySelectorAll('.auth-story,.auth-card').forEach((el,i)=>animate(el,[{opacity:0,transform:'translateY(22px)'},{opacity:1,transform:'translateY(0)'}],{duration:800,delay:i*130,easing:'cubic-bezier(.16,1,.3,1)',fill:'backwards'}));
+  if('IntersectionObserver' in window){
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+      if(!entry.isIntersecting||document.body.classList.contains('auth-locked'))return;
+      animate(entry.target,[{opacity:.15,transform:'translateY(18px)'},{opacity:1,transform:'translateY(0)'}],{duration:650,easing:'cubic-bezier(.16,1,.3,1)'});
+      observer.unobserve(entry.target);
+    }),{threshold:.04});
+    const observe=()=>document.querySelectorAll('.tc.on .sec,.tc.on .kpi-card,.tc.on .mk-hero').forEach(el=>observer.observe(el));
+    new MutationObserver(()=>{if(!document.body.classList.contains('auth-locked'))observe()}).observe(document.body,{attributes:true,attributeFilter:['class']});
+    document.querySelectorAll('.tc').forEach(el=>new MutationObserver(()=>{if(el.classList.contains('on'))observe()}).observe(el,{attributes:true,attributeFilter:['class']}));
+    observe();
+  }
+  document.addEventListener('click',event=>{
+    const button=event.target.closest('button');if(!button||preference.matches)return;
+    animate(button,[{scale:'1'},{scale:'.97'},{scale:'1'}],{duration:230,easing:'ease-out'});
+  });
+  const hero=document.querySelector('.mk-hero');
+  hero?.addEventListener('pointermove',event=>{if(preference.matches)return;const r=hero.getBoundingClientRect();hero.style.setProperty('--mx',`${event.clientX-r.left}px`);hero.style.setProperty('--my',`${event.clientY-r.top}px`)});
+  const canvas=document.getElementById('auth-atmosphere'),ctx=canvas?.getContext('2d');if(!ctx)return;
+  let width=0,height=0,frame=0,last=0;
+  const resize=()=>{width=innerWidth;height=innerHeight;const dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=width*dpr;canvas.height=height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)};
+  const visible=()=>!preference.matches&&!document.hidden&&document.body.classList.contains('auth-locked');
+  function draw(time){
+    frame=0;if(!visible())return;
+    if(time-last<32){frame=requestAnimationFrame(draw);return}last=time;
+    ctx.clearRect(0,0,width,height);
+    const t=time*.00013;
+    // Slowly shifting, non-representational light ribbons.
+    for(let band=0;band<4;band++){
+      ctx.beginPath();
+      for(let x=0;x<=width+12;x+=12){const y=height*(.58+band*.07)+Math.sin(x/width*4+t+band*.6)*height*.16; x===0?ctx.moveTo(x,y):ctx.lineTo(x,y)}
+      ctx.strokeStyle=`rgba(139,176,238,${.07+band*.025})`;ctx.lineWidth=1+band*.4;ctx.stroke();
+    }
+    const x=width*(.28+Math.sin(t)*.1),y=height*(.45+Math.cos(t*.7)*.13);
+    const glow=ctx.createRadialGradient(x,y,0,x,y,width*.45);glow.addColorStop(0,'rgba(112,150,215,.16)');glow.addColorStop(1,'rgba(112,150,215,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,width,height);
+    frame=requestAnimationFrame(draw);
+  }
+  const sync=()=>{if(frame)cancelAnimationFrame(frame);frame=0;if(visible())frame=requestAnimationFrame(draw)};
+  addEventListener('resize',resize,{passive:true});document.addEventListener('visibilitychange',sync);preference.addEventListener('change',sync);
+  new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['class']});resize();sync();
+})();
 </script>
 </body>
 </html>
