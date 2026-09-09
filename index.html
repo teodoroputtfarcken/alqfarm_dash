@@ -302,6 +302,16 @@ button,select{touch-action:manipulation}button:focus-visible,select:focus-visibl
 .campaign-metrics .metric-roas{box-shadow:0 12px 22px -12px #293d6580}
 @media(max-width:768px){.tc .sec .cwrap{padding:8px;border-radius:12px}}
 @media print{.tc .sec .cwrap{box-shadow:none}}
+.campaign-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.campaign-detail-card{overflow:hidden;border:1px solid #d9e4f3;border-radius:18px;background:#fff;box-shadow:0 14px 30px -22px #20395f80;transition:transform .2s ease,box-shadow .2s ease}
+.campaign-detail-card:hover{transform:translateY(-2px);box-shadow:0 20px 34px -22px #20395fa0}
+.campaign-detail-media{position:relative;height:190px;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 25% 20%,#dce8f8,#eef4fb 48%,#d7e3f3);color:#506991}
+.campaign-detail-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.campaign-detail-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}.campaign-detail-placeholder strong{font-size:28px;font-weight:500}
+.campaign-detail-body{padding:20px}.campaign-detail-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.campaign-detail-name{font-size:16px;font-weight:600;color:#253b62;line-height:1.4;overflow-wrap:anywhere}.campaign-detail-type{flex:none;padding:6px 9px;border-radius:999px;background:#e8f0fb;color:#405b8c;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.campaign-detail-label{display:block;margin-bottom:6px;color:#7384a1;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}.campaign-detail-objective{margin-bottom:16px;color:#405577;font-size:13px;line-height:1.65}.campaign-detail-message{padding:15px 16px;border-radius:13px;background:#f1f6fc;border:1px solid #e0e9f6;color:#435876;font-size:12px;line-height:1.7;white-space:pre-line}.campaign-detail-link{position:absolute;right:12px;bottom:12px;padding:8px 11px;border-radius:9px;background:#243b63;color:#fff;font-size:11px;font-weight:600;text-decoration:none;box-shadow:0 6px 16px #172a4950}.campaign-detail-empty{padding:30px;border:1px dashed #cbd8ea;border-radius:16px;text-align:center;color:#6f819e;font-size:13px;background:#f8fbff}
+@media(max-width:900px){.campaign-detail-grid{grid-template-columns:1fr}}
+@media(max-width:768px){.campaign-detail-media{height:160px}.campaign-detail-body{padding:17px}}
 </style>
 </head>
 <body class="auth-locked">
@@ -637,6 +647,16 @@ button,select{touch-action:manipulation}button:focus-visible,select:focus-visibl
         </div>
         <div class="mk-note" id="mk-chart-empty" style="display:none;margin-bottom:12px">Não há dados para os filtros selecionados.</div>
         <div class="cwrap campaign-plot" style="height:260px"><canvas id="mkChCampaignPerformance"></canvas></div>
+      </div>
+    </div>
+    <div class="sec" id="mk-sec-details">
+      <div class="sec-hd">
+        <div><div class="sec-title">Conteúdos das campanhas</div><div class="chart-period">Imagem, objetivo e mensagem dos disparos</div></div>
+        <div class="sec-tag" id="mk-details-count">—</div>
+      </div>
+      <div class="sec-body">
+        <div class="campaign-detail-grid" id="mk-campaign-details"></div>
+        <div class="campaign-detail-empty" id="mk-details-empty" style="display:none">Não há detalhes cadastrados para as campanhas selecionadas.</div>
       </div>
     </div>
   </div></div><!-- /tab-marketing -->
@@ -1113,6 +1133,7 @@ let MKC=[
   {ano:2026,mes:'Junho',canal:'Pedido Pago',campanha:'primeiracompra_junho',invest:61.92,receita:231.02,roas:3.73},
   {ano:2026,mes:'Junho',canal:'Pedido Pago',campanha:'repesc_15_dias_30/06',invest:158.76,receita:33465.72,roas:210.80},
 ];
+let MK_DETAILS=[];
 let MKS=[
   {ano:2026,mes:'Março',metrica:'Primeiras aprovações',valor:7},{ano:2026,mes:'Março',metrica:'Não calculadas',valor:15},{ano:2026,mes:'Março',metrica:'Pag. via Pix',valor:6},{ano:2026,mes:'Março',metrica:'Pag. via Cartão',valor:4},{ano:2026,mes:'Março',metrica:'Tempo médio atendimento',valor:'02h36m'},{ano:2026,mes:'Março',metrica:'Tempo médio cálculo',valor:'03h33m'},
   {ano:2026,mes:'Abril',metrica:'Primeiras aprovações',valor:6},{ano:2026,mes:'Abril',metrica:'Não calculadas',valor:26},{ano:2026,mes:'Abril',metrica:'Pag. via Pix',valor:6},{ano:2026,mes:'Abril',metrica:'Pag. via Cartão',valor:4},{ano:2026,mes:'Abril',metrica:'Tempo médio atendimento',valor:'02h45m'},{ano:2026,mes:'Abril',metrica:'Tempo médio cálculo',valor:'03h30m'},
@@ -1795,6 +1816,7 @@ function renderMarketing(){
   document.getElementById('mk-chart-campaign').textContent=campaignLabel;
   document.getElementById('mk-chart-empty').style.display=cur.rows.length?'none':'block';
   renderMkCharts(campaignSeries);
+  renderCampaignDetails(cur.rows);
 }
 function renderMkCharts(campaigns){
   const labels=campaigns.map(x=>mkCampaignAxisLabel(x.label)),multi=campaigns.length>1;
@@ -1827,6 +1849,42 @@ function renderMkCharts(campaigns){
     chart.setDatasetVisibility(2,multi);
     chart.update();
   }else CH.mkCampaignPerformance=new Chart(canvas,{type:'bar',data:{labels,datasets},options});
+}
+function mkSafeCampaignUrl(value){
+  try{const url=new URL(String(value||'').trim());return /^https?:$/.test(url.protocol)?url.href:''}catch{return''}
+}
+function mkCampaignAsset(value){
+  const href=mkSafeCampaignUrl(value);if(!href)return{href:'',image:''};
+  const fileId=href.match(/drive\.google\.com\/file\/d\/([^/?#]+)/)?.[1];
+  return{href,image:fileId?`https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`:(/drive\.google\.com\/drive\/folders\//.test(href)?'':href)};
+}
+function renderCampaignDetails(performanceRows){
+  const grid=document.getElementById('mk-campaign-details'),empty=document.getElementById('mk-details-empty'),count=document.getElementById('mk-details-count');
+  if(!grid||!empty||!count)return;
+  const names=new Set(performanceRows.map(row=>String(row.campanha||'').trim().toLowerCase()));
+  const rows=MK_DETAILS.filter(row=>names.has(String(row.campanha||'').trim().toLowerCase()))
+    .sort((a,b)=>(b.publicacaoTs||0)-(a.publicacaoTs||0)||a.campanha.localeCompare(b.campanha,'pt-BR'));
+  grid.replaceChildren();empty.style.display=rows.length?'none':'block';count.textContent=`${rows.length} ${rows.length===1?'campanha':'campanhas'}`;
+  rows.forEach(row=>{
+    const card=document.createElement('article');card.className='campaign-detail-card';
+    const media=document.createElement('div');media.className='campaign-detail-media';
+    const placeholder=document.createElement('div');placeholder.className='campaign-detail-placeholder';
+    const placeholderIcon=document.createElement('strong');placeholderIcon.textContent='▧';
+    const placeholderText=document.createElement('span');placeholderText.textContent=row.imagemUrl?'Arte no Google Drive':'Sem arte cadastrada';
+    placeholder.append(placeholderIcon,placeholderText);media.appendChild(placeholder);
+    const asset=mkCampaignAsset(row.imagemUrl);
+    if(asset.image){const img=document.createElement('img');img.loading='lazy';img.alt=`Arte da campanha ${row.campanha}`;img.src=asset.image;img.addEventListener('error',()=>img.remove(),{once:true});media.appendChild(img)}
+    if(asset.href){const link=document.createElement('a');link.className='campaign-detail-link';link.href=asset.href;link.target='_blank';link.rel='noopener noreferrer';link.textContent=asset.image?'Abrir arte':'Abrir pasta de artes';media.appendChild(link)}
+    const body=document.createElement('div');body.className='campaign-detail-body';
+    const top=document.createElement('div');top.className='campaign-detail-top';
+    const name=document.createElement('h3');name.className='campaign-detail-name';name.textContent=row.campanha;
+    const type=document.createElement('span');type.className='campaign-detail-type';type.textContent=row.tipo||'Campanha';top.append(name,type);
+    const objectiveLabel=document.createElement('span');objectiveLabel.className='campaign-detail-label';objectiveLabel.textContent='Objetivo da campanha';
+    const objective=document.createElement('p');objective.className='campaign-detail-objective';objective.textContent=row.objetivo||'Não informado';
+    const messageLabel=document.createElement('span');messageLabel.className='campaign-detail-label';messageLabel.textContent='Mensagem enviada';
+    const message=document.createElement('div');message.className='campaign-detail-message';message.textContent=row.mensagem||'Não informada';
+    body.append(top,objectiveLabel,objective,messageLabel,message);card.append(media,body);grid.appendChild(card);
+  });
 }
 function renderMkRoasChannel(rows){const el=document.getElementById('mkRoasChannelBars');if(!el)return;const max=Math.max(...rows.map(r=>r.roas),1);el.innerHTML=rows.length?rows.map(r=>`<div class="mk-bar-row"><div>${r.canal}</div><div class="mk-bar-track"><div class="mk-bar-fill" style="width:${Math.max(3,r.roas/max*100).toFixed(1)}%"></div></div><div class="mk-bar-value">${r.roas.toFixed(1)}×</div></div>`).join(''):'<div class="mk-note">Sem dados.</div>'}
 function renderMkTables(mp){const camps=mkCampsP(mp).slice().sort((a,b)=>b.roas-a.roas).slice(0,5);document.getElementById('mk-camp-tbl').innerHTML=`<table class="dt"><thead><tr><th>Campanha</th><th>Canal</th><th class="tr">ROAS</th></tr></thead><tbody>${camps.map(c=>`<tr><td>${c.campanha}</td><td><span class="badge bg">${c.canal}</span></td><td class="tr"><strong>${c.roas>=10?c.roas.toFixed(0):c.roas.toFixed(1)}×</strong></td></tr>`).join('')}</tbody></table>`}
@@ -2126,6 +2184,7 @@ const SHEETS_CONFIG = {
     novosCac:          142706480,
     roas:              586083326,
     campanhas:         1359791966,
+    detalhesCampanhas: 864092417,
     repescagem:        1194167509
   }
 };
@@ -2328,6 +2387,20 @@ function transformCampanhas(rows) {
   });
   return { mk: Object.values(mk), mkc };
 }
+function transformCampaignDetails(rows){
+  if(!rows||!rows.length)return[];
+  return rows.map(r=>{
+    const publicacao=String(r['Publicação']||r.Publicacao||r.publicacao||'').trim();
+    const dateMatch=publicacao.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    const ano=dateMatch?parseInt(dateMatch[3],10):0,monthIndex=dateMatch?parseInt(dateMatch[2],10)-1:-1;
+    return{
+      campanha:String(r.Campanha||r.campanha||'').trim(),publicacao,
+      ano,mes:monthIndex>=0?MO[monthIndex]:'',publicacaoTs:dateMatch?Date.UTC(ano,monthIndex,parseInt(dateMatch[1],10)):0,
+      tipo:String(r.Tipo||r.tipo||'').trim(),objetivo:String(r.Objetivo||r.objetivo||'').trim(),
+      mensagem:String(r.Mensagem||r.mensagem||'').trim(),imagemUrl:String(r['Imagem Url']||r['Imagem URL']||r.imagemUrl||'').trim()
+    };
+  }).filter(row=>row.campanha&&row.mes&&row.ano);
+}
 function transformMetricaIndicador(rows) {
   if (!rows || rows.length === 0) return null;
   const result = rows.filter(r => r && r.Ano && r.Mês).map(r => {
@@ -2353,7 +2426,7 @@ function transformNovosCac(rows) {
 async function loadAllSheetData() {
   let anyLoaded = false;
   try {
-    const [fatur, fatCategs, orcQ, orcV, ticket, ticketCat, rejAtivos, rejMedicos, tempos, nps, promotores, neutros, detratores, campanhas] = await Promise.all([
+    const [fatur, fatCategs, orcQ, orcV, ticket, ticketCat, rejAtivos, rejMedicos, tempos, nps, promotores, neutros, detratores, campanhas, detalhesCampanhas] = await Promise.all([
       fetchSheetData('Faturamento', SHEETS_CONFIG.tabs.faturamento),
       fetchSheetData('Faturamento Categorias', SHEETS_CONFIG.tabs.faturamentoCategs),
       fetchSheetData('Orçamentos Qtd', SHEETS_CONFIG.tabs.orcQtd),
@@ -2367,7 +2440,8 @@ async function loadAllSheetData() {
       fetchSheetData('Promotores', SHEETS_CONFIG.tabs.promotores),
       fetchSheetData('Neutros', SHEETS_CONFIG.tabs.neutros),
       fetchSheetData('Detratores', SHEETS_CONFIG.tabs.detratores),
-      fetchSheetData('Campanhas PP', SHEETS_CONFIG.tabs.campanhas, SHEETS_CONFIG.marketingSpreadsheetId)
+      fetchSheetData('Campanhas PP', SHEETS_CONFIG.tabs.campanhas, SHEETS_CONFIG.marketingSpreadsheetId),
+      fetchSheetData('Detalhes PP', SHEETS_CONFIG.tabs.detalhesCampanhas, SHEETS_CONFIG.marketingSpreadsheetId)
     ]);
     if (fatur && fatur.length > 0)     { const r=transformFaturamento(fatur);   if(r){DF=r;anyLoaded=true;} }
     if (fatCategs && fatCategs.length) { const r=transformFatCategs(fatCategs); if(r){DFC=r;anyLoaded=true;} }
@@ -2383,6 +2457,7 @@ async function loadAllSheetData() {
     if (neutros && neutros.length)       { DP_NEU=transformMotivos(neutros); }
     if (detratores && detratores.length) { DP_DET=transformMotivos(detratores); }
     if (campanhas && campanhas.length)   { const r=transformCampanhas(campanhas);        if(r){MK=r.mk; MKC=r.mkc;anyLoaded=true;} }
+    if (detalhesCampanhas && detalhesCampanhas.length) { MK_DETAILS=transformCampaignDetails(detalhesCampanhas); }
     if (anyLoaded) { recalcPeriods(); recalcMarketingPeriods(); }
     return anyLoaded;
   } catch (error) {
