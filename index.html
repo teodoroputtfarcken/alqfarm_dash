@@ -1721,19 +1721,28 @@ function renderDonut(id,lgId,data,colors){
 
 /* ── MARKETING RENDER ─────────────────────────────────────── */
 function mkReportPeriods(){return MK_PERIODS.filter(p=>p.months.length===1).slice().reverse()}
-const MK_ALLOWED_CAMPAIGNS=[
-  {id:'orcamento',label:'orçamento'},
-  {id:'primeira_compra',label:'primeira_compra'},
-  {id:'repesc_15dias',label:'repesc_15dias'},
-  {id:'primeira_compra_espaco',label:'primeira compra'}
-];
+const MK_CAMPAIGN_LABELS={
+  monit:'Monit.',
+  mesversario:'Mesversário',
+  reativacao:'Reativação',
+  repescagem:'Repescagem',
+  repesc_15_dias:'Repesc. 15 dias'
+};
 function mkCampaignGroup(name){
   const raw=String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  if(/^orcamentos?$/.test(raw))return'orcamento';
-  if(/^primeira_compra(?:_|$)/.test(raw))return'primeira_compra';
-  if(/^repesc_15_?dias(?:_|$)/.test(raw))return'repesc_15dias';
-  if(/^primeira compra(?: |$)/.test(raw)||/^primeiracompra(?:_|$)/.test(raw))return'primeira_compra_espaco';
-  return null;
+  if(!raw)return null;
+  if(/^monit\.?/.test(raw))return'monit';
+  if(/^repesc_15_dias(?:_|$)/.test(raw))return'repesc_15_dias';
+  if(/^repescagem(?:_|$)/.test(raw))return'repescagem';
+  if(/^mesversario(?:_|$)/.test(raw))return'mesversario';
+  if(/^reativacao(?:_|$)/.test(raw))return'reativacao';
+  const prefix=raw.split(/[_\d]/)[0].trim().replace(/[.\s-]+$/,'');
+  return prefix||null;
+}
+function mkCampaignLabel(group){
+  if(!group)return'Todas as campanhas';
+  if(MK_CAMPAIGN_LABELS[group])return MK_CAMPAIGN_LABELS[group];
+  return group.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
 }
 function mkFilteredCampaignRows(p){return MKC.filter(d=>{const group=mkCampaignGroup(d.campanha);return group&&inP(d,p)&&(mkCampaignFilter==='all'||group===mkCampaignFilter)})}
 function mkCampaignSummary(p){
@@ -1744,7 +1753,7 @@ function mkCampaignSummary(p){
 function renderMkCampaignSelect(mp){
   const el=document.getElementById('mk-campaign');if(!el)return;
   const available=new Set(MKC.filter(d=>inP(d,mp)).map(d=>mkCampaignGroup(d.campanha)).filter(Boolean));
-  const campaigns=MK_ALLOWED_CAMPAIGNS.filter(c=>available.has(c.id));
+  const campaigns=[...available].map(id=>({id,label:mkCampaignLabel(id)})).sort((a,b)=>a.label.localeCompare(b.label,'pt-BR'));
   if(mkCampaignFilter!=='all'&&!campaigns.some(c=>c.id===mkCampaignFilter))mkCampaignFilter='all';
   el.innerHTML='';
   const all=document.createElement('option');all.value='all';all.textContent='Todas as campanhas';el.appendChild(all);
@@ -1768,7 +1777,7 @@ function renderMarketing(){
   document.getElementById('mk-hero-roas').textContent=cur.roas.toFixed(1)+'×';
   document.getElementById('mk-hero-best').textContent=best?best.label:'—';
   document.getElementById('mk-chart-period').textContent=pLabel(mp);
-  const campaignLabel=MK_ALLOWED_CAMPAIGNS.find(c=>c.id===mkCampaignFilter)?.label||'Todas as campanhas';
+  const campaignLabel=mkCampaignLabel(mkCampaignFilter==='all'?null:mkCampaignFilter);
   document.getElementById('mk-chart-campaign').textContent=campaignLabel;
   document.getElementById('mk-chart-empty').style.display=cur.rows.length?'none':'block';
   renderMkCharts(monthly);
@@ -2079,6 +2088,7 @@ async function exportPDF(){
 // ════════════════════════════════════════════════════════════════
 const SHEETS_CONFIG = {
   pubId: '2PACX-1vS6IOPbCVpIQ3_Zi5sfy92nHYFgyv3PuiSnM__ibxu6gjQAltYlnaPbnTmTv9XxWqPT_WBUB2bMjiWQ',
+  marketingSpreadsheetId: '1r210oBEixzxAIVN0Eo-8MD6pbt6Ahz6PFbEj5CdcWO0',
   tabs: {
     faturamento:       1772642311,
     orcQtd:            727311525,
@@ -2096,18 +2106,19 @@ const SHEETS_CONFIG = {
     googleAds:         1893673251,
     novosCac:          142706480,
     roas:              586083326,
-    campanhas:         234776793,
+    campanhas:         1359791966,
     repescagem:        1194167509
   }
 };
 
-function getSheetURL(gid) {
+function getSheetURL(gid, spreadsheetId) {
+  if (spreadsheetId) return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&gid=${gid}`;
   return `https://docs.google.com/spreadsheets/d/e/${SHEETS_CONFIG.pubId}/pub?gid=${gid}&single=true&output=csv`;
 }
 
-async function fetchSheetData(sheetName, gid) {
+async function fetchSheetData(sheetName, gid, spreadsheetId) {
   try {
-    const url = getSheetURL(gid);
+    const url = getSheetURL(gid, spreadsheetId);
     const response = await fetch(url, { cache: 'no-cache' });
     if (!response.ok) return [];
     const csv = await response.text();
@@ -2281,12 +2292,15 @@ function transformCampanhas(rows) {
   if (!rows || rows.length === 0) return null;
   const mk = {}; const mkc = [];
   rows.forEach(r => {
-    const ano = parseInt(r.Ano) || 0; const mes = (r.Mês || '').trim();
-    const canal = (r.Canal || r.canal || '').trim(); const campanha = (r.Campanha || r.campanha || '').trim();
+    const publicacao = String(r['Publicação'] || r.Publicacao || r.publicacao || '').trim();
+    const dateMatch = publicacao.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    const ano = dateMatch ? parseInt(dateMatch[3],10) : 0;
+    const mes = dateMatch ? MO[parseInt(dateMatch[2],10)-1] : '';
+    const canal = 'Campanhas PP'; const campanha = (r.Campanha || r.campanha || '').trim();
     const invest = parseMoney(r.Investimento || r.investimento || 0);
     const receita = parseMoney(r.Retorno || r.retorno || r.Receita || r.receita || 0);
     const roas = parseFloat(String(r.ROAS || r.roas || 0).replace(',', '.')) || (invest > 0 ? receita/invest : 0);
-    if (!mes || !canal) return;
+    if (!mes || !campanha) return;
     mkc.push({ ano, mes, canal, campanha, invest, receita, roas });
     const key = `${ano}-${mes}-${canal}`;
     if (!mk[key]) mk[key] = { ano, mes, canal, invest: 0, receita: 0, leads: 0, novos: 0 };
@@ -2333,7 +2347,7 @@ async function loadAllSheetData() {
       fetchSheetData('Promotores', SHEETS_CONFIG.tabs.promotores),
       fetchSheetData('Neutros', SHEETS_CONFIG.tabs.neutros),
       fetchSheetData('Detratores', SHEETS_CONFIG.tabs.detratores),
-      fetchSheetData('Campanhas', SHEETS_CONFIG.tabs.campanhas)
+      fetchSheetData('Campanhas PP', SHEETS_CONFIG.tabs.campanhas, SHEETS_CONFIG.marketingSpreadsheetId)
     ]);
     if (fatur && fatur.length > 0)     { const r=transformFaturamento(fatur);   if(r){DF=r;anyLoaded=true;} }
     if (fatCategs && fatCategs.length) { const r=transformFatCategs(fatCategs); if(r){DFC=r;anyLoaded=true;} }
@@ -2348,7 +2362,7 @@ async function loadAllSheetData() {
     if (promotores && promotores.length) { DP_PROM=transformMotivos(promotores); }
     if (neutros && neutros.length)       { DP_NEU=transformMotivos(neutros); }
     if (detratores && detratores.length) { DP_DET=transformMotivos(detratores); }
-    if (campanhas && campanhas.length)   { const r=transformCampanhas(campanhas);        if(r){MK=r.mk; MKC=r.mkc;} }
+    if (campanhas && campanhas.length)   { const r=transformCampanhas(campanhas);        if(r){MK=r.mk; MKC=r.mkc;anyLoaded=true;} }
     if (anyLoaded) { recalcPeriods(); recalcMarketingPeriods(); }
     return anyLoaded;
   } catch (error) {
