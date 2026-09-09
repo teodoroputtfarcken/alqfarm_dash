@@ -313,6 +313,14 @@ button,select{touch-action:manipulation}button:focus-visible,select:focus-visibl
 @media(max-width:900px){.campaign-detail-grid{grid-template-columns:1fr}}
 @media(max-width:768px){.campaign-detail-media{height:300px}.campaign-detail-media img{padding:6px}.campaign-detail-body{padding:17px}}
 </style>
+<style id="alq-instagram">
+.ig-hero{position:relative;overflow:hidden;margin-bottom:22px;padding:30px 32px;border-radius:24px;color:#fff;background:radial-gradient(circle at 88% 15%,#d486e438 0,transparent 28%),radial-gradient(circle at 70% 80%,#f1a2bd20 0,transparent 30%),linear-gradient(120deg,#17294b,#40598c);box-shadow:0 18px 40px -20px #233b6b80}
+.ig-hero-ey{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#cbdaf2}.ig-hero-title{margin-top:8px;font-size:clamp(28px,3.2vw,42px);font-weight:600;letter-spacing:-.045em}.ig-hero-sub{margin-top:6px;color:#d5e1f4;font-size:14px}.ig-hero-orb{position:absolute;right:6%;top:50%;width:108px;height:108px;border:1px solid #ffffff30;border-radius:30px;transform:translateY(-50%) rotate(12deg);box-shadow:inset 0 0 35px #fff1,0 20px 45px #14234155}.ig-hero-orb:before{content:'◎';position:absolute;inset:0;display:grid;place-items:center;font-size:60px;color:#fff9}
+.ig-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0 28px}.ig-kpi{position:relative;min-width:0;padding:21px;border:1px solid #fff;border-radius:19px;background:linear-gradient(145deg,#fff,#f5f8fd);box-shadow:0 15px 32px -25px #20395f80}.ig-kpi:before{content:'';position:absolute;left:21px;top:0;width:34px;height:3px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,#526ea3,#d486e4)}.ig-kpi-label{font-size:12px;color:#6d7f9e}.ig-kpi-value{margin-top:9px;font-size:clamp(24px,2.4vw,34px);font-weight:600;letter-spacing:-.045em;color:#263e68;font-variant-numeric:tabular-nums}.ig-kpi-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;font-size:11px;color:#71819b}.ig-chip{padding:5px 8px;border-radius:999px;background:#eaf0f9}.ig-delta{font-weight:700}.ig-up{color:#16845b;background:#e2f5ec}.ig-down{color:#c24848;background:#fdeaea}.ig-neutral{color:#6f7d93;background:#edf1f6}
+.ig-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.ig-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.ig-empty{display:none;padding:22px;border:1px dashed #c7d5e8;border-radius:14px;background:#f6f9fd;text-align:center;color:#71819c}.ig-chart-title{margin-bottom:12px;font-size:12px;font-weight:600;color:#647795}.ig-source-note{margin:-10px 0 20px;color:#72819a;font-size:11px}
+@media(max-width:1100px){.ig-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.ig-grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.ig-hero{padding:24px 20px}.ig-hero-orb{opacity:.35;right:-15px}.ig-kpis,.ig-grid-2,.ig-grid-3{grid-template-columns:1fr}.ig-kpi{padding:18px}.ig-grid-2,.ig-grid-3{gap:16px}}
+</style>
 </head>
 <body class="auth-locked">
 <div class="auth-modal" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
@@ -352,6 +360,7 @@ button,select{touch-action:manipulation}button:focus-visible,select:focus-visibl
     <div class="sb-section-label">Principal</div>
     <button class="sb-item active" onclick="swTab('comercial',this)"><span class="sb-item-icon">📊</span> Comercial</button>
     <button class="sb-item" onclick="swTab('marketing',this)"><span class="sb-item-icon">📣</span> Marketing</button>
+    <button class="sb-item" onclick="swTab('instagram',this)"><span class="sb-item-icon">◎</span> Instagram</button>
     <div class="sb-section-label" style="margin-top:8px">Análises</div>
     <button class="sb-item" onclick="goSection('sec-fat',this)"><span class="sb-item-icon">💰</span> Faturamento</button>
     <button class="sb-item" onclick="goSection('sec-orc',this)"><span class="sb-item-icon">📈</span> Orçamentos</button>
@@ -388,6 +397,7 @@ button,select{touch-action:manipulation}button:focus-visible,select:focus-visibl
       <div class="tab-switch">
         <button class="tab-switch-btn on" onclick="swTab('comercial',this)">Comercial</button>
         <button class="tab-switch-btn" onclick="swTab('marketing',this)">Marketing</button>
+        <button class="tab-switch-btn" onclick="swTab('instagram',this)">Instagram</button>
       </div>
       <button class="topbar-btn" onclick="expCSV()">⬇ CSV</button>
       <button class="topbar-btn pdf-btn-dark" onclick="exportPDF()">📄 PDF</button>
@@ -660,6 +670,37 @@ button,select{touch-action:manipulation}button:focus-visible,select:focus-visibl
       </div>
     </div>
   </div></div><!-- /tab-marketing -->
+
+  <!-- INSTAGRAM TAB -->
+  <div class="tc" id="tab-instagram"><div class="content">
+    <div class="ig-hero">
+      <div class="ig-hero-ey">ALQ Farma — Instagram orgânico</div>
+      <div class="ig-hero-title">Presença que gera conexão</div>
+      <div class="ig-hero-sub">Crescimento, alcance, engajamento e consumo de conteúdo em uma única visão.</div>
+      <div class="ig-hero-orb" aria-hidden="true"></div>
+    </div>
+    <div class="filter-strip">
+      <span class="fl">De:</span><div class="comp-tag"><select class="comp-select" id="ig-period-start" onchange="setIgPeriod()"></select></div>
+      <span class="fl">Até:</span><div class="comp-tag"><select class="comp-select" id="ig-period-end" onchange="setIgPeriod()"></select></div>
+      <div class="comp-tag"><span class="fl">Comparação:</span><select class="comp-select" id="ig-compare" onchange="renderInstagram()"><option value="previous">Período anterior</option><option value="none">Sem comparação</option></select></div>
+      <div class="comp-tag"><span class="fl">Origem:</span><select class="comp-select" id="ig-source"><option value="organic">Orgânico</option></select></div>
+      <button class="last-month-btn" type="button" onclick="setLastIgMonth()">Último mês</button>
+    </div>
+    <div class="ig-empty" id="ig-empty">Não há dados do Instagram para o período selecionado.</div>
+    <div class="ig-kpis" id="ig-kpis"></div>
+    <div class="ig-grid-2">
+      <section class="sec" id="ig-sec-followers"><div class="sec-hd"><div><div class="sec-title">Evolução dos seguidores</div><div class="chart-period" id="ig-period-label-1">—</div></div></div><div class="sec-body"><div class="cwrap" style="height:310px"><canvas id="igChFollowers"></canvas></div></div></section>
+      <section class="sec" id="ig-sec-reach"><div class="sec-hd"><div><div class="sec-title">Alcance e visualizações</div><div class="chart-period" id="ig-period-label-2">—</div></div></div><div class="sec-body"><div class="cwrap" style="height:310px"><canvas id="igChReach"></canvas></div></div></section>
+      <section class="sec" id="ig-sec-interactions"><div class="sec-hd"><div><div class="sec-title">Evolução das interações</div><div class="chart-period" id="ig-period-label-3">—</div></div></div><div class="sec-body"><div class="cwrap" style="height:280px"><canvas id="igChInteractions"></canvas></div></div></section>
+      <section class="sec" id="ig-sec-visits"><div class="sec-hd"><div><div class="sec-title">Visitas ao perfil e cliques</div><div class="chart-period" id="ig-period-label-4">—</div></div></div><div class="sec-body"><div class="cwrap" style="height:280px"><canvas id="igChVisits"></canvas></div></div></section>
+    </div>
+    <section class="sec" id="ig-sec-distributions"><div class="sec-hd"><div><div class="sec-title">Distribuição do desempenho</div><div class="chart-period">Quem alcançamos, quem interagiu e o que publicamos</div></div></div><div class="sec-body"><div class="ig-grid-3">
+      <div id="ig-dist-reach"><div class="ig-chart-title">Alcance por público</div><div class="cwrap" style="height:235px"><canvas id="igChReachDist"></canvas></div></div>
+      <div id="ig-dist-interactions"><div class="ig-chart-title">Interações por público</div><div class="cwrap" style="height:235px"><canvas id="igChInteractionDist"></canvas></div></div>
+      <div id="ig-dist-content"><div class="ig-chart-title">Conteúdos publicados por formato disponível</div><div class="cwrap" style="height:235px"><canvas id="igChContent"></canvas></div></div>
+    </div></div></section>
+    <div class="ig-source-note">Os dados exibidos correspondem apenas às colunas preenchidas na planilha.</div>
+  </div></div><!-- /tab-instagram -->
 </main>
 <script>
 function alqBarGradient(top,bottom){
@@ -1134,6 +1175,7 @@ let MKC=[
   {ano:2026,mes:'Junho',canal:'Pedido Pago',campanha:'repesc_15_dias_30/06',invest:158.76,receita:33465.72,roas:210.80},
 ];
 let MK_DETAILS=[];
+let IG_DATA=[];
 let MKS=[
   {ano:2026,mes:'Março',metrica:'Primeiras aprovações',valor:7},{ano:2026,mes:'Março',metrica:'Não calculadas',valor:15},{ano:2026,mes:'Março',metrica:'Pag. via Pix',valor:6},{ano:2026,mes:'Março',metrica:'Pag. via Cartão',valor:4},{ano:2026,mes:'Março',metrica:'Tempo médio atendimento',valor:'02h36m'},{ano:2026,mes:'Março',metrica:'Tempo médio cálculo',valor:'03h33m'},
   {ano:2026,mes:'Abril',metrica:'Primeiras aprovações',valor:6},{ano:2026,mes:'Abril',metrica:'Não calculadas',valor:26},{ano:2026,mes:'Abril',metrica:'Pag. via Pix',valor:6},{ano:2026,mes:'Abril',metrica:'Pag. via Cartão',valor:4},{ano:2026,mes:'Abril',metrica:'Tempo médio atendimento',valor:'02h45m'},{ano:2026,mes:'Abril',metrica:'Tempo médio cálculo',valor:'03h30m'},
@@ -1951,6 +1993,65 @@ function setMkCompFromSelect(sel){mkPeriodEndId=sel.value||mkPeriodStartId;updat
 function setMkCampaign(sel){mkCampaignFilter=sel.value||'all';renderMarketing()}
 function setLastMkMonth(){const latest=MK_MONTH_PERIODS[0]?.id||'mk-jul26';mkPeriodStartId=latest;mkPeriodEndId=latest;updateMarketingPeriod();renderMkSelects();renderMarketing()}
 
+/* ── INSTAGRAM ───────────────────────────────────────────── */
+let igStartId='',igEndId='';
+const igKey=r=>`${r.ano}-${String(MO.indexOf(r.mes)+1).padStart(2,'0')}`;
+const igMonthLabel=r=>`${r.mes.slice(0,3)}/${String(r.ano).slice(-2)}`;
+const igNumber=v=>new Intl.NumberFormat('pt-BR').format(Math.round(v||0));
+const igPercent=v=>`${Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
+function igRowsSorted(){return IG_DATA.slice().sort((a,b)=>a.ano-b.ano||MO.indexOf(a.mes)-MO.indexOf(b.mes))}
+function initIgSelects(){
+  const rows=igRowsSorted(),options=rows.slice().reverse().map(r=>`<option value="${igKey(r)}">${igMonthLabel(r)}</option>`).join('');
+  ['ig-period-start','ig-period-end'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=options});
+  if(rows.length&&!igStartId){igStartId=igEndId=igKey(rows[rows.length-1])}
+  const a=document.getElementById('ig-period-start'),b=document.getElementById('ig-period-end');if(a)a.value=igStartId;if(b)b.value=igEndId;
+}
+function setIgPeriod(){igStartId=document.getElementById('ig-period-start')?.value||igStartId;igEndId=document.getElementById('ig-period-end')?.value||igEndId;renderInstagram()}
+function setLastIgMonth(){const rows=igRowsSorted();if(!rows.length)return;igStartId=igEndId=igKey(rows[rows.length-1]);initIgSelects();renderInstagram()}
+function igSelection(){
+  const all=igRowsSorted(),a=all.findIndex(r=>igKey(r)===igStartId),b=all.findIndex(r=>igKey(r)===igEndId);if(a<0||b<0)return{current:[],previous:[]};
+  const lo=Math.min(a,b),hi=Math.max(a,b),current=all.slice(lo,hi+1),len=hi-lo+1,previous=all.slice(Math.max(0,lo-len),lo);
+  return{current,previous:previous.length===len?previous:[]};
+}
+function igAggregate(rows){
+  if(!rows.length)return null;const first=rows[0],last=rows[rows.length-1],sum=k=>rows.reduce((t,r)=>t+(Number(r[k])||0),0),weighted=(base,pct)=>rows.reduce((t,r)=>t+(Number(r[base])||0)*(Number(r[pct])||0)/100,0);
+  const net=sum('net'),startFollowers=Math.max(0,(first.followers||0)-(first.net||0)),reach=sum('reach'),interactions=sum('interactions');
+  return{followers:last.followers,newFollowers:sum('newFollowers'),lostFollowers:sum('lostFollowers'),net,growthRate:startFollowers?net/startFollowers*100:sum('growthRate'),reach,views:sum('views'),engaged:rows.every(r=>r.engaged==null)?null:sum('engaged'),interactions,engagementRate:reach?interactions/reach*100:sum('engagementRate'),visits:sum('visits'),clicks:sum('clicks'),content:sum('content'),reels:sum('reels'),posts:sum('posts'),stories:sum('stories'),reachFollowers:weighted('reach','reachFollowersPct'),reachNonFollowers:weighted('reach','reachNonFollowersPct'),interactionFollowers:weighted('interactions','interactionFollowersPct'),interactionNonFollowers:weighted('interactions','interactionNonFollowersPct')};
+}
+function igDelta(current,previous,inverse=false){
+  if(previous==null||!Number.isFinite(previous)||previous===0)return'<span class="ig-chip ig-neutral">Sem período anterior</span>';
+  const pct=(current-previous)/Math.abs(previous)*100,up=pct>0,good=inverse?!up:up,cls=pct===0?'ig-neutral':good?'ig-up':'ig-down',arrow=pct===0?'→':up?'↑':'↓';
+  return`<span class="ig-chip ig-delta ${cls}">${arrow} ${Math.abs(pct).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})}%</span>`;
+}
+function igDestroy(key){if(CH[key]){CH[key].destroy();CH[key]=null}}
+function igLineChart(key,id,labels,datasets){igDestroy(key);const el=document.getElementById(id);if(!el)return;CH[key]=new Chart(el,{type:'line',data:{labels,datasets},options:{...CDef,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{...CDef.plugins,legend:{display:true,position:'bottom'}},scales:{x:CDef.scales.x,y:{...CDef.scales.y,beginAtZero:true}}}})}
+function igDonut(key,id,labels,data,colors){igDestroy(key);const el=document.getElementById(id);if(!el)return;CH[key]=new Chart(el,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:3,borderColor:'#fff',hoverOffset:7}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{family:'Poppins',size:11},color:'#5c6e8d'}},tooltip:{callbacks:{label:c=>`${c.label}: ${igNumber(c.raw)}`}}}}})}
+function renderInstagram(){
+  initIgSelects();const {current,previous}=igSelection(),empty=document.getElementById('ig-empty'),kpis=document.getElementById('ig-kpis');
+  if(!current.length){empty.style.display='block';kpis.innerHTML='';return}empty.style.display='none';
+  const now=igAggregate(current),prev=document.getElementById('ig-compare')?.value==='none'?null:igAggregate(previous),cmp=(k,inverse=false)=>igDelta(now[k],prev?.[k],inverse),meta=(items,delta)=>`<div class="ig-kpi-meta">${items.map(x=>`<span class="ig-chip">${x}</span>`).join('')}${delta}</div>`;
+  const cards=[
+    ['Seguidores atuais',igNumber(now.followers),meta([`+${igNumber(now.newFollowers)} novos`,`−${igNumber(now.lostFollowers)} perdidos`],cmp('followers'))],
+    ['Crescimento líquido',`${now.net>=0?'+':''}${igNumber(now.net)}`,meta([`${igPercent(now.growthRate)} de crescimento`],cmp('net'))],
+    ['Contas alcançadas',igNumber(now.reach),meta([],cmp('reach'))],
+    ['Visualizações',igNumber(now.views),meta([],cmp('views'))],
+    ['Interações totais',igNumber(now.interactions),meta([`${igPercent(now.engagementRate)} por alcance`],cmp('interactions'))],
+    ['Visitas ao perfil',igNumber(now.visits),meta([`${igNumber(now.clicks)} cliques no link`],cmp('visits'))],
+    ['Conteúdos publicados',igNumber(now.content),meta([`${igNumber(now.reels)} Reels`,`${igNumber(now.posts)} posts`,`${igNumber(now.stories)} Stories`],cmp('content'))]
+  ];
+  if(now.engaged!=null)cards.splice(5,0,['Contas engajadas',igNumber(now.engaged),meta([],cmp('engaged'))]);
+  kpis.innerHTML=cards.map(c=>`<article class="ig-kpi"><div class="ig-kpi-label">${c[0]}</div><div class="ig-kpi-value">${c[1]}</div>${c[2]}</article>`).join('');
+  const labels=current.map(igMonthLabel),period=labels.length===1?labels[0]:`${labels[0]} a ${labels[labels.length-1]}`;document.querySelectorAll('[id^="ig-period-label-"]').forEach(el=>el.textContent=period);
+  igLineChart('igFollowers','igChFollowers',labels,[{label:'Seguidores atuais',data:current.map(r=>r.followers),borderColor:'#526ea3',backgroundColor:'#526ea322',fill:true,tension:.35,pointRadius:4},{label:'Novos',data:current.map(r=>r.newFollowers),borderColor:'#86a8d8',tension:.35},{label:'Perdidos',data:current.map(r=>r.lostFollowers),borderColor:'#d486a0',tension:.35}]);
+  igLineChart('igReach','igChReach',labels,[{label:'Contas alcançadas',data:current.map(r=>r.reach),borderColor:'#526ea3',backgroundColor:'#526ea31c',fill:true,tension:.35},{label:'Visualizações',data:current.map(r=>r.views),borderColor:'#b25bc7',tension:.35}]);
+  igLineChart('igInteractions','igChInteractions',labels,[{label:'Interações',data:current.map(r=>r.interactions),borderColor:'#526ea3',backgroundColor:'#526ea32a',fill:true,tension:.35}]);
+  igLineChart('igVisits','igChVisits',labels,[{label:'Visitas ao perfil',data:current.map(r=>r.visits),borderColor:'#526ea3',backgroundColor:'#526ea322',fill:true,tension:.35},{label:'Cliques no link',data:current.map(r=>r.clicks),borderColor:'#b25bc7',tension:.35}]);
+  igDonut('igReachDist','igChReachDist',['Seguidores','Não seguidores'],[now.reachFollowers,now.reachNonFollowers],['#526ea3','#c06bd1']);
+  igDonut('igInteractionDist','igChInteractionDist',['Seguidores','Não seguidores'],[now.interactionFollowers,now.interactionNonFollowers],['#526ea3','#d486a0']);
+  igDonut('igContent','igChContent',['Reels','Posts','Stories'],[now.reels,now.posts,now.stories],['#526ea3','#9a6fc0','#85a0cc']);
+  document.getElementById('ig-sec-followers').style.display=current.some(r=>r.followers!=null)?'block':'none';document.getElementById('ig-sec-reach').style.display=current.some(r=>r.reach!=null||r.views!=null)?'block':'none';document.getElementById('ig-sec-interactions').style.display=current.some(r=>r.interactions!=null)?'block':'none';document.getElementById('ig-sec-visits').style.display=current.some(r=>r.visits!=null||r.clicks!=null)?'block':'none';document.getElementById('ig-dist-reach').style.display=(now.reachFollowers||now.reachNonFollowers)?'block':'none';document.getElementById('ig-dist-interactions').style.display=(now.interactionFollowers||now.interactionNonFollowers)?'block':'none';document.getElementById('ig-dist-content').style.display=(now.reels||now.posts||now.stories)?'block':'none';
+}
+
 /* ── TAB / NAV ───────────────────────────────────────────── */
 function swTab(tab,btn){
   showTab(tab);
@@ -1963,7 +2064,8 @@ function showTab(tab){
   document.querySelectorAll('.tc').forEach(c=>c.classList.remove('on'));
   document.getElementById('tab-'+tab).classList.add('on');
   if(tab==='comercial'){document.getElementById('tb-title').textContent='Dashboard Comercial';document.getElementById('tb-path').textContent='Performance';}
-  else{document.getElementById('tb-title').textContent='Dashboard de Marketing';document.getElementById('tb-path').textContent='Marketing';renderMarketing();}
+  else if(tab==='marketing'){document.getElementById('tb-title').textContent='Dashboard de Marketing';document.getElementById('tb-path').textContent='Marketing';renderMarketing();}
+  else{document.getElementById('tb-title').textContent='Dashboard do Instagram';document.getElementById('tb-path').textContent='Instagram';renderInstagram();}
   document.querySelectorAll('.tab-switch-btn').forEach(b=>{b.classList.toggle('on',b.textContent.toLowerCase().includes(tab.substring(0,3).toLowerCase()))});
 }
 function setSidebarActive(btn){document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active')}
@@ -2117,23 +2219,25 @@ async function addSummaryPage(pdf,nodes,firstRef){
 async function exportPDF(){
   if(document.body.classList.contains('auth-locked')){alert('Entre no dashboard antes de exportar o PDF.');return;}
   if(typeof html2canvas==='undefined'||!window.jspdf?.jsPDF){alert('Não foi possível carregar o gerador de PDF. Verifique sua conexão e tente novamente.');return;}
-  const prevTab=document.getElementById('tab-marketing').classList.contains('on')?'marketing':'comercial';
+  const prevTab=document.getElementById('tab-instagram').classList.contains('on')?'instagram':document.getElementById('tab-marketing').classList.contains('on')?'marketing':'comercial';
   const prevScroll=window.scrollY;
   try{
     setPdfProgress(0,1,'Preparando gráficos...');
-    render();renderMarketing();
+    render();renderMarketing();renderInstagram();
     await document.fonts.ready;await new Promise(r=>setTimeout(r,350));
-    const commercial=document.getElementById('tab-comercial'),marketing=document.getElementById('tab-marketing');
-    const oldC=commercial.classList.contains('on'),oldM=marketing.classList.contains('on');
-    commercial.classList.add('on');marketing.classList.add('on');
-    commercial.style.display='block';marketing.style.display='block';
+    const commercial=document.getElementById('tab-comercial'),marketing=document.getElementById('tab-marketing'),instagram=document.getElementById('tab-instagram');
+    const oldC=commercial.classList.contains('on'),oldM=marketing.classList.contains('on'),oldI=instagram.classList.contains('on');
+    commercial.classList.add('on');marketing.classList.add('on');instagram.classList.add('on');
+    commercial.style.display='block';marketing.style.display='block';instagram.style.display='block';
     const {jsPDF}=window.jspdf,pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true}),first={value:true};
     const commercialSections=[...commercial.querySelectorAll('.sec')];
     const marketingSections=[...marketing.querySelectorAll('.sec')];
+    const instagramSections=[...instagram.querySelectorAll('.sec')];
     const summaryNodes=[commercial.querySelector('.page-hd'),commercial.querySelector('.insight-strip'),commercial.querySelector('.kpi-grid'),commercialSections.shift()].filter(Boolean);
     const marketingIntro=[marketing.querySelector('.mk-hero'),marketingSections.shift()].filter(Boolean);
-    const sections=[...commercialSections,...marketingSections];
-    const total=1+sections.length+(marketingIntro.length?1:0);
+    const instagramIntro=[instagram.querySelector('.ig-hero'),instagram.querySelector('.ig-kpis')].filter(Boolean);
+    const sections=[...commercialSections,...marketingSections,...instagramSections];
+    const total=1+sections.length+(marketingIntro.length?1:0)+(instagramIntro.length?1:0);
     setPdfProgress(0,total,'Montando resumo comercial...');
     await addSummaryPage(pdf,summaryNodes,first);
     for(let i=0;i<sections.length;i++){
@@ -2148,10 +2252,14 @@ async function exportPDF(){
       setPdfProgress(total-1,total,'Montando página de marketing...');
       await addSummaryPage(pdf,marketingIntro,first);
     }
+    if(instagramIntro.length){
+      setPdfProgress(total-1,total,'Montando página do Instagram...');
+      await addSummaryPage(pdf,instagramIntro,first);
+    }
     setPdfProgress(total,total,'Finalizando PDF...');
     pdf.save(safePdfName());
-    commercial.style.display='';marketing.style.display='';
-    commercial.classList.toggle('on',oldC);marketing.classList.toggle('on',oldM);
+    commercial.style.display='';marketing.style.display='';instagram.style.display='';
+    commercial.classList.toggle('on',oldC);marketing.classList.toggle('on',oldM);instagram.classList.toggle('on',oldI);
   }catch(err){console.error('Erro ao exportar PDF:',err);alert('O PDF não pôde ser gerado. Abra o console do navegador para ver o erro.');}
   finally{
     hidePdfProgress();
@@ -2185,6 +2293,7 @@ const SHEETS_CONFIG = {
     roas:              586083326,
     campanhas:         1359791966,
     detalhesCampanhas: 864092417,
+    instagram:         64674186,
     repescagem:        1194167509
   }
 };
@@ -2410,6 +2519,13 @@ function transformCampaignDetails(rows){
     };
   }).filter(row=>row.campanha&&row.mes&&row.ano);
 }
+function transformInstagram(rows){
+  if(!rows||!rows.length)return[];
+  const number=(r,key)=>{const raw=r[key];return raw===undefined||raw===null||String(raw).trim()===''?null:parseMoney(raw)};
+  return rows.filter(r=>r&&r.Ano&&r.Mês).map(r=>({
+    ano:parseInt(r.Ano)||0,mes:String(r.Mês||'').trim(),followers:number(r,'Seguidores atuais'),newFollowers:number(r,'Novos seguidores'),lostFollowers:number(r,'Seguidores perdidos'),net:number(r,'Crescimento líquido'),growthRate:number(r,'Taxa de crescimento'),reach:number(r,'Contas alcançadas'),reachFollowersPct:number(r,'Alcance de seguidores'),reachNonFollowersPct:number(r,'Alcance de não seguidores'),views:number(r,'Visualizações'),engaged:number(r,'Contas engajadas'),interactions:number(r,'Interações totais'),interactionFollowersPct:number(r,'Interações de seguidores'),interactionNonFollowersPct:number(r,'Interações de não seguidores'),visits:number(r,'Visitas ao perfil'),clicks:number(r,'Cliques no link da bio'),content:number(r,'Conteúdos publicados'),reels:number(r,'Reels publicados'),posts:number(r,'Posts Publicados'),stories:number(r,'Stories publicados'),engagementRate:number(r,'Taxa de engajamento')
+  })).filter(r=>r.ano&&r.mes);
+}
 function transformMetricaIndicador(rows) {
   if (!rows || rows.length === 0) return null;
   const result = rows.filter(r => r && r.Ano && r.Mês).map(r => {
@@ -2435,7 +2551,7 @@ function transformNovosCac(rows) {
 async function loadAllSheetData() {
   let anyLoaded = false;
   try {
-    const [fatur, fatCategs, orcQ, orcV, ticket, ticketCat, rejAtivos, rejMedicos, tempos, nps, promotores, neutros, detratores, campanhas, detalhesCampanhas] = await Promise.all([
+    const [fatur, fatCategs, orcQ, orcV, ticket, ticketCat, rejAtivos, rejMedicos, tempos, nps, promotores, neutros, detratores, campanhas, detalhesCampanhas, instagram] = await Promise.all([
       fetchSheetData('Faturamento', SHEETS_CONFIG.tabs.faturamento),
       fetchSheetData('Faturamento Categorias', SHEETS_CONFIG.tabs.faturamentoCategs),
       fetchSheetData('Orçamentos Qtd', SHEETS_CONFIG.tabs.orcQtd),
@@ -2450,7 +2566,8 @@ async function loadAllSheetData() {
       fetchSheetData('Neutros', SHEETS_CONFIG.tabs.neutros),
       fetchSheetData('Detratores', SHEETS_CONFIG.tabs.detratores),
       fetchSheetData('Campanhas PP', SHEETS_CONFIG.tabs.campanhas, SHEETS_CONFIG.marketingSpreadsheetId),
-      fetchSheetData('Detalhes PP', SHEETS_CONFIG.tabs.detalhesCampanhas, SHEETS_CONFIG.marketingSpreadsheetId)
+      fetchSheetData('Detalhes PP', SHEETS_CONFIG.tabs.detalhesCampanhas, SHEETS_CONFIG.marketingSpreadsheetId),
+      fetchSheetData('Instagram', SHEETS_CONFIG.tabs.instagram, SHEETS_CONFIG.marketingSpreadsheetId)
     ]);
     if (fatur && fatur.length > 0)     { const r=transformFaturamento(fatur);   if(r){DF=r;anyLoaded=true;} }
     if (fatCategs && fatCategs.length) { const r=transformFatCategs(fatCategs); if(r){DFC=r;anyLoaded=true;} }
@@ -2467,6 +2584,7 @@ async function loadAllSheetData() {
     if (detratores && detratores.length) { DP_DET=transformMotivos(detratores); }
     if (campanhas && campanhas.length)   { const r=transformCampanhas(campanhas);        if(r){MK=r.mk; MKC=r.mkc;anyLoaded=true;} }
     if (detalhesCampanhas && detalhesCampanhas.length) { MK_DETAILS=transformCampaignDetails(detalhesCampanhas); }
+    if (instagram && instagram.length) { IG_DATA=transformInstagram(instagram);if(IG_DATA.length){anyLoaded=true;igStartId='';igEndId='';initIgSelects();} }
     if (anyLoaded) { recalcPeriods(); recalcMarketingPeriods(); }
     return anyLoaded;
   } catch (error) {
@@ -2523,8 +2641,8 @@ function refData() {
   b.textContent = '↻ Atualizando...'; b.disabled = true;
   Object.keys(CH).forEach(key => { if (CH[key] && CH[key].destroy) { try { CH[key].destroy(); } catch (e) {} } CH[key] = null; });
   loadAllSheetData().then(success => {
-    const isMk = document.getElementById('tab-marketing')?.classList.contains('on');
-    if (isMk) renderMarketing(); else render();
+    const isIg=document.getElementById('tab-instagram')?.classList.contains('on'),isMk=document.getElementById('tab-marketing')?.classList.contains('on');
+    if(isIg)renderInstagram();else if(isMk)renderMarketing();else render();
     b.textContent = '↻ Atualizar'; b.disabled = false;
     b.style.filter = 'brightness(1.15)'; setTimeout(() => { b.style.filter = 'brightness(1)'; }, 300);
   });
