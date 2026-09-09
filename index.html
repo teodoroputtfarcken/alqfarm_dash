@@ -2323,15 +2323,24 @@ function transformAtivos(rows) {
 }
 function transformMedicos(rows) {
   if (!rows || rows.length === 0) return null;
-  const result = rows.filter(r => r && r.Ano && r.Mês).map(r => ({
-    ano: parseInt(r.Ano) || 0, mes: (r.Mês || '').trim(),
-    med: (r['Médico'] || r.Medico || r.Ativo || r.ativo || '').trim(),
-    ef: parseInt(r.Efetuados || r.efetuados || 0) || 0,
-    ap: parseInt(r.Aprovados || r.aprovados || 0) || 0,
-    rj: parseInt(r.Rejeitados || r.rejeitados || 0) || 0,
-    vl: parseMoney(r.Valor || r.valor || 0),
-    ix: parsePercent(r['Índice de Rejeição'] || r['Indice de Rejeição'] || r['Índice'] || r['indice'] || 0)
-  })).filter(r => r.mes && r.med);
+  const unique = new Map();
+  rows.filter(r => r && r.Ano && r.Mês).forEach(r => {
+    const item={
+      ano:parseInt(r.Ano)||0,mes:(r.Mês||'').trim(),
+      med:(r['Médico']||r.Medico||r.Ativo||r.ativo||'').trim(),
+      ef:parseInt(r.Efetuados||r.efetuados||0)||0,
+      ap:parseInt(r.Aprovados||r.aprovados||0)||0,
+      rj:parseInt(r.Rejeitados||r.rejeitados||0)||0,
+      vl:parseMoney(r.Valor||r.valor||0),
+      ix:parsePercent(r['Índice de Rejeição']||r['Indice de Rejeição']||r['Índice']||r.indice||0),
+      status:String(r.Status||r.status||'').trim()
+    };
+    if(!item.mes||!item.med)return;
+    const key=`${item.ano}|${item.mes.toLowerCase()}|${item.med.toLowerCase().replace(/\s+/g,' ')}`;
+    const current=unique.get(key),isValue=/valor de venda rejeitado/i.test(item.status);
+    if(!current||isValue)unique.set(key,item);
+  });
+  const result=[...unique.values()];
   return result.length > 0 ? result : null;
 }
 function transformMotivos(rows) {
