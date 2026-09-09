@@ -682,7 +682,6 @@ button,select{touch-action:manipulation}button:focus-visible,select:focus-visibl
       <span class="fl">De:</span><div class="comp-tag"><select class="comp-select" id="ig-period-start" onchange="setIgPeriod()"></select></div>
       <span class="fl">Até:</span><div class="comp-tag"><select class="comp-select" id="ig-period-end" onchange="setIgPeriod()"></select></div>
       <div class="comp-tag"><span class="fl">Comparação:</span><select class="comp-select" id="ig-compare" onchange="renderInstagram()"><option value="previous">Período anterior</option><option value="none">Sem comparação</option></select></div>
-      <div class="comp-tag"><span class="fl">Origem:</span><select class="comp-select" id="ig-source"><option value="organic">Orgânico</option></select></div>
       <button class="last-month-btn" type="button" onclick="setLastIgMonth()">Último mês</button>
     </div>
     <div class="ig-empty" id="ig-empty">Não há dados do Instagram para o período selecionado.</div>
@@ -1995,7 +1994,7 @@ function setLastMkMonth(){const latest=MK_MONTH_PERIODS[0]?.id||'mk-jul26';mkPer
 /* ── INSTAGRAM ───────────────────────────────────────────── */
 let igStartId='',igEndId='';
 const igKey=r=>`${r.ano}-${String(MO.indexOf(r.mes)+1).padStart(2,'0')}`;
-const igMonthLabel=r=>`${r.mes.slice(0,3)}/${String(r.ano).slice(-2)}`;
+const igMonthLabel=r=>`${r.mes}/${r.ano}`;
 const igNumber=v=>new Intl.NumberFormat('pt-BR').format(Math.round(v||0));
 const igPercent=v=>`${Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}%`;
 function igRowsSorted(){return IG_DATA.slice().sort((a,b)=>a.ano-b.ano||MO.indexOf(a.mes)-MO.indexOf(b.mes))}
@@ -2025,14 +2024,37 @@ function igDelta(current,previous,inverse=false){
 function igDestroy(key){if(CH[key]){CH[key].destroy();CH[key]=null}}
 const igValueLabels={id:'igValueLabels',afterDatasetsDraw(chart){const {ctx}=chart;ctx.save();ctx.font='600 11px Poppins';ctx.textAlign='center';ctx.textBaseline='bottom';chart.data.datasets.forEach((ds,di)=>{const meta=chart.getDatasetMeta(di);if(meta.hidden)return;meta.data.forEach((element,i)=>{const value=Number(ds.data[i])||0;if(!value)return;const pos=element.tooltipPosition();ctx.fillStyle='#344b73';ctx.fillText(igNumber(value),pos.x,pos.y-7)})});ctx.restore()}};
 function igLineChart(key,id,labels,datasets){
-  igDestroy(key);const el=document.getElementById(id);if(!el)return;const single=labels.length===1;
-  const styled=datasets.map((d,i)=>single?{...d,type:'bar',fill:false,backgroundColor:i===0?'#526ea3':i===1?'#8ba9d4':'#d486a0',borderColor:'transparent',borderRadius:8,maxBarThickness:76}:{...d,type:'line'});
-  CH[key]=new Chart(el,{type:single?'bar':'line',data:{labels,datasets:styled},plugins:single?[igValueLabels]:[],options:{...CDef,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{...CDef.plugins,legend:{display:true,position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:18}}},scales:{x:{...CDef.scales.x,grid:{display:false}},y:{...CDef.scales.y,beginAtZero:true,grace:'18%'}}}})
+  igDestroy(key);const el=document.getElementById(id);if(!el)return;const palette=[['#526ea3','#324b7b'],['#a66ac1','#7b4c9b'],['#db8ca4','#b85c78']];
+  const styled=datasets.map((d,i)=>({...d,type:'bar',fill:false,backgroundColor:alqBarGradient(palette[i%3][0],palette[i%3][1]),borderColor:'transparent',borderRadius:9,maxBarThickness:68,categoryPercentage:.7,barPercentage:.78}));
+  CH[key]=new Chart(el,{type:'bar',data:{labels,datasets:styled},plugins:[igValueLabels],options:{...CDef,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{...CDef.plugins,legend:{display:true,position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:18}}},scales:{x:{...CDef.scales.x,grid:{display:false},ticks:{...CDef.scales.x.ticks,maxRotation:0}},y:{...CDef.scales.y,beginAtZero:true,grace:'20%',grid:{color:'#e5ecf6'}}}}});
+}
+function igFollowersChart(rows,labels){
+  igDestroy('igFollowers');const el=document.getElementById('igChFollowers');if(!el)return;const single=rows.length===1;
+  const currentNote={id:'igFollowerTotal',afterDraw(chart){if(!single)return;const {ctx,chartArea}=chart;ctx.save();ctx.textAlign='right';ctx.fillStyle='#7182a0';ctx.font='500 11px Poppins';ctx.fillText('SEGUIDORES ATUAIS',chartArea.right,chartArea.top+8);ctx.fillStyle='#263e68';ctx.font='600 25px Poppins';ctx.fillText(igNumber(rows[0].followers),chartArea.right,chartArea.top+40);ctx.restore()}};
+  const datasets=single?[
+    {label:'Novos seguidores',data:[rows[0].newFollowers],backgroundColor:alqBarGradient('#6f91c6','#48689e')},
+    {label:'Seguidores perdidos',data:[rows[0].lostFollowers],backgroundColor:alqBarGradient('#dc91a6','#bd607b')}
+  ]:[
+    {type:'line',label:'Seguidores atuais',data:rows.map(r=>r.followers),borderColor:'#304d80',backgroundColor:'#526ea322',fill:true,tension:.35,pointRadius:4,pointBackgroundColor:'#fff',pointBorderWidth:3,yAxisID:'y'},
+    {type:'bar',label:'Novos seguidores',data:rows.map(r=>r.newFollowers),backgroundColor:'#7d9dce',borderRadius:7,yAxisID:'growth'},
+    {type:'bar',label:'Seguidores perdidos',data:rows.map(r=>r.lostFollowers),backgroundColor:'#d47f99',borderRadius:7,yAxisID:'growth'}
+  ];
+  const scales={
+    x:{grid:{display:false},ticks:{color:'#627391',font:{family:'Poppins',size:11},maxRotation:0}},
+    y:single
+      ?{beginAtZero:true,grace:'32%',ticks:{precision:0,color:'#627391'},grid:{color:'#e5ecf6'}}
+      :{position:'left',grace:'12%',ticks:{color:'#627391'},grid:{color:'#e5ecf6'}}
+  };
+  if(!single)scales.growth={position:'right',beginAtZero:true,grace:'20%',ticks:{precision:0,color:'#7b88a0'},grid:{display:false}};
+  CH.igFollowers=new Chart(el,{
+    type:'bar',data:{labels,datasets},plugins:[igValueLabels,currentNote],
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:18,font:{family:'Poppins',size:11},color:'#5c6e8d'}},tooltip:{backgroundColor:'#1b2c4b',padding:13,cornerRadius:10}},scales}
+  });
 }
 function igStackedChart(key,id,labels,data,colors){
   igDestroy(key);const el=document.getElementById(id);if(!el)return;const total=data.reduce((a,b)=>a+(Number(b)||0),0),pct=data.map(v=>total?v/total*100:0);
   const inside={id:`${key}Inside`,afterDatasetsDraw(chart){const {ctx}=chart;ctx.save();ctx.font='700 12px Poppins';ctx.textAlign='center';ctx.textBaseline='middle';chart.data.datasets.forEach((ds,i)=>{const bar=chart.getDatasetMeta(i).data[0],value=ds.data[0];if(!bar||value<7)return;const p=bar.tooltipPosition();ctx.fillStyle='#fff';ctx.fillText(`${value.toLocaleString('pt-BR',{maximumFractionDigits:1})}%`,p.x,p.y)});ctx.restore()}};
-  CH[key]=new Chart(el,{type:'bar',data:{labels:['Distribuição'],datasets:labels.map((label,i)=>({label,data:[pct[i]],backgroundColor:colors[i],borderRadius:i===0?{topLeft:9,bottomLeft:9}:i===labels.length-1?{topRight:9,bottomRight:9}:0,borderSkipped:false,barThickness:52}))},plugins:[inside],options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:18,font:{family:'Poppins',size:11},color:'#5c6e8d'}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw.toLocaleString('pt-BR',{maximumFractionDigits:1})}%`}}},scales:{x:{display:false,stacked:true,max:100},y:{display:false,stacked:true}}}})
+  CH[key]=new Chart(el,{type:'bar',data:{labels:['Distribuição'],datasets:labels.map((label,i)=>({label,data:[pct[i]],backgroundColor:colors[i],borderRadius:i===0?{topLeft:9,bottomLeft:9}:i===labels.length-1?{topRight:9,bottomRight:9}:0,borderSkipped:false,barThickness:52}))},plugins:[inside],options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:18,font:{family:'Poppins',size:11},color:'#5c6e8d'}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw.toLocaleString('pt-BR',{maximumFractionDigits:1})}%`}}},scales:{x:{display:false,stacked:true,max:100},y:{display:false,stacked:true}}}});
 }
 function igContentChart(key,id,labels,data,colors){igDestroy(key);const el=document.getElementById(id);if(!el)return;CH[key]=new Chart(el,{type:'bar',data:{labels,datasets:[{label:'Publicações',data,backgroundColor:colors,borderRadius:8,maxBarThickness:64}]},plugins:[igValueLabels],options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${igNumber(c.raw)} publicações`}}},scales:{x:{grid:{display:false},ticks:{color:'#5c6e8d',font:{family:'Poppins',size:11}}},y:{beginAtZero:true,grace:'20%',ticks:{precision:0,color:'#6b7b96'},grid:{color:'#e7edf6'}}}}})}
 function renderInstagram(){
@@ -2051,7 +2073,7 @@ function renderInstagram(){
   if(now.engaged!=null)cards.splice(5,0,['Contas engajadas',igNumber(now.engaged),meta([],cmp('engaged'))]);
   kpis.innerHTML=cards.map(c=>`<article class="ig-kpi"><div class="ig-kpi-label">${c[0]}</div><div class="ig-kpi-value">${c[1]}</div>${c[2]}</article>`).join('');
   const labels=current.map(igMonthLabel),period=labels.length===1?labels[0]:`${labels[0]} a ${labels[labels.length-1]}`;document.querySelectorAll('[id^="ig-period-label-"]').forEach(el=>el.textContent=period);
-  igLineChart('igFollowers','igChFollowers',labels,[{label:'Seguidores atuais',data:current.map(r=>r.followers),borderColor:'#526ea3',backgroundColor:'#526ea322',fill:true,tension:.35,pointRadius:4},{label:'Novos',data:current.map(r=>r.newFollowers),borderColor:'#86a8d8',tension:.35},{label:'Perdidos',data:current.map(r=>r.lostFollowers),borderColor:'#d486a0',tension:.35}]);
+  igFollowersChart(current,labels);
   igLineChart('igReach','igChReach',labels,[{label:'Contas alcançadas',data:current.map(r=>r.reach),borderColor:'#526ea3',backgroundColor:'#526ea31c',fill:true,tension:.35},{label:'Visualizações',data:current.map(r=>r.views),borderColor:'#b25bc7',tension:.35}]);
   igLineChart('igInteractions','igChInteractions',labels,[{label:'Interações',data:current.map(r=>r.interactions),borderColor:'#526ea3',backgroundColor:'#526ea32a',fill:true,tension:.35}]);
   igLineChart('igVisits','igChVisits',labels,[{label:'Visitas ao perfil',data:current.map(r=>r.visits),borderColor:'#526ea3',backgroundColor:'#526ea322',fill:true,tension:.35},{label:'Cliques no link',data:current.map(r=>r.clicks),borderColor:'#b25bc7',tension:.35}]);
