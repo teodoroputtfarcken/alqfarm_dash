@@ -2029,17 +2029,15 @@ async function addSummaryPage(pdf,nodes,firstRef){
   const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),margin=7,gap=3;
   if(!firstRef.value)pdf.addPage('a4','landscape');
   firstRef.value=false;
-  let y=margin;
-  const maxW=pageW-margin*2;
-  for(const c of canvases){
-    let scale=maxW/c.width;
-    let h=c.height*scale;
-    const remain=pageH-margin-y;
-    if(h>remain){scale=remain/c.height;h=c.height*scale;}
-    const w=c.width*scale;
-    pdf.addImage(c.toDataURL('image/jpeg',0.95),'JPEG',(pageW-w)/2,y,w,h,undefined,'FAST');
+  const maxW=pageW-margin*2,maxH=pageH-margin*2-gap*(canvases.length-1);
+  const fitted=canvases.map(c=>({canvas:c,scale:maxW/c.width,height:c.height*(maxW/c.width)}));
+  const heightScale=Math.min(1,maxH/fitted.reduce((sum,item)=>sum+item.height,0));
+  const usedH=fitted.reduce((sum,item)=>sum+item.height*heightScale,0)+gap*(fitted.length-1);
+  let y=margin+Math.max(0,(pageH-margin*2-usedH)/2);
+  for(const item of fitted){
+    const scale=item.scale*heightScale,w=item.canvas.width*scale,h=item.canvas.height*scale;
+    pdf.addImage(item.canvas.toDataURL('image/jpeg',0.95),'JPEG',(pageW-w)/2,y,w,h,undefined,'FAST');
     y+=h+gap;
-    if(y>=pageH-margin)break;
   }
 }
 async function exportPDF(){
@@ -2056,9 +2054,12 @@ async function exportPDF(){
     commercial.classList.add('on');marketing.classList.add('on');
     commercial.style.display='block';marketing.style.display='block';
     const {jsPDF}=window.jspdf,pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true}),first={value:true};
-    const summaryNodes=[commercial.querySelector('.page-hd'),commercial.querySelector('.insight-strip'),commercial.querySelector('.kpi-grid')].filter(Boolean);
-    const sections=[...commercial.querySelectorAll('.sec'),marketing.querySelector('.mk-hero'),...marketing.querySelectorAll('.sec')].filter(Boolean);
-    const total=1+sections.length;
+    const commercialSections=[...commercial.querySelectorAll('.sec')];
+    const marketingSections=[...marketing.querySelectorAll('.sec')];
+    const summaryNodes=[commercial.querySelector('.page-hd'),commercial.querySelector('.insight-strip'),commercial.querySelector('.kpi-grid'),commercialSections.shift()].filter(Boolean);
+    const marketingIntro=[marketing.querySelector('.mk-hero'),marketingSections.shift()].filter(Boolean);
+    const sections=[...commercialSections,...marketingSections];
+    const total=1+sections.length+(marketingIntro.length?1:0);
     setPdfProgress(0,total,'Montando resumo comercial...');
     await addSummaryPage(pdf,summaryNodes,first);
     for(let i=0;i<sections.length;i++){
@@ -2068,6 +2069,10 @@ async function exportPDF(){
       node.scrollIntoView({block:'start'});await new Promise(r=>setTimeout(r,60));
       const canvas=await pdfCanvas(node);
       addCanvasFit(pdf,canvas,first);
+    }
+    if(marketingIntro.length){
+      setPdfProgress(total-1,total,'Montando página de marketing...');
+      await addSummaryPage(pdf,marketingIntro,first);
     }
     setPdfProgress(total,total,'Finalizando PDF...');
     pdf.save(safePdfName());
