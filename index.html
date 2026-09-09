@@ -1742,6 +1742,19 @@ function mkCampaignLabel(group){
   if(MK_CAMPAIGN_LABELS[group])return MK_CAMPAIGN_LABELS[group];
   return group.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
 }
+function mkCampaignAxisLabel(name){
+  const label=String(name||'').trim().replace(/_/g,' ');
+  if(label.length<=22)return label;
+  const words=label.split(/\s+/),lines=[''];
+  words.forEach(word=>{
+    const last=lines.length-1;
+    if((lines[last]+' '+word).trim().length<=20)lines[last]=(lines[last]+' '+word).trim();
+    else if(lines.length<2)lines.push(word);
+    else lines[1]+=' '+word;
+  });
+  if(lines[1]?.length>23)lines[1]=lines[1].slice(0,22)+'…';
+  return lines;
+}
 function mkFilteredCampaignRows(p){return MKC.filter(d=>{const group=mkCampaignGroup(d.campanha);return group&&inP(d,p)&&(mkCampaignFilter==='all'||group===mkCampaignFilter)})}
 function mkCampaignSummary(p){
   const rows=mkFilteredCampaignRows(p);
@@ -1769,6 +1782,9 @@ function renderMarketing(){
     const p={months:[month]},sum=mkCampaignSummary(p);
     return{p,label:sl(month.m,month.a),sum};
   });
+  const campaignSeries=cur.rows.slice()
+    .sort((a,b)=>(b.publicacaoTs||0)-(a.publicacaoTs||0)||a.campanha.localeCompare(b.campanha,'pt-BR'))
+    .map(row=>({label:row.campanha,sum:{rows:[row],invest:row.invest,receita:row.receita,roas:row.invest?row.receita/row.invest:row.roas}}));
   const best=monthly.filter(x=>x.sum.invest>0).sort((a,b)=>b.sum.roas-a.sum.roas)[0];
   document.getElementById('mk-hero-invest').textContent=brl(cur.invest).replace(',00','');
   document.getElementById('mk-hero-rev').textContent=brl(cur.receita).replace(',00','');
@@ -1778,16 +1794,16 @@ function renderMarketing(){
   const campaignLabel=mkCampaignLabel(mkCampaignFilter==='all'?null:mkCampaignFilter);
   document.getElementById('mk-chart-campaign').textContent=campaignLabel;
   document.getElementById('mk-chart-empty').style.display=cur.rows.length?'none':'block';
-  renderMkCharts(monthly);
+  renderMkCharts(campaignSeries);
 }
-function renderMkCharts(monthly){
-  const labels=monthly.map(x=>x.label),multi=monthly.length>1;
+function renderMkCharts(campaigns){
+  const labels=campaigns.map(x=>mkCampaignAxisLabel(x.label)),multi=campaigns.length>1;
   const canvas=document.getElementById('mkChCampaignPerformance');
-  canvas.parentElement.style.height=multi?'340px':'260px';
+  canvas.parentElement.style.height=multi?(campaigns.length>6?'380px':'340px'):'260px';
   const datasets=[
-    {type:'bar',label:'Investimento',data:monthly.map(x=>x.sum.rows.length?x.sum.invest:null),backgroundColor:alqBarGradient('#526ea3','#293c65'),borderRadius:7,maxBarThickness:72,categoryPercentage:.65,yAxisID:'y'},
-    {type:'bar',label:'Retorno',data:monthly.map(x=>x.sum.rows.length?x.sum.receita:null),backgroundColor:alqBarGradient('#aec5e7','#7898c7'),borderRadius:7,maxBarThickness:72,categoryPercentage:.65,yAxisID:'y'},
-    {type:'line',label:'ROAS',data:monthly.map(x=>x.sum.invest?x.sum.roas:null),hidden:!multi,borderColor:'#407d98',backgroundColor:'#407d98',borderWidth:2.5,tension:.2,pointRadius:0,pointHoverRadius:0,yAxisID:'yRoas',order:-1}
+    {type:'bar',label:'Investimento',data:campaigns.map(x=>x.sum.invest),backgroundColor:alqBarGradient('#526ea3','#293c65'),borderRadius:7,maxBarThickness:54,categoryPercentage:.72,yAxisID:'y'},
+    {type:'bar',label:'Retorno',data:campaigns.map(x=>x.sum.receita),backgroundColor:alqBarGradient('#aec5e7','#7898c7'),borderRadius:7,maxBarThickness:54,categoryPercentage:.72,yAxisID:'y'},
+    {type:'line',label:'ROAS',data:campaigns.map(x=>x.sum.invest?x.sum.roas:null),hidden:!multi,borderColor:'#407d98',backgroundColor:'#407d98',borderWidth:2.5,tension:.2,pointRadius:0,pointHoverRadius:0,yAxisID:'yRoas',order:-1}
   ];
   const options={
     responsive:true,maintainAspectRatio:false,
@@ -1795,10 +1811,10 @@ function renderMkCharts(monthly){
     interaction:{mode:'index',intersect:false},
     plugins:{
       legend:{display:true,position:'bottom',labels:{boxWidth:18,boxHeight:4,padding:22,color:'#4d6080',font:{family:'Poppins',size:12},filter:item=>multi||item.text!=='ROAS'}},
-      tooltip:{backgroundColor:'#1b2c4b',padding:16,cornerRadius:12,titleFont:{family:'Poppins',size:13,weight:'600'},bodyFont:{family:'Poppins',size:13},bodySpacing:8,callbacks:{label:c=>c.dataset.label==='ROAS'?' ROAS: '+Number(c.parsed.y).toLocaleString('pt-BR',{maximumFractionDigits:2})+'×':' '+c.dataset.label+': '+brl(c.parsed.y)}}
+      tooltip:{backgroundColor:'#1b2c4b',padding:16,cornerRadius:12,titleFont:{family:'Poppins',size:13,weight:'600'},bodyFont:{family:'Poppins',size:13},bodySpacing:8,callbacks:{title:items=>items.length?campaigns[items[0].dataIndex].label:'',label:c=>c.dataset.label==='ROAS'?' ROAS: '+Number(c.parsed.y).toLocaleString('pt-BR',{maximumFractionDigits:2})+'×':' '+c.dataset.label+': '+brl(c.parsed.y)}}
     },
     scales:{
-      x:{grid:{display:false},border:{display:false},ticks:{font:{family:'Poppins',size:12},color:'#627391',maxRotation:0}},
+      x:{grid:{display:false},border:{display:false},ticks:{autoSkip:false,font:{family:'Poppins',size:10},color:'#627391',maxRotation:0}},
       y:{beginAtZero:true,border:{display:false},grid:{color:'#e8edf5',drawTicks:false},ticks:{padding:12,maxTicksLimit:5,font:{family:'Poppins',size:12},color:'#627391',callback:v=>brlK(v)}},
       yRoas:{display:multi,position:'right',beginAtZero:true,grid:{display:false},border:{display:false},ticks:{maxTicksLimit:5,font:{family:'Poppins',size:12},color:'#407d98',callback:v=>v.toLocaleString('pt-BR',{maximumFractionDigits:1})+'×'}}
     }
@@ -2304,7 +2320,8 @@ function transformCampanhas(rows) {
     const receita = parseMoney(r.Retorno || r.retorno || r.Receita || r.receita || 0);
     const roas = parseFloat(String(r.ROAS || r.roas || 0).replace(',', '.')) || (invest > 0 ? receita/invest : 0);
     if (!mes || !campanha) return;
-    mkc.push({ ano, mes, canal, campanha, invest, receita, roas });
+    const publicacaoTs=dateMatch?Date.UTC(ano,parseInt(dateMatch[2],10)-1,parseInt(dateMatch[1],10)):0;
+    mkc.push({ ano, mes, canal, campanha, invest, receita, roas, publicacao, publicacaoTs });
     const key = `${ano}-${mes}-${canal}`;
     if (!mk[key]) mk[key] = { ano, mes, canal, invest: 0, receita: 0, leads: 0, novos: 0 };
     mk[key].invest += invest; mk[key].receita += receita;
